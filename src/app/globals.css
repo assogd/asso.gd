@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-size: 14px;
+  line-height: 1.1em;
+}
+
+@media screen and (min-width: 670px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+mux-player {
+  --controls-backdrop-color: rgb(0 0 0 / 0%);
+}
+
+mux-player.no-controls {
+  --controls: none;
+  --media-object-fit: cover;
+  --media-object-position: center;
+}
+
+.transition-bg {
+  transition: background 500ms;
+}
+
+.uppercase {
+  letter-spacing: 0.25em;
+}
+
+.extra-tracking {
+  letter-spacing: 0.5em;
+}
