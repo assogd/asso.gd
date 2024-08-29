@@ -1,17 +1,18 @@
 import { notFound } from 'next/navigation'
 import { HeroImage } from '@/components/ui/assets'
 import { SinglePage, SinglePageSeo } from '@/queries/pages'
-import { LastUpdatedProfile } from '@/queries/profiles'
+import { GalleryById } from '@/queries/galleries'
 import { fetchGraphQL } from '@/lib/graphql'
+import { MainCarousel } from '@/components/ui/carousel/'
 
-/*export async function generateMetadata() {
+export async function generateMetadata() {
   const pageData = await fetchGraphQL(SinglePageSeo, { slug: 'home' })
   const page = pageData?.page
 
   const { title, description, image } = page?.seo ?? []
 
   return {
-    title: title ?? 'Adam Richards',
+    title: title ?? 'ADDD',
     description: description,
     openGraph: {
       description: description,
@@ -22,15 +23,22 @@ import { fetchGraphQL } from '@/lib/graphql'
       ]
     }
   }
-}*/
+}
 
 export default async function Home() {
-  /*const profileData = await fetchGraphQL(LastUpdatedProfile)
-  const profile = profileData?.profiles?.[0]
-
   const pageData = await fetchGraphQL(SinglePage, { slug: 'home' })
   const page = pageData?.page
 
-  if (!page) return notFound()*/
-  return null
+  const galleryData = await fetchGraphQL(GalleryById, {
+    id: 'cm0fdalorfvgo07w2wji3wbv0'
+  })
+  const gallery = galleryData?.gallery
+
+  if (!page) return notFound()
+  return (
+    <main>
+      <h1 className="sr-only">Projects</h1>
+      <MainCarousel {...gallery} />
+    </main>
+  )
 }

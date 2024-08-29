@@ -1,5 +1,5 @@
 {
-  "name": "asso-event-management",
+  "name": "addd",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
     "@graphcms/rich-text-react-renderer": "^0.6.2",
     "@mux/mux-node": "^8.8.0",
     "@mux/mux-player-react": "^2.9.1",
-    "@next/font": "^14.2.6",
+    "@next/font": "^14.2.7",
     "@uidotdev/usehooks": "^2.4.1",
     "autoprefixer": "10.4.20",
     "axios": "^1.7.5",
@@ -24,7 +24,7 @@
     "eslint-config-next": "14.2.6",
     "express": "^4.19.2",
     "formik": "^2.4.6",
-    "framer-motion": "^11.3.30",
+    "framer-motion": "^11.3.31",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.0",
     "moment": "^2.30.1",
@@ -41,7 +41,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.14",
+    "@tailwindcss/typography": "^0.5.15",
     "@types/node": "22.5.0"
   }
 }

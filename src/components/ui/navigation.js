@@ -12,27 +12,18 @@ export const Navigation = () => {
   const scrolled = useScroll()
   const isMobile = useMedia({ maxWidth: '638px' })
 
-  const linkClassName = 'block p-3 sm:p-6 uppercase'
-
   return (
-    <nav
-      className={clsx(
-        'fixed inset-x-0 top-0 flex justify-between px-3 sm:px-6 py-4',
-        'bg-gradient-to-b from-black to-transparent',
-        'select-none'
-      )}
-    >
-      <Link href="/" className={linkClassName}>
-        Adam Richards
-      </Link>
-      <div className="flex">
-        <Link href="/#projects" className={linkClassName}>
-          Projects
+    <>
+      <nav className={clsx('fixed right-0 top-0', 'select-none')}>
+        <Link href="/about" className={'block p-4'}>
+          About the Studio
         </Link>
-        <Link href="/" className={linkClassName}>
-          About
+      </nav>
+      <div className={clsx('fixed left-0 bottom-4', 'select-none')}>
+        <Link href="/" className={'block p-4'}>
+          ADDD:
         </Link>
       </div>
-    </nav>
+    </>
   )
 }

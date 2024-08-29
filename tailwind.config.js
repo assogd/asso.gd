@@ -7,7 +7,27 @@ module.exports = {
   ],
   safelist: [
     {
-      pattern: /^col-span-(1[0-2]|[1-9]|full)$/,
+      pattern: /^col-span-([1-4]|full)$/,
+      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
+    },
+    {
+      pattern: /^row-span-([1-3]|full)$/,
+      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
+    },
+    {
+      pattern: /^col-start-([1-3])$/,
+      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
+    },
+    {
+      pattern: /^col-end-([1-3])$/,
+      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
+    },
+    {
+      pattern: /^row-start-([1-3])$/,
+      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
+    },
+    {
+      pattern: /^row-end-([1-3])$/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
@@ -24,7 +44,7 @@ module.exports = {
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
-      white: 'rgba(245, 245, 245, 1)',
+      white: 'rgba(255, 255, 255, 1)',
       black: '#000000'
     },
     extend: {
@@ -49,8 +69,7 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
       },
       fontFamily: {
-        serif: ['var(--font-serif)'],
-        sans: ['var(--font-sans)']
+        mono: ['var(--font-mono)']
       }
     }
   },

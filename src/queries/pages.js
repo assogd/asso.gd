@@ -13,15 +13,6 @@ export const SinglePage = `
       id
       slug
       title
-      content {
-        ... on Text {
-          id
-          __typename
-          body {
-            raw
-          }
-        }
-      }
     }
   }
 `

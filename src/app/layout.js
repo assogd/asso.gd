@@ -6,38 +6,22 @@ import { fetchGraphQL } from '@/lib/graphql'
 import PlausibleProvider from 'next-plausible'
 import { Navigation } from '@/components/ui/navigation'
 
-const serif = localFont({
+const mono = localFont({
   src: [
     {
-      path: '../../public/fonts/untitled-serif-regular.woff2',
-      weight: '400',
-      style: 'normal'
-    },
-    {
-      path: '../../public/fonts/untitled-serif-regular-italic.woff2',
-      weight: '400',
-      style: 'italic'
-    }
-  ],
-  variable: '--font-serif'
-})
-
-const sans = localFont({
-  src: [
-    {
-      path: '../../public/fonts/HelveticaNeueLTStd-Ex.woff2',
+      path: '../../public/fonts/PanamaMonospaceRegular.woff',
       weight: '400',
       style: 'normal'
     }
   ],
-  variable: '--font-sans'
+  variable: '--font-mono'
 })
 
 export const metadata = {
-  metadataBase: new URL('https://www.adamrichards.tv'),
+  metadataBase: new URL('https://www.asso.gd'),
   creator: 'Asso DDD',
   openGraph: {
-    siteName: 'Adam Richards',
+    siteName: 'ADDD',
     type: 'website'
   },
   appleWebApp: {
@@ -50,12 +34,12 @@ export default async function Layout({ children, params }) {
     <html
       lang="en"
       className={clsx(
-        'bg-black text-white',
-        `${sans.variable} ${serif.variable} font-sans`
+        'bg-white text-black',
+        `${mono.variable} font-mono overscroll-none`
       )}
     >
       <head>
-        <PlausibleProvider domain="adamrichards.tv" />
+        <PlausibleProvider domain="asso.gd" />
       </head>
       <body>
         {children}
