@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import ProgressBar from './progressBar'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTheme } from 'next-themes'
 
 export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
@@ -17,6 +18,14 @@ export const MainCarousel = ({ content }) => {
   const startTimeRef = useRef(null)
   const pauseTimeRef = useRef(null)
   const pressStartRef = useRef(null)
+  const { theme, setTheme } = useTheme()
+
+  useEffect(() => {
+    const slideTheme = content[active]?.theme ?? 'light'
+    if (theme !== slideTheme) {
+      setTheme(slideTheme)
+    }
+  }, [setTheme, active])
 
   const totalDuration = 8000 // Total duration of each slide in milliseconds
   const holdThreshold = 500 // Duration in ms to consider a hold
@@ -110,7 +119,7 @@ export const MainCarousel = ({ content }) => {
 
   return (
     <section
-      className="relative w-screen h-screen overflow-hidden"
+      className="relative w-screen h-screen overflow-hidden select-none"
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
@@ -122,7 +131,7 @@ export const MainCarousel = ({ content }) => {
           key={item.id}
           className={clsx(
             'absolute inset-0 transition-opacity duration-500',
-            active === i ? 'opacity-100' : 'opacity-0'
+            active === i ? 'opacity-100' : 'opacity-0 pointer-events-none'
           )}
         >
           <div className="grid grid-cols-3 grid-rows-2 max-h-full h-full">
@@ -141,6 +150,7 @@ export const MainCarousel = ({ content }) => {
                         asset?.className?.includes('span-full') &&
                           'object-center object-cover max-h-full h-full'
                       )}
+                      draggable="false"
                     />
                   )
                 case 'Video':

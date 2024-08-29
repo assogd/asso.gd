@@ -8,24 +8,34 @@ import { useMedia } from 'use-media'
 import { Button } from '@/components/ui/buttons'
 
 export const StandardPlayer = ({ file, muted, className, paused }) => {
-  const playerRef = useRef(null)
+  const ref = useRef(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
   const handleLoadedData = () => {
     setIsLoaded(true)
   }
 
+  useEffect(() => {
+    if (ref?.current && paused) {
+      ref?.current?.pause()
+    } else {
+      ref?.current?.play()
+    }
+  }, [ref?.current, paused])
+
   return (
-    <MuxPlayer
-      ref={playerRef}
-      playbackId={file?.playbackId}
-      muted={muted}
-      nohotkeys
-      autoPlay={'any'}
-      className={clsx('no-controls w-full', className)}
-      thumbnailTime={0}
-      loop
-      onCanPlay={handleLoadedData}
-    />
+    <div>
+      <MuxPlayer
+        ref={ref}
+        playbackId={file?.playbackId}
+        muted={muted}
+        nohotkeys
+        autoPlay={'any'}
+        className={clsx('no-controls w-full', className)}
+        thumbnailTime={0}
+        loop
+        onCanPlay={handleLoadedData}
+      />
+    </div>
   )
 }

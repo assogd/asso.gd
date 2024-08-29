@@ -11,12 +11,12 @@ const ProgressBar = ({ progress, isActive, isViewed, onClick }) => {
       <div
         className={clsx(
           'h-[1px] relative overflow-hidden',
-          isViewed ? 'bg-black' : 'bg-[#E7E7E7]/50'
+          isViewed ? 'bg-current' : 'bg-[#E7E7E7]/70'
         )}
       >
         {isActive && (
           <motion.div
-            className="h-full bg-black origin-left"
+            className="h-full bg-current origin-left"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: progress / 100 }}
             transition={{ duration: 0.016, ease: 'linear' }}

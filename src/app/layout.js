@@ -5,6 +5,7 @@ import Loading from '@/components/loading'
 import { fetchGraphQL } from '@/lib/graphql'
 import PlausibleProvider from 'next-plausible'
 import { Navigation } from '@/components/ui/navigation'
+import { ThemeProvider } from 'next-themes'
 
 const mono = localFont({
   src: [
@@ -33,17 +34,22 @@ export default async function Layout({ children, params }) {
   return (
     <html
       lang="en"
-      className={clsx(
-        'bg-white text-black',
-        `${mono.variable} font-mono overscroll-none`
-      )}
+      className={clsx(`${mono.variable} font-mono overscroll-none`)}
+      suppressHydrationWarning
     >
       <head>
         <PlausibleProvider domain="asso.gd" />
       </head>
       <body>
-        {children}
-        <Navigation />
+        <ThemeProvider
+          defaultTheme="offWhite"
+          enableColorScheme
+          enableSystem={false}
+          themes={['light', 'vibrant', 'dark']}
+        >
+          {children}
+          <Navigation />
+        </ThemeProvider>
       </body>
     </html>
   )
