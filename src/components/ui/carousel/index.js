@@ -22,24 +22,26 @@ export const MainCarousel = ({ content }) => {
   const holdThreshold = 500 // Duration in ms to consider a hold
 
   const startTimer = () => {
-    startTimeRef.current = Date.now() - progress * (totalDuration / 100)
-    intervalRef.current = setInterval(() => {
-      const elapsedTime = Date.now() - startTimeRef.current
-      setProgress((elapsedTime / totalDuration) * 100)
+    if (!isPaused) {
+      startTimeRef.current = Date.now() - progress * (totalDuration / 100)
+      intervalRef.current = setInterval(() => {
+        const elapsedTime = Date.now() - startTimeRef.current
+        setProgress((elapsedTime / totalDuration) * 100)
 
-      if (elapsedTime >= totalDuration) {
-        clearInterval(intervalRef.current)
-        setActive((prev) => {
-          if (prev < content.length - 1) {
-            setProgress(0)
-            return prev + 1
-          } else {
-            setProgress(0)
-            return 0 // Loop back to the first slide
-          }
-        })
-      }
-    }, 16) // 16ms for smoother progress (roughly 60fps)
+        if (elapsedTime >= totalDuration) {
+          clearInterval(intervalRef.current)
+          setActive((prev) => {
+            if (prev < content.length - 1) {
+              setProgress(0)
+              return prev + 1
+            } else {
+              setProgress(0)
+              return 0 // Loop back to the first slide
+            }
+          })
+        }
+      }, 16) // 16ms for smoother progress (roughly 60fps)
+    }
   }
 
   const pauseTimer = () => {
@@ -59,7 +61,7 @@ export const MainCarousel = ({ content }) => {
     startTimer()
 
     return () => clearInterval(intervalRef.current)
-  }, [active])
+  }, [active, isPaused]) // Added isPaused dependency
 
   const handlePrev = () => {
     if (active > 0) {
@@ -123,7 +125,7 @@ export const MainCarousel = ({ content }) => {
             active === i ? 'opacity-100' : 'opacity-0'
           )}
         >
-          <div className="grid grid-cols-3 grid-rows-2 max-h-full">
+          <div className="grid grid-cols-3 grid-rows-2 max-h-full h-full">
             {item.assets.map((asset) => {
               switch (asset.__typename) {
                 case 'Image':
@@ -137,7 +139,7 @@ export const MainCarousel = ({ content }) => {
                       className={clsx(
                         asset.className,
                         asset?.className?.includes('span-full') &&
-                          'object-center object-cover max-h-full'
+                          'object-center object-cover max-h-full h-full'
                       )}
                     />
                   )
@@ -145,13 +147,13 @@ export const MainCarousel = ({ content }) => {
                   return (
                     <StandardPlayer
                       key={asset.id}
-                      {...asset.file}
-                      alt={asset.file.alt ?? ''}
+                      {...asset}
                       className={clsx(
                         asset.className,
                         asset?.className?.includes('span-full') &&
                           'object-center object-cover max-h-full'
                       )}
+                      paused={isPaused}
                     />
                   )
                 default: {
@@ -161,9 +163,11 @@ export const MainCarousel = ({ content }) => {
               }
             })}
           </div>
-          <div className="fixed bottom-8 left-24">
-            <Caption content={item.caption} />
-          </div>
+          {item.caption?.raw && (
+            <div className="fixed bottom-8 left-24">
+              <Caption content={item.caption} />
+            </div>
+          )}
         </div>
       ))}
       <AnimatePresence>

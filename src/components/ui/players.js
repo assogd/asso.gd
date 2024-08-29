@@ -7,7 +7,7 @@ import { useInView } from 'react-intersection-observer'
 import { useMedia } from 'use-media'
 import { Button } from '@/components/ui/buttons'
 
-export const StandardPlayer = ({ file, muted, className }) => {
+export const StandardPlayer = ({ file, muted, className, paused }) => {
   const playerRef = useRef(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -22,7 +22,7 @@ export const StandardPlayer = ({ file, muted, className }) => {
       muted={muted}
       nohotkeys
       autoPlay={'any'}
-      className={clsx('no-controls', className)}
+      className={clsx('no-controls w-full', className)}
       thumbnailTime={0}
       loop
       onCanPlay={handleLoadedData}

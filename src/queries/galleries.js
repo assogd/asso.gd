@@ -29,6 +29,7 @@ export const GalleryById = `
           caption {
             raw
           }
+          theme
         }
       }
     }
