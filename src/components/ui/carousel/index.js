@@ -149,7 +149,7 @@ export const MainCarousel = ({ content }) => {
                       className={clsx(
                         asset.className,
                         asset?.className?.includes('span-full') &&
-                          'object-center object-cover max-h-full h-full'
+                          'object-center object-cover max-h-full h-full pointer-events-none'
                       )}
                       draggable="false"
                     />
@@ -175,7 +175,7 @@ export const MainCarousel = ({ content }) => {
             })}
           </div>
           {item.caption?.raw && (
-            <div className="fixed bottom-8 left-24">
+            <div className="fixed bottom-8 left-16">
               <Caption content={item.caption} />
             </div>
           )}

@@ -19,7 +19,7 @@ export const Navigation = () => {
       {isHome ? (
         <motion.div
           key={'adddCAPTION'}
-          className={clsx('fixed left-0 bottom-4 select-none')}
+          className={clsx('fixed left-0 bottom-4 select-none z-10')}
           initial={{ y: 200, transition: { type: 'tween', duration: 0.5 } }}
           animate={{ y: 0, transition: { type: 'tween', duration: 0.5 } }}
           exit={{ y: 200, transition: { type: 'tween', duration: 0.5 } }}
@@ -32,7 +32,7 @@ export const Navigation = () => {
         <motion.div
           key={'adddANNOUNCEMENT'}
           className={clsx(
-            'relative inset-x-0 select-none top-0 flex gap-2 items-baseline justify-between p-4 bg-white'
+            'relative inset-x-0 select-none top-0 flex gap-2 items-baseline justify-between p-4 bg-white z-10'
           )}
           initial={{
             y: -200
