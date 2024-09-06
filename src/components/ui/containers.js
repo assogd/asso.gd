@@ -26,6 +26,8 @@ export const DisappearOnScroll = ({ children, className }) => {
   )
 }
 
-export const Main = ({ children }) => {
-  return <main className="grid grid-cols-12">{children}</main>
+export const Main = ({ children, className }) => {
+  return (
+    <main className={clsx('grid grid-cols-16', className)}>{children}</main>
+  )
 }

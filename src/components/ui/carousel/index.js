@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import ProgressBar from './progressBar'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
+import Link from 'next/link'
 
 export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
@@ -186,7 +187,12 @@ export const MainCarousel = ({ content }) => {
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-0 left-0 right-0 flex gap-1 px-4 py-2">
+      <div
+        className={clsx(
+          'fixed bottom-0 left-0 right-0 flex gap-1 px-4 py-2',
+          isPaused && 'opacity-0'
+        )}
+      >
         {content.map((_, i) => (
           <ProgressBar
             key={i}
@@ -202,6 +208,12 @@ export const MainCarousel = ({ content }) => {
           />
         ))}
       </div>
+
+      <nav className={clsx('fixed right-0 top-0', 'select-none')}>
+        <Link href="/about" className={'block p-4'}>
+          About the Studio
+        </Link>
+      </nav>
     </section>
   )
 }

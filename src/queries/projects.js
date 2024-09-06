@@ -49,6 +49,12 @@ export const SingleProject = `
            controls
            className
          }
+         ... on PlayerWithPreview {
+           __typename
+           id
+           mainFile
+           previewFile
+         }
        }
        director {
          name

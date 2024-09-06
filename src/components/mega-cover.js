@@ -1,0 +1,19 @@
+'use client'
+import { motion, AnimatePresence } from 'framer-motion'
+
+export default function MegaCover() {
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ delay: 1, duration: 6 }}
+        className="pointer-events-none fixed inset-0 flex flex-col gap-12 items-center text-mega justify-center md:justify-between pb-16 p-8"
+      >
+        <p>Direction</p>
+        <p>Design</p>
+        <p>Development</p>
+      </motion.div>
+    </AnimatePresence>
+  )
+}

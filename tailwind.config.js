@@ -7,27 +7,7 @@ module.exports = {
   ],
   safelist: [
     {
-      pattern: /^col-span-([1-4]|full)$/,
-      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
-    },
-    {
-      pattern: /^row-span-([1-3]|full)$/,
-      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
-    },
-    {
-      pattern: /^col-start-([1-3])$/,
-      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
-    },
-    {
-      pattern: /^col-end-([1-3])$/,
-      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
-    },
-    {
-      pattern: /^row-start-([1-3])$/,
-      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
-    },
-    {
-      pattern: /^row-end-([1-3])$/,
+      pattern: /^col-(span|start|end)-(1[0-6]|[1-9]|full)$/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
@@ -55,7 +35,11 @@ module.exports = {
         md: ['1.3333333rem', '1.3em'], //24px
         lg: ['1.5rem', '1.3em'], //24px
         xl: ['2.6666666rem', '1em'], //48px
-        '2xl': ['clamp(1.25rem, 6vw, 4rem)', '1em']
+        '2xl': ['clamp(1.25rem, 6vw, 4rem)', '1em'],
+        mega: ['clamp(4rem, 16vw, 12rem)', '1em']
+      },
+      gridTemplateColumns: {
+        16: 'repeat(16, minmax(0, 1fr))'
       },
       screens: {
         xs: '480px',

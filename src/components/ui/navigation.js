@@ -14,16 +14,26 @@ export const Navigation = () => {
 
   return (
     <>
-      <nav className={clsx('fixed right-0 top-0', 'select-none')}>
-        <Link href="/about" className={'block p-4'}>
-          About the Studio
-        </Link>
-      </nav>
-      <div className={clsx('fixed left-0 bottom-4', 'select-none')}>
-        <Link href="/" className={'block p-4'}>
-          ADDD:
-        </Link>
-      </div>
+      {isHome ? (
+        <motion.div
+          className={clsx('fixed left-0 bottom-4 select-none bottom-4')}
+          layoutId="addd"
+        >
+          <Link href="/" className={'block p-4'}>
+            ADDD:
+          </Link>
+        </motion.div>
+      ) : (
+        <motion.div
+          className={clsx('fixed left-0 bottom-4 select-none', 'top-0')}
+          layoutId="addd"
+        >
+          <Link href="/" className={'block p-4'}>
+            ADDD:
+            {!isHome && ' We can write something here, like an announcement'}
+          </Link>
+        </motion.div>
+      )}
     </>
   )
 }
