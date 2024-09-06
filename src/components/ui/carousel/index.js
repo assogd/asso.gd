@@ -9,6 +9,7 @@ import ProgressBar from './progressBar'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
+import { use100vh } from 'react-div-100vh'
 
 export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
@@ -20,6 +21,7 @@ export const MainCarousel = ({ content }) => {
   const pauseTimeRef = useRef(null)
   const pressStartRef = useRef(null)
   const { theme, setTheme } = useTheme()
+  const height = use100vh()
 
   useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
@@ -120,7 +122,8 @@ export const MainCarousel = ({ content }) => {
 
   return (
     <section
-      className="relative w-screen h-screen overflow-hidden select-none"
+      className={'relative w-screen overflow-hidden select-none'}
+      style={{ height }}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
