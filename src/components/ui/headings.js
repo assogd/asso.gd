@@ -1,17 +1,9 @@
-import { applyRandomFonts } from '@/lib/text'
+import clsx from 'clsx'
 
-export const Heading1 = ({ children }) => {
-  const title = children?.props
-    ? children.props.content.map((item) => item.text).join(' ')
-    : children
-
-  return <h1 className="text-center text-2xl">{applyRandomFonts(title, 4)}</h1>
+export const Heading1 = ({ children, className }) => {
+  return <h1 className={clsx('text-center text-2xl', className)}>{children}</h1>
 }
 
 export const Heading2 = ({ children }) => {
-  return (
-    <h2 className="font-expandedSans uppercase !text-[0.5em] tracking-wider mb-[.1em]">
-      {children}
-    </h2>
-  )
+  return <h2 className="uppercase mb-4">{children}</h2>
 }

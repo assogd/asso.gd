@@ -5,8 +5,9 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { RichText } from '@graphcms/rich-text-react-renderer'
 import { Main } from '@/components/ui/containers'
-import { Heading1 } from '@/components/ui/headings'
+import { Heading1, Heading2 } from '@/components/ui/headings'
 import MegaCover from '@/components/mega-cover'
+import clsx from 'clsx'
 
 export async function generateMetadata({ params }) {
   const pageData = await fetchGraphQL(SinglePageSeo, { slug: 'about' })
@@ -34,17 +35,23 @@ export default async function Post({ params }) {
   if (!page || !page?.content?.length) return notFound()
 
   return (
-    <Main className="p-4 pt-16">
+    <Main className="p-4 pt-4">
+      <Heading1 className="sr-only">About</Heading1>
       {page?.content.map((section) => {
         switch (section.__typename) {
           case 'Text':
             return (
-              <section className={section.className}>
+              <section className={clsx('', section.className)}>
                 <RichText
                   content={section.content.raw}
                   renderers={{
-                    h1: ({ children }) => <Heading1>{children}</Heading1>,
-                    p: ({ children }) => <p>{children}</p>
+                    h2: ({ children }) => <Heading2>{children}</Heading2>,
+                    p: ({ children }) => (
+                      <p className="mb-4 last:mb-0">{children}</p>
+                    ),
+                    li: ({ children }) => (
+                      <li className="odd:ml-0 even:ml-4">{children}</li>
+                    )
                   }}
                 />
               </section>
@@ -55,11 +62,7 @@ export default async function Post({ params }) {
           }
         }
       })}
-      <nav className={'fixed right-0 top-0 select-none'}>
-        <Link href="/" className={'block p-4'}>
-          Back to Images
-        </Link>
-      </nav>
+
       <MegaCover />
     </Main>
   )

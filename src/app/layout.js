@@ -47,8 +47,8 @@ export default async function Layout({ children, params }) {
           enableSystem={false}
           themes={['light', 'vibrant', 'dark']}
         >
-          {children}
           <Navigation />
+          {children}
         </ThemeProvider>
       </body>
     </html>
