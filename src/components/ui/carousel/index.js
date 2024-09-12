@@ -136,7 +136,7 @@ export const MainCarousel = ({ content }) => {
                       height={asset.file.height}
                       alt={asset.file.alt ?? ''}
                       className={clsx(
-                        'object-center h-full object-contain',
+                        'object-center h-full object-contain pointer-events-none',
                         asset.className,
                         !asset.className.includes('row-') &&
                           'row-span-full mb-4'
@@ -152,7 +152,7 @@ export const MainCarousel = ({ content }) => {
                       key={asset.id}
                       {...asset}
                       className={clsx(
-                        'object-center h-full',
+                        'object-center h-full pointer-events-none',
                         asset.className,
                         !asset.className.includes('row-') &&
                           'row-span-full mb-4'
