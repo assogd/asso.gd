@@ -49,6 +49,7 @@ export default async function Layout({ children, params }) {
         >
           <Navigation />
           {children}
+          <Navigation />
         </ThemeProvider>
       </body>
     </html>

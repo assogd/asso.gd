@@ -11,12 +11,12 @@ export const Heading2 = ({ children }) => {
 }
 
 export const Heading3 = ({ children }) => {
-  const [isBlack, setIsBlack] = useState(true)
+  const [isCurrentColor, setIsCurrentColor] = useState(true)
 
-  // Set up the interval to toggle `isBlack` every 500ms
+  // Set up the interval to toggle `isCurrentColor` every 500ms
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsBlack((prev) => !prev)
+      setIsCurrentColor((prev) => !prev)
     }, 1000)
 
     return () => clearInterval(interval)
@@ -31,13 +31,13 @@ export const Heading3 = ({ children }) => {
         <span
           key={index}
           className={clsx(
-            isBlack
+            isCurrentColor
               ? index % 2 === 0
-                ? 'text-black'
+                ? 'text-current'
                 : 'text-red'
               : index % 2 === 0
               ? 'text-red'
-              : 'text-black'
+              : 'text-current'
           )}
         >
           {char}
