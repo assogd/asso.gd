@@ -16,7 +16,7 @@ export async function generateMetadata({ params }) {
   const { title, description, image } = page?.seo ?? []
 
   return {
-    title: title ? `${title} – Tarot` : 'Tarot',
+    title: title ? `${title} – ADDD` : 'ADDD',
     description: description,
     openGraph: {
       description: description,

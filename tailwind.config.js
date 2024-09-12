@@ -11,7 +11,7 @@ module.exports = {
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
-      pattern: /^row-(span|start|end)-([1-5]|full)$/,
+      pattern: /^row-(span|start|end)-(1[0-3]|[1-9]|full)$/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
