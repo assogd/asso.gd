@@ -151,7 +151,9 @@ export const MainCarousel = ({ content }) => {
                       alt={asset.file.alt ?? ''}
                       className={clsx(
                         'object-center h-full object-contain',
-                        asset.className
+                        asset.className,
+                        !asset.className.includes('row-') &&
+                          'row-span-full mb-4'
                       )}
                       draggable="false"
                     />
@@ -161,7 +163,12 @@ export const MainCarousel = ({ content }) => {
                     <StandardPlayer
                       key={asset.id}
                       {...asset}
-                      className={clsx('object-center h-full', asset.className)}
+                      className={clsx(
+                        'object-center h-full',
+                        asset.className,
+                        !asset.className.includes('row-') &&
+                          'row-span-full mb-4'
+                      )}
                       paused={isPaused}
                     />
                   )
