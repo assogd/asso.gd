@@ -150,9 +150,8 @@ export const MainCarousel = ({ content }) => {
                       height={asset.file.height}
                       alt={asset.file.alt ?? ''}
                       className={clsx(
-                        asset.className,
-                        asset?.className?.includes('span-full') &&
-                          'object-center object-cover max-h-full h-full pointer-events-none'
+                        'object-center h-full object-contain',
+                        asset.className
                       )}
                       draggable="false"
                     />
@@ -162,11 +161,7 @@ export const MainCarousel = ({ content }) => {
                     <StandardPlayer
                       key={asset.id}
                       {...asset}
-                      className={clsx(
-                        asset.className,
-                        asset?.className?.includes('span-full') &&
-                          'object-center object-cover max-h-full'
-                      )}
+                      className={clsx('object-center h-full', asset.className)}
                       paused={isPaused}
                     />
                   )
