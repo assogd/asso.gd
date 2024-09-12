@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation'
 import ProgressBar from './progressBar'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
-import Link from 'next/link'
 import { use100vh } from 'react-div-100vh'
+import { throttle } from 'lodash'
 
 export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
@@ -25,10 +25,14 @@ export const MainCarousel = ({ content }) => {
 
   useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
-    if (theme !== slideTheme) {
-      setTheme(slideTheme)
-    }
-  }, [setTheme, active])
+    const startThemeTransition = setTimeout(() => {
+      if (theme !== slideTheme) {
+        setTheme(slideTheme)
+      }
+    }, 50) // Debounce for theme switching
+
+    return () => clearTimeout(startThemeTransition)
+  }, [setTheme, active, theme])
 
   const totalDuration = 8000 // Total duration of each slide in milliseconds
   const holdThreshold = 500 // Duration in ms to consider a hold
@@ -42,15 +46,8 @@ export const MainCarousel = ({ content }) => {
 
         if (elapsedTime >= totalDuration) {
           clearInterval(intervalRef.current)
-          setActive((prev) => {
-            if (prev < content.length - 1) {
-              setProgress(0)
-              return prev + 1
-            } else {
-              setProgress(0)
-              return 0 // Loop back to the first slide
-            }
-          })
+          setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
+          setProgress(0)
         }
       }, 16) // 16ms for smoother progress (roughly 60fps)
     }
@@ -71,28 +68,17 @@ export const MainCarousel = ({ content }) => {
 
   useEffect(() => {
     startTimer()
-
     return () => clearInterval(intervalRef.current)
-  }, [active, isPaused]) // Added isPaused dependency
+  }, [active, isPaused])
 
   const handlePrev = () => {
-    if (active > 0) {
-      setProgress(0)
-      setActive(active - 1)
-    } else {
-      setProgress(0)
-      setActive(content.length - 1) // Go to the last slide
-    }
+    setActive((prev) => (prev > 0 ? prev - 1 : content.length - 1))
+    setProgress(0)
   }
 
   const handleNext = () => {
-    if (active < content.length - 1) {
-      setProgress(0)
-      setActive(active + 1)
-    } else {
-      setProgress(0)
-      setActive(0) // Loop back to the first slide
-    }
+    setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
+    setProgress(0)
   }
 
   const handleMouseDown = () => {
@@ -102,13 +88,10 @@ export const MainCarousel = ({ content }) => {
 
   const handleMouseUp = () => {
     const pressDuration = Date.now() - pressStartRef.current
-
     if (pressDuration >= holdThreshold) {
-      // It's a hold
       resumeTimer()
     } else {
-      // It's a click/short press
-      resumeTimer() // Resume timer before navigating
+      resumeTimer()
       handleNext()
     }
   }
@@ -117,15 +100,18 @@ export const MainCarousel = ({ content }) => {
     if (isPaused) resumeTimer()
   }
 
-  const handleTouchStart = handleMouseDown
-  const handleTouchEnd = handleMouseUp
+  const throttledMouseDown = useRef(throttle(handleMouseDown, 200)).current
+  const throttledMouseUp = useRef(throttle(handleMouseUp, 200)).current
+
+  const handleTouchStart = throttledMouseDown
+  const handleTouchEnd = throttledMouseUp
 
   return (
     <section
       className={'relative w-screen overflow-hidden select-none'}
       style={{ height }}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
+      onMouseDown={throttledMouseDown}
+      onMouseUp={throttledMouseUp}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -134,9 +120,9 @@ export const MainCarousel = ({ content }) => {
         <div
           key={item.id}
           className={clsx(
-            'absolute inset-0 transition-opacity duration-0',
-            active === i ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          )}
+            'absolute inset-0 transition-opacity duration-100',
+            active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
+          )} // Only show the active item and hide others
         >
           <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full">
             {item.assets.map((asset) => {
@@ -156,6 +142,8 @@ export const MainCarousel = ({ content }) => {
                           'row-span-full mb-4'
                       )}
                       draggable="false"
+                      loading={i === 0 ? 'eager' : 'lazy'} // lazy-load non-first images
+                      priority={i === 0} // prioritize the first image for faster rendering
                     />
                   )
                 case 'Video':
@@ -206,8 +194,8 @@ export const MainCarousel = ({ content }) => {
             isViewed={i < active}
             onClick={() => {
               if (i !== active) {
-                setProgress(0)
                 setActive(i)
+                setProgress(0)
               }
             }}
           />
