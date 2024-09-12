@@ -14,7 +14,7 @@ export const RegularImage = ({ file, caption, className }) => {
           src={file.url}
           width={file.width}
           height={file.height}
-          alt={file.alt}
+          alt={file.alt ?? ''}
           className="w-full"
           onLoadingComplete={() => setIsLoaded(true)} // Set isLoaded to true when the image is fully loaded
         />

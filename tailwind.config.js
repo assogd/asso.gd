@@ -15,7 +15,7 @@ module.exports = {
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
-      pattern: /^object-(cover|contain)$/,
+      pattern: /^object-(cover|contain|top|bottom)$/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
