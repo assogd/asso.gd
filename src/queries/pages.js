@@ -22,6 +22,19 @@ export const SinglePage = `
           }
           className
         }
+        ... on Image {
+          __typename
+          id
+          file {
+            height
+            url(
+              transformation: {document: {output: {format: webp}}, image: {resize: {width: 800}}}
+            )
+            width
+          }
+          caption
+          className
+        }
       }
     }
   }

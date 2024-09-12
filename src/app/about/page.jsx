@@ -1,7 +1,7 @@
 import { fetchGraphQL } from '@/lib/graphql'
 import { AllPages, SinglePage, SinglePageSeo } from '@/queries/pages'
 import Link from 'next/link'
-import Image from 'next/image'
+import { RegularImage } from '@/components/ui/images'
 import { notFound } from 'next/navigation'
 import { RichText } from '@graphcms/rich-text-react-renderer'
 import { Main } from '@/components/ui/containers'
@@ -37,13 +37,13 @@ export default async function Post({ params }) {
   return (
     <Main className="p-4 pt-4">
       <Heading1 className="sr-only">About</Heading1>
-      {page?.content.map((section) => {
-        switch (section.__typename) {
+      {page?.content.map((item) => {
+        switch (item.__typename) {
           case 'Text':
             return (
-              <section className={clsx('', section.className)}>
+              <section className={clsx('', item.className)}>
                 <RichText
-                  content={section.content.raw}
+                  content={item.content.raw}
                   renderers={{
                     h2: ({ children }) => <Heading2>{children}</Heading2>,
                     p: ({ children }) => (
@@ -56,8 +56,10 @@ export default async function Post({ params }) {
                 />
               </section>
             )
+          case 'Image':
+            return <RegularImage {...item} />
           default: {
-            console.log(section.__typename)
+            console.log(item.__typename)
             return null
           }
         }

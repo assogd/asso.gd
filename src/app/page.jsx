@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import { HeroImage } from '@/components/ui/assets'
 import { SinglePage, SinglePageSeo } from '@/queries/pages'
 import { GalleryById } from '@/queries/galleries'
 import { fetchGraphQL } from '@/lib/graphql'
