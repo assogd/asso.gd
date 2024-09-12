@@ -138,7 +138,7 @@ export const MainCarousel = ({ content }) => {
             active === i ? 'opacity-100' : 'opacity-0 pointer-events-none'
           )}
         >
-          <div className="grid grid-cols-3 grid-rows-2 max-h-full h-full">
+          <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full">
             {item.assets.map((asset) => {
               switch (asset.__typename) {
                 case 'Image':

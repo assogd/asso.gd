@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "HOST=192.168.1.10 next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "HOST=192.168.x.x next start",
     "lint": "next lint"
   },
   "dependencies": {
