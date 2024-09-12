@@ -1,8 +1,15 @@
 'use client'
-import { motion } from 'framer-motion'
 import clsx from 'clsx'
+import { memo, useMemo } from 'react'
+import { throttle } from 'lodash'
 
-const ProgressBar = ({ progress, isActive, isViewed, onClick }) => {
+const ProgressBar = memo(({ progress, isActive, isViewed, onClick }) => {
+  // Use throttled progress to limit updates
+  const throttledProgress = useMemo(
+    () => throttle(() => progress / 100, 100),
+    [progress]
+  )
+
   return (
     <div
       onClick={onClick}
@@ -15,16 +22,18 @@ const ProgressBar = ({ progress, isActive, isViewed, onClick }) => {
         )}
       >
         {isActive && (
-          <motion.div
+          <div
             className="h-full bg-current origin-left"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: progress / 100 }}
-            transition={{ duration: 0.016, ease: 'linear' }}
+            style={{
+              transform: `scaleX(${throttledProgress()})`,
+              transition: 'transform 0.1s linear',
+              willChange: 'transform' // Hint for optimization
+            }}
           />
         )}
       </div>
     </div>
   )
-}
+})
 
 export default ProgressBar

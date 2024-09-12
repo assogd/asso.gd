@@ -122,7 +122,7 @@ export const MainCarousel = ({ content }) => {
           className={clsx(
             'absolute inset-0 transition-opacity duration-100',
             active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
-          )} // Only show the active item and hide others
+          )}
         >
           <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full">
             {item.assets.map((asset) => {
