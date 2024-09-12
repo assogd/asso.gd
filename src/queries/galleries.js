@@ -3,7 +3,7 @@ export const GalleryById = `
     gallery(where: { id: $id }) {
       id
       title
-      content {
+      content(first: 50, skip: 0) {
         ... on Slide {
           id
           assets {
