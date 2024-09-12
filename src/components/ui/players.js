@@ -24,18 +24,16 @@ export const StandardPlayer = ({ file, muted, className, paused }) => {
   }, [ref?.current, paused])
 
   return (
-    <div>
-      <MuxPlayer
-        ref={ref}
-        playbackId={file?.playbackId}
-        muted={muted}
-        nohotkeys
-        autoPlay={'any'}
-        className={clsx('no-controls w-full', className)}
-        thumbnailTime={0}
-        loop
-        onCanPlay={handleLoadedData}
-      />
-    </div>
+    <MuxPlayer
+      ref={ref}
+      playbackId={file?.playbackId}
+      muted={muted}
+      nohotkeys
+      autoPlay={'any'}
+      className={clsx('no-controls w-full', className)}
+      thumbnailTime={0}
+      loop
+      onCanPlay={handleLoadedData}
+    />
   )
 }

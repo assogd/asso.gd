@@ -16,7 +16,7 @@ export const RegularImage = ({ file, caption, className }) => {
           height={file.height}
           alt={file.alt ?? ''}
           className="w-full"
-          onLoadingComplete={() => setIsLoaded(true)} // Set isLoaded to true when the image is fully loaded
+          onLoad={() => setIsLoaded(true)}
         />
       </UncoverWhenInView>
       {caption && <figcaption className="text-sm mt-1">{caption}</figcaption>}
