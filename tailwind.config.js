@@ -15,6 +15,10 @@ module.exports = {
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
+      pattern: /^object-(cover|contain)$/,
+      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
+    },
+    {
       pattern:
         /^(p|px|py)-(1[0-2]|[1-9]|16|20|24|28|32|36|40|44|48|1\/2|1\/3|2\/3|1\/4|3\/4|1\/5|2\/5|3\/5|4\/5|1\/6|5\/6|full)$/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
@@ -29,7 +33,8 @@ module.exports = {
       transparent: 'transparent',
       current: 'currentColor',
       white: 'rgba(255, 255, 255, 1)',
-      black: '#000000'
+      black: '#000000',
+      red: '#FF0000'
     },
     extend: {
       fontSize: {

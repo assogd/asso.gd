@@ -5,7 +5,7 @@ import { RegularImage } from '@/components/ui/images'
 import { notFound } from 'next/navigation'
 import { RichText } from '@graphcms/rich-text-react-renderer'
 import { Main } from '@/components/ui/containers'
-import { Heading1, Heading2 } from '@/components/ui/headings'
+import { Heading1, Heading2, Heading3 } from '@/components/ui/headings'
 import MegaCover from '@/components/mega-cover'
 import clsx from 'clsx'
 
@@ -46,6 +46,7 @@ export default async function Post({ params }) {
                   content={item.content.raw}
                   renderers={{
                     h2: ({ children }) => <Heading2>{children}</Heading2>,
+                    h3: ({ children }) => <Heading3>{children}</Heading3>,
                     p: ({ children }) => (
                       <p className="mb-4 last:mb-0">{children}</p>
                     ),
