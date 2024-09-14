@@ -13,6 +13,11 @@ html {
   }
 }
 
+html,
+body {
+  transition: background 200ms;
+}
+
 [data-theme='light'],
 [data-theme='light'] body {
   background: rgba(255, 255, 255, 1);

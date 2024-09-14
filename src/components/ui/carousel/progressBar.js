@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { memo, useMemo } from 'react'
 import { throttle } from 'lodash'
 
-const ProgressBar = memo(({ progress, isActive, isViewed, onClick }) => {
+const ProgressBar = memo(({ progress, isActive, isViewed }) => {
   // Use throttled progress to limit updates
   const throttledProgress = useMemo(
     () => throttle(() => progress / 100, 100),
@@ -12,7 +12,6 @@ const ProgressBar = memo(({ progress, isActive, isViewed, onClick }) => {
 
   return (
     <div
-      onClick={onClick}
       className={clsx('flex-1 py-2 relative', !isActive && 'cursor-pointer')}
     >
       <div

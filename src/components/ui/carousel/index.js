@@ -111,7 +111,6 @@ export const MainCarousel = ({ content }) => {
   const handleTouchStart = throttledMouseDown
   const handleTouchEnd = throttledMouseUp
 
-  // Determine if the slide should be rendered
   const shouldRenderSlide = (i) => {
     return (
       i === active ||
@@ -137,7 +136,7 @@ export const MainCarousel = ({ content }) => {
             <div
               key={item.id}
               className={clsx(
-                'absolute inset-0 transition-opacity duration-100',
+                'absolute inset-0 transition-opacity duration-200',
                 active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
               )}
             >
@@ -210,12 +209,6 @@ export const MainCarousel = ({ content }) => {
               progress={progress}
               isActive={i === active}
               isViewed={i < active}
-              onClick={() => {
-                if (i !== active) {
-                  setActive(i)
-                  setProgress(0)
-                }
-              }}
             />
           ))}
       </div>
