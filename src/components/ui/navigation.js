@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { useMedia } from 'use-media'
 import { usePathname } from 'next/navigation'
@@ -35,9 +35,7 @@ export const Navigation = () => {
       ) : (
         <motion.div
           key={'adddANNOUNCEMENT'}
-          className={clsx(
-            'relative inset-x-0 select-none z-10 h-28 last-of-type:h-auto'
-          )}
+          className={clsx('relative inset-x-0 select-none z-10')}
         >
           <nav
             className={
@@ -56,24 +54,9 @@ export const Navigation = () => {
               Back to Images
             </Link>
           </nav>
-          <Announcement />
         </motion.div>
       )}
     </AnimatePresence>
-  )
-}
-
-const Announcement = () => {
-  const { scrollY } = useScroll()
-  const opacity = useTransform(scrollY, [50, 100], [1, 0])
-
-  return (
-    <motion.div
-      className="last-of-type:hidden absolute bg-white border border-black m-4 mt-9 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:left-16 top-0"
-      style={{ opacity }} // Bind opacity to the animated value
-    >
-      We can write something here, like an announcement
-    </motion.div>
   )
 }
 

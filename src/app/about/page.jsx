@@ -7,6 +7,7 @@ import { RichText } from '@graphcms/rich-text-react-renderer'
 import { Main } from '@/components/ui/containers'
 import { Heading1, Heading2, Heading3 } from '@/components/ui/headings'
 import MegaCover from '@/components/mega-cover'
+import Announcement from '@/components/announcement'
 import clsx from 'clsx'
 
 export async function generateMetadata({ params }) {
@@ -37,6 +38,7 @@ export default async function Post({ params }) {
   return (
     <Main className="p-4 pt-4">
       <Heading1 className="sr-only">About</Heading1>
+      <Announcement />
       {page?.content.map((item) => {
         switch (item.__typename) {
           case 'Text':
@@ -65,7 +67,6 @@ export default async function Post({ params }) {
           }
         }
       })}
-
       <MegaCover />
     </Main>
   )
