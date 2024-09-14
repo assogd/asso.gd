@@ -42,7 +42,7 @@ export const Navigation = () => {
         >
           <nav className={'flex gap-2 items-baseline justify-between'}>
             <Link href="/" className={'block'}>
-              ADDD:
+              ADDD<span className="md:hidden">:</span>
             </Link>
             <Link
               href="/"
@@ -53,7 +53,7 @@ export const Navigation = () => {
               Back to Images
             </Link>
           </nav>
-          <div className="border bg-black text-white border-black mt-2 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:absolute md:left-16 top-4">
+          <div className="border border-black mt-2 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:absolute md:left-16 top-4">
             We can write something here, like an announcement
           </div>
         </motion.div>
