@@ -69,7 +69,7 @@ const Announcement = () => {
 
   return (
     <motion.div
-      className="absolute bg-white border border-black m-4 mt-9 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:left-16 top-0"
+      className="last-of-type:hidden absolute bg-white border border-black m-4 mt-9 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:left-16 top-0"
       style={{ opacity }} // Bind opacity to the animated value
     >
       We can write something here, like an announcement
