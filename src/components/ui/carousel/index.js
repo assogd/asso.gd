@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { use100vh } from 'react-div-100vh'
 import { throttle } from 'lodash'
+import { useMedia } from 'use-media'
 
 export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
@@ -22,6 +23,10 @@ export const MainCarousel = ({ content }) => {
   const pressStartRef = useRef(null)
   const { theme, setTheme } = useTheme()
   const height = use100vh()
+  const isMobile = useMedia({
+    maxWidth: 767,
+    pointer: 'coarse'
+  })
 
   useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
@@ -186,20 +191,21 @@ export const MainCarousel = ({ content }) => {
           isPaused && 'opacity-0'
         )}
       >
-        {content.map((_, i) => (
-          <ProgressBar
-            key={i}
-            progress={progress}
-            isActive={i === active}
-            isViewed={i < active}
-            onClick={() => {
-              if (i !== active) {
-                setActive(i)
-                setProgress(0)
-              }
-            }}
-          />
-        ))}
+        {!isMobile &&
+          content.map((_, i) => (
+            <ProgressBar
+              key={i}
+              progress={progress}
+              isActive={i === active}
+              isViewed={i < active}
+              onClick={() => {
+                if (i !== active) {
+                  setActive(i)
+                  setProgress(0)
+                }
+              }}
+            />
+          ))}
       </div>
     </section>
   )
