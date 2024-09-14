@@ -1,17 +1,14 @@
 'use client'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
-import useScroll from '@/hooks/use-scroll'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import clsx from 'clsx'
 import { useMedia } from 'use-media'
 import { usePathname } from 'next/navigation'
-
 import React, { useState, useEffect } from 'react'
 
 export const Navigation = () => {
   const pathname = usePathname()
   const isHome = pathname === '/'
-  const scrolled = useScroll()
   const isMobile = useMedia({ maxWidth: '638px' })
 
   return (
@@ -38,11 +35,15 @@ export const Navigation = () => {
       ) : (
         <motion.div
           key={'adddANNOUNCEMENT'}
-          className={clsx('relative inset-x-0 select-none p-4 z-10')}
+          className={clsx('relative inset-x-0 select-none z-10 h-28')}
         >
-          <nav className={'flex gap-2 items-baseline justify-between'}>
+          <nav
+            className={
+              'inset-x-0 flex gap-2 items-baseline justify-between px-4 py-2 bg-white'
+            }
+          >
             <Link href="/" className={'block'}>
-              ADDD<span className="md:hidden">:</span>
+              ADDD<span className="hidden md:block">:</span>
             </Link>
             <Link
               href="/"
@@ -53,12 +54,25 @@ export const Navigation = () => {
               Back to Images
             </Link>
           </nav>
-          <div className="border border-black mt-2 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:absolute md:left-16 top-4">
-            We can write something here, like an announcement
-          </div>
+          <Announcement />
         </motion.div>
       )}
     </AnimatePresence>
+  )
+}
+
+const Announcement = () => {
+  const { scrollY } = useScroll()
+  const opacity = useTransform(scrollY, [0, 100], [1, 0])
+  const y = useTransform(scrollY, [0, 100], [0, -120])
+
+  return (
+    <motion.div
+      className="fixed bg-white border border-black m-4 mt-9 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:left-16 top-0"
+      style={{ opacity, y }} // Bind opacity to the animated value
+    >
+      We can write something here, like an announcement
+    </motion.div>
   )
 }
 
