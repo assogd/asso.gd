@@ -34,13 +34,13 @@ export const MainCarousel = ({ content }) => {
       if (theme !== slideTheme) {
         setTheme(slideTheme)
       }
-    }, 50) // Debounce for theme switching
+    }, 50)
 
     return () => clearTimeout(startThemeTransition)
   }, [setTheme, active, theme])
 
-  const totalDuration = 8000 // Total duration of each slide in milliseconds
-  const holdThreshold = 500 // Duration in ms to consider a hold
+  const totalDuration = 8000
+  const holdThreshold = 500
 
   const startTimer = () => {
     if (!isPaused) {
@@ -54,7 +54,7 @@ export const MainCarousel = ({ content }) => {
           setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
           setProgress(0)
         }
-      }, 16) // 16ms for smoother progress (roughly 60fps)
+      }, 16)
     }
   }
 
@@ -67,7 +67,7 @@ export const MainCarousel = ({ content }) => {
   const resumeTimer = () => {
     setIsPaused(false)
     const pauseDuration = Date.now() - pauseTimeRef.current
-    startTimeRef.current += pauseDuration // Adjust the start time by the pause duration
+    startTimeRef.current += pauseDuration
     startTimer()
   }
 
@@ -111,6 +111,16 @@ export const MainCarousel = ({ content }) => {
   const handleTouchStart = throttledMouseDown
   const handleTouchEnd = throttledMouseUp
 
+  // Determine if the slide should be rendered
+  const shouldRenderSlide = (i) => {
+    return (
+      i === active ||
+      i === active + 1 ||
+      i === active - 1 ||
+      (active === content.length - 1 && i === 0)
+    )
+  }
+
   return (
     <section
       className={'relative w-screen overflow-hidden select-none'}
@@ -121,64 +131,66 @@ export const MainCarousel = ({ content }) => {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {content.map((item, i) => (
-        <div
-          key={item.id}
-          className={clsx(
-            'absolute inset-0 transition-opacity duration-100',
-            active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
-          )}
-        >
-          <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full">
-            {item.assets.map((asset) => {
-              switch (asset.__typename) {
-                case 'Image':
-                  return (
-                    <Image
-                      key={asset.id}
-                      src={asset.file.url}
-                      width={asset.file.width}
-                      height={asset.file.height}
-                      alt={asset.file.alt ?? ''}
-                      className={clsx(
-                        'object-center h-full object-contain pointer-events-none',
-                        asset.className,
-                        !asset.className.includes('row-') &&
-                          'row-span-full mb-4'
-                      )}
-                      draggable="false"
-                      loading={i === 0 ? 'eager' : 'lazy'} // lazy-load non-first images
-                      priority={i === 0} // prioritize the first image for faster rendering
-                    />
-                  )
-                case 'Video':
-                  return (
-                    <StandardPlayer
-                      key={asset.id}
-                      {...asset}
-                      className={clsx(
-                        'object-center h-full pointer-events-none',
-                        asset.className,
-                        !asset.className.includes('row-') &&
-                          'row-span-full mb-4'
-                      )}
-                      paused={isPaused}
-                    />
-                  )
-                default: {
-                  console.log(asset)
-                  return null
-                }
-              }
-            })}
-          </div>
-          {item.caption?.raw && (
-            <div className="fixed bottom-8 left-16">
-              <Caption content={item.caption} />
+      {content.map(
+        (item, i) =>
+          shouldRenderSlide(i) && (
+            <div
+              key={item.id}
+              className={clsx(
+                'absolute inset-0 transition-opacity duration-100',
+                active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
+              )}
+            >
+              <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full">
+                {item.assets.map((asset) => {
+                  switch (asset.__typename) {
+                    case 'Image':
+                      return (
+                        <Image
+                          key={asset.id}
+                          src={asset.file.url}
+                          width={asset.file.width}
+                          height={asset.file.height}
+                          alt={asset.file.alt ?? ''}
+                          className={clsx(
+                            'object-center h-full object-contain pointer-events-none',
+                            asset.className,
+                            !asset.className.includes('row-') &&
+                              'row-span-full mb-4'
+                          )}
+                          draggable="false"
+                          loading={i === active ? 'eager' : 'lazy'}
+                          priority={i === active}
+                        />
+                      )
+                    case 'Video':
+                      return (
+                        <StandardPlayer
+                          key={asset.id}
+                          {...asset}
+                          className={clsx(
+                            'object-center h-full pointer-events-none',
+                            asset.className,
+                            !asset.className.includes('row-') &&
+                              'row-span-full mb-4'
+                          )}
+                          paused={isPaused}
+                        />
+                      )
+                    default:
+                      return null
+                  }
+                })}
+              </div>
+              {item.caption?.raw && (
+                <div className="fixed bottom-8 left-16">
+                  <Caption content={item.caption} />
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      ))}
+          )
+      )}
+
       <AnimatePresence>
         {!isPaused && (
           <div className="fixed top-0 left-0 p-4">(Hold to Pause)</div>
