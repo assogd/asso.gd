@@ -38,32 +38,24 @@ export const Navigation = () => {
       ) : (
         <motion.div
           key={'adddANNOUNCEMENT'}
-          className={clsx(
-            'relative inset-x-0 select-none top-0 flex gap-2 items-baseline justify-between p-4 z-10'
-          )}
-          initial={{
-            y: 0
-          }}
-          animate={{
-            y: 0
-          }}
-          exit={{
-            y: 0
-          }}
-          transition={{ type: 'tween', duration: 0.5 }}
+          className={clsx('relative inset-x-0 select-none p-4 z-10')}
         >
-          <div className="flex gap-x-2 flex-col sm:flex-row grow">
+          <nav className={'flex gap-2 items-baseline justify-between'}>
             <Link href="/" className={'block'}>
               ADDD:
             </Link>
-            <span>We can write something here, like an announcement</span>
+            <Link
+              href="/"
+              className={
+                'whitespace-nowrap absolute right-4 sm:static shrink-0'
+              }
+            >
+              Back to Images
+            </Link>
+          </nav>
+          <div className="border bg-black text-white border-black mt-2 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:absolute md:left-16 top-4">
+            We can write something here, like an announcement
           </div>
-          <Link
-            href="/"
-            className={'whitespace-nowrap absolute right-4 sm:static shrink-0'}
-          >
-            Back to Images
-          </Link>
         </motion.div>
       )}
     </AnimatePresence>

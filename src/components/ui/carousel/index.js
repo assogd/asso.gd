@@ -202,15 +202,14 @@ export const MainCarousel = ({ content }) => {
           isPaused && 'opacity-0'
         )}
       >
-        {!isMobile &&
-          content.map((_, i) => (
-            <ProgressBar
-              key={i}
-              progress={progress}
-              isActive={i === active}
-              isViewed={i < active}
-            />
-          ))}
+        {content.map((_, i) => (
+          <ProgressBar
+            key={i}
+            progress={progress}
+            isActive={i === active}
+            isViewed={i < active}
+          />
+        ))}
       </div>
     </section>
   )
