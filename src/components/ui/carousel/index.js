@@ -109,6 +109,7 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
+    // If it was a hold, simply resume the timer without navigation
     resumeTimer()
   }
 
@@ -146,6 +147,7 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
+    // If it was a hold, simply resume the timer without navigation
     resumeTimer()
   }
 
