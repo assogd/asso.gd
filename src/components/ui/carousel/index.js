@@ -19,7 +19,6 @@ export const MainCarousel = ({ content }) => {
   const router = useRouter()
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
-  const pauseTimeRef = useRef(null)
   const pressStartRef = useRef(null)
   const { theme, setTheme } = useTheme()
   const height = use100vh()
@@ -42,9 +41,12 @@ export const MainCarousel = ({ content }) => {
   const totalDuration = 8000
   const holdThreshold = 500
 
+  // Start the timer and progress bar
   const startTimer = () => {
     if (!isPaused) {
-      startTimeRef.current = Date.now() - progress * (totalDuration / 100)
+      const initialProgressTime = progress * (totalDuration / 100)
+      startTimeRef.current = Date.now() - initialProgressTime
+
       intervalRef.current = setInterval(() => {
         const elapsedTime = Date.now() - startTimeRef.current
         setProgress((elapsedTime / totalDuration) * 100)
@@ -58,17 +60,16 @@ export const MainCarousel = ({ content }) => {
     }
   }
 
+  // Pause the timer and store progress
   const pauseTimer = () => {
     setIsPaused(true)
     clearInterval(intervalRef.current)
-    pauseTimeRef.current = Date.now()
   }
 
+  // Resume the timer after pause
   const resumeTimer = () => {
     setIsPaused(false)
-    const pauseDuration = Date.now() - pauseTimeRef.current
-    startTimeRef.current += pauseDuration
-    startTimer()
+    startTimer() // Restart from the last saved progress
   }
 
   useEffect(() => {
@@ -77,28 +78,39 @@ export const MainCarousel = ({ content }) => {
   }, [active, isPaused])
 
   const handlePrev = () => {
+    clearInterval(intervalRef.current)
     setActive((prev) => (prev > 0 ? prev - 1 : content.length - 1))
     setProgress(0)
+    startTimer()
   }
 
-  const handleNext = () => {
+  const handleNext = throttle(() => {
+    clearInterval(intervalRef.current)
     setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
     setProgress(0)
-  }
+    startTimer()
+  }, 300)
 
   const handleMouseDown = () => {
     pressStartRef.current = Date.now()
     pauseTimer()
   }
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
     const pressDuration = Date.now() - pressStartRef.current
-    if (pressDuration >= holdThreshold) {
-      resumeTimer()
-    } else {
-      resumeTimer()
-      handleNext()
+    const screenWidth = window.innerWidth
+    const clickX = e.clientX
+
+    // Only navigate if the hold duration was short (distinguish hold from click)
+    if (pressDuration < holdThreshold) {
+      if (clickX < screenWidth / 2) {
+        handlePrev()
+      } else {
+        handleNext()
+      }
     }
+
+    resumeTimer()
   }
 
   const handleMouseLeave = () => {
@@ -109,7 +121,22 @@ export const MainCarousel = ({ content }) => {
   const throttledMouseUp = useRef(throttle(handleMouseUp, 200)).current
 
   const handleTouchStart = throttledMouseDown
-  const handleTouchEnd = throttledMouseUp
+  const handleTouchEnd = (e) => {
+    const touchX = e.changedTouches[0].clientX
+    const screenWidth = window.innerWidth
+    const pressDuration = Date.now() - pressStartRef.current
+
+    // Only navigate if touch was not a long hold
+    if (pressDuration < holdThreshold) {
+      if (touchX < screenWidth / 2) {
+        handlePrev()
+      } else {
+        handleNext()
+      }
+    }
+
+    throttledMouseUp(e)
+  }
 
   const shouldRenderSlide = (i) => {
     return (
@@ -119,6 +146,33 @@ export const MainCarousel = ({ content }) => {
       (active === content.length - 1 && i === 0)
     )
   }
+
+  useEffect(() => {
+    const handleTouchMove = (e) => {
+      const swipeDistance = e.touches[0].clientX - startTouchX
+      if (Math.abs(swipeDistance) > 50) {
+        handleSwipe(swipeDistance > 0 ? 'right' : 'left')
+      }
+    }
+
+    let startTouchX = 0
+    const handleTouchStart = (e) => {
+      startTouchX = e.touches[0].clientX
+    }
+
+    const element = document.querySelector('section')
+    if (isMobile) {
+      element.addEventListener('touchstart', handleTouchStart)
+      element.addEventListener('touchmove', handleTouchMove)
+    }
+
+    return () => {
+      if (isMobile) {
+        element.removeEventListener('touchstart', handleTouchStart)
+        element.removeEventListener('touchmove', handleTouchMove)
+      }
+    }
+  }, [isMobile])
 
   return (
     <section
@@ -190,11 +244,15 @@ export const MainCarousel = ({ content }) => {
           )
       )}
 
-      <AnimatePresence>
-        {!isPaused && (
-          <div className="fixed top-0 left-0 p-4">(Hold to Pause)</div>
-        )}
-      </AnimatePresence>
+      <motion.div
+        animate={{
+          opacity: isPaused ? 0 : 1,
+          transition: { delay: 0.1, duration: 0.1 }
+        }}
+        className="fixed top-0 left-0 p-4"
+      >
+        (Hold to Pause)
+      </motion.div>
 
       <div
         className={clsx(
