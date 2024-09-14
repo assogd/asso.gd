@@ -65,13 +65,12 @@ export const Navigation = () => {
 
 const Announcement = () => {
   const { scrollY } = useScroll()
-  const opacity = useTransform(scrollY, [0, 100], [1, 0])
-  const y = useTransform(scrollY, [0, 100], [0, -120])
+  const opacity = useTransform(scrollY, [50, 100], [1, 0])
 
   return (
     <motion.div
-      className="fixed bg-white border border-black m-4 mt-9 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:left-16 top-0"
-      style={{ opacity, y }} // Bind opacity to the animated value
+      className="absolute bg-white border border-black m-4 mt-9 p-4 text-center md:border-0 md:mt-0 md:p-0 md:text-left md:left-16 top-0"
+      style={{ opacity }} // Bind opacity to the animated value
     >
       We can write something here, like an announcement
     </motion.div>
