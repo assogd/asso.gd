@@ -36,4 +36,7 @@ const ProgressBar = memo(({ progress, isActive, isViewed, onClick }) => {
   )
 })
 
+// Assign a display name for debugging purposes
+ProgressBar.displayName = 'ProgressBar'
+
 export default ProgressBar
