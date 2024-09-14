@@ -19,7 +19,8 @@ export const MainCarousel = ({ content }) => {
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
   const pressStartRef = useRef(null)
-  const isHoldingRef = useRef(false) // Track if the user is holding
+  const isHoldingRef = useRef(false) // Flag to track hold state
+  const isSwipingRef = useRef(false) // Flag to track swipe state
   const { theme, setTheme } = useTheme()
   const height = use100vh()
   const isMobile = useMedia({
@@ -40,6 +41,7 @@ export const MainCarousel = ({ content }) => {
 
   const totalDuration = 8000
   const holdThreshold = 500
+  const swipeThreshold = 50
 
   // Start the timer and progress bar
   const startTimer = () => {
@@ -93,7 +95,8 @@ export const MainCarousel = ({ content }) => {
 
   const handleMouseDown = () => {
     pressStartRef.current = Date.now()
-    isHoldingRef.current = false // Initially, not holding
+    isHoldingRef.current = false // Reset hold flag
+    isSwipingRef.current = false // Reset swipe flag
     pauseTimer()
   }
 
@@ -103,12 +106,11 @@ export const MainCarousel = ({ content }) => {
     const clickX = e.clientX
 
     if (pressDuration >= holdThreshold) {
-      // Mark as holding if the press duration exceeds the threshold
       isHoldingRef.current = true
     }
 
-    if (!isHoldingRef.current) {
-      // Only navigate if it wasn't a long hold
+    if (!isHoldingRef.current && !isSwipingRef.current) {
+      // Only navigate if it wasn't a long hold or a swipe
       if (clickX < screenWidth / 2) {
         handlePrev()
       } else {
@@ -116,7 +118,6 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
-    // Reset hold state and resume timer
     isHoldingRef.current = false
     resumeTimer()
   }
@@ -127,44 +128,47 @@ export const MainCarousel = ({ content }) => {
 
   const handleTouchStart = (e) => {
     pressStartRef.current = Date.now()
-    isHoldingRef.current = false // Initially, not holding
+    isHoldingRef.current = false // Reset hold flag
+    isSwipingRef.current = false // Reset swipe flag
     pauseTimer()
     const startTouchX = e.touches[0].clientX
     e.target.dataset.startTouchX = startTouchX // Store touch start point for swipe detection
+  }
+
+  const handleTouchMove = (e) => {
+    const startTouchX = parseFloat(e.target.dataset.startTouchX || 0)
+    const currentTouchX = e.touches[0].clientX
+
+    if (Math.abs(currentTouchX - startTouchX) > swipeThreshold) {
+      isSwipingRef.current = true
+    }
   }
 
   const handleTouchEnd = (e) => {
     const touchX = e.changedTouches[0].clientX
     const screenWidth = window.innerWidth
     const pressDuration = Date.now() - pressStartRef.current
-    const startTouchX = e.target.dataset.startTouchX
+    const startTouchX = parseFloat(e.target.dataset.startTouchX)
 
     if (pressDuration >= holdThreshold) {
-      // Mark as holding if the press duration exceeds the threshold
       isHoldingRef.current = true
     }
 
-    // Detect if it was a swipe gesture
-    const swipeThreshold = 50
-    if (Math.abs(touchX - startTouchX) > swipeThreshold) {
-      if (!isHoldingRef.current) {
-        // If it wasn't a long hold, handle swipe navigation
-        if (touchX > startTouchX) {
-          handlePrev() // Swipe right
-        } else {
-          handleNext() // Swipe left
-        }
-      }
-    } else if (!isHoldingRef.current && pressDuration < holdThreshold) {
-      // Only navigate if it wasn't a long hold and wasn't a swipe
+    if (!isHoldingRef.current && !isSwipingRef.current) {
+      // Only navigate if it wasn't a long hold or a swipe
       if (touchX < screenWidth / 2) {
         handlePrev()
       } else {
         handleNext()
       }
+    } else if (isSwipingRef.current) {
+      if (touchX > startTouchX) {
+        handlePrev() // Swipe right
+      } else {
+        handleNext() // Swipe left
+      }
     }
 
-    // Reset hold state and resume timer
     isHoldingRef.current = false
     resumeTimer()
   }
@@ -186,6 +190,7 @@ export const MainCarousel = ({ content }) => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove} // Detect swipe movement
       onTouchEnd={handleTouchEnd}
     >
       {content.map(
