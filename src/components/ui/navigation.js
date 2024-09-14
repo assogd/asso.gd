@@ -35,11 +35,13 @@ export const Navigation = () => {
       ) : (
         <motion.div
           key={'adddANNOUNCEMENT'}
-          className={clsx('relative inset-x-0 select-none z-10 h-28')}
+          className={clsx(
+            'relative inset-x-0 select-none z-10 h-28 last-of-type:h-auto'
+          )}
         >
           <nav
             className={
-              'inset-x-0 flex gap-2 items-baseline justify-between px-4 py-2 bg-white'
+              'inset-x-0 flex gap-2 items-baseline justify-between px-4 py-3 bg-white'
             }
           >
             <Link href="/" className={'block'}>
