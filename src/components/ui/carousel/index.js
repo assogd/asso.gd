@@ -19,6 +19,7 @@ export const MainCarousel = ({ content }) => {
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
   const pressStartRef = useRef(null)
+  const isHoldingRef = useRef(false) // Track if the user is holding
   const { theme, setTheme } = useTheme()
   const height = use100vh()
   const isMobile = useMedia({
@@ -92,6 +93,7 @@ export const MainCarousel = ({ content }) => {
 
   const handleMouseDown = () => {
     pressStartRef.current = Date.now()
+    isHoldingRef.current = false // Initially, not holding
     pauseTimer()
   }
 
@@ -100,8 +102,13 @@ export const MainCarousel = ({ content }) => {
     const screenWidth = window.innerWidth
     const clickX = e.clientX
 
-    // Only navigate if the hold duration was short (distinguish hold from click)
-    if (pressDuration < holdThreshold) {
+    if (pressDuration >= holdThreshold) {
+      // Mark as holding if the press duration exceeds the threshold
+      isHoldingRef.current = true
+    }
+
+    if (!isHoldingRef.current) {
+      // Only navigate if it wasn't a long hold
       if (clickX < screenWidth / 2) {
         handlePrev()
       } else {
@@ -109,7 +116,8 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
-    // If it was a hold, simply resume the timer without navigation
+    // Reset hold state and resume timer
+    isHoldingRef.current = false
     resumeTimer()
   }
 
@@ -119,6 +127,7 @@ export const MainCarousel = ({ content }) => {
 
   const handleTouchStart = (e) => {
     pressStartRef.current = Date.now()
+    isHoldingRef.current = false // Initially, not holding
     pauseTimer()
     const startTouchX = e.touches[0].clientX
     e.target.dataset.startTouchX = startTouchX // Store touch start point for swipe detection
@@ -130,16 +139,24 @@ export const MainCarousel = ({ content }) => {
     const pressDuration = Date.now() - pressStartRef.current
     const startTouchX = e.target.dataset.startTouchX
 
+    if (pressDuration >= holdThreshold) {
+      // Mark as holding if the press duration exceeds the threshold
+      isHoldingRef.current = true
+    }
+
     // Detect if it was a swipe gesture
     const swipeThreshold = 50
     if (Math.abs(touchX - startTouchX) > swipeThreshold) {
-      if (touchX > startTouchX) {
-        handlePrev() // Swipe right
-      } else {
-        handleNext() // Swipe left
+      if (!isHoldingRef.current) {
+        // If it wasn't a long hold, handle swipe navigation
+        if (touchX > startTouchX) {
+          handlePrev() // Swipe right
+        } else {
+          handleNext() // Swipe left
+        }
       }
-    } else if (pressDuration < holdThreshold) {
-      // Only navigate if touch was not a long hold
+    } else if (!isHoldingRef.current && pressDuration < holdThreshold) {
+      // Only navigate if it wasn't a long hold and wasn't a swipe
       if (touchX < screenWidth / 2) {
         handlePrev()
       } else {
@@ -147,7 +164,8 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
-    // If it was a hold, simply resume the timer without navigation
+    // Reset hold state and resume timer
+    isHoldingRef.current = false
     resumeTimer()
   }
 
