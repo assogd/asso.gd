@@ -6,10 +6,9 @@ import clsx from 'clsx'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import ProgressBar from './progressBar'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { use100vh } from 'react-div-100vh'
-import { throttle } from 'lodash'
 import { useMedia } from 'use-media'
 
 export const MainCarousel = ({ content }) => {
@@ -84,12 +83,12 @@ export const MainCarousel = ({ content }) => {
     startTimer()
   }
 
-  const handleNext = throttle(() => {
+  const handleNext = () => {
     clearInterval(intervalRef.current)
     setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
     setProgress(0)
     startTimer()
-  }, 300)
+  }
 
   const handleMouseDown = () => {
     pressStartRef.current = Date.now()
@@ -117,17 +116,29 @@ export const MainCarousel = ({ content }) => {
     if (isPaused) resumeTimer()
   }
 
-  const throttledMouseDown = useRef(throttle(handleMouseDown, 200)).current
-  const throttledMouseUp = useRef(throttle(handleMouseUp, 200)).current
+  const handleTouchStart = (e) => {
+    pressStartRef.current = Date.now()
+    pauseTimer()
+    const startTouchX = e.touches[0].clientX
+    e.target.dataset.startTouchX = startTouchX // Store touch start point for swipe detection
+  }
 
-  const handleTouchStart = throttledMouseDown
   const handleTouchEnd = (e) => {
     const touchX = e.changedTouches[0].clientX
     const screenWidth = window.innerWidth
     const pressDuration = Date.now() - pressStartRef.current
+    const startTouchX = e.target.dataset.startTouchX
 
-    // Only navigate if touch was not a long hold
-    if (pressDuration < holdThreshold) {
+    // Detect if it was a swipe gesture
+    const swipeThreshold = 50
+    if (Math.abs(touchX - startTouchX) > swipeThreshold) {
+      if (touchX > startTouchX) {
+        handlePrev() // Swipe right
+      } else {
+        handleNext() // Swipe left
+      }
+    } else if (pressDuration < holdThreshold) {
+      // Only navigate if touch was not a long hold
       if (touchX < screenWidth / 2) {
         handlePrev()
       } else {
@@ -135,7 +146,7 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
-    throttledMouseUp(e)
+    resumeTimer()
   }
 
   const shouldRenderSlide = (i) => {
@@ -147,39 +158,12 @@ export const MainCarousel = ({ content }) => {
     )
   }
 
-  useEffect(() => {
-    const handleTouchMove = (e) => {
-      const swipeDistance = e.touches[0].clientX - startTouchX
-      if (Math.abs(swipeDistance) > 50) {
-        handleSwipe(swipeDistance > 0 ? 'right' : 'left')
-      }
-    }
-
-    let startTouchX = 0
-    const handleTouchStart = (e) => {
-      startTouchX = e.touches[0].clientX
-    }
-
-    const element = document.querySelector('section')
-    if (isMobile) {
-      element.addEventListener('touchstart', handleTouchStart)
-      element.addEventListener('touchmove', handleTouchMove)
-    }
-
-    return () => {
-      if (isMobile) {
-        element.removeEventListener('touchstart', handleTouchStart)
-        element.removeEventListener('touchmove', handleTouchMove)
-      }
-    }
-  }, [isMobile])
-
   return (
     <section
       className={'relative w-screen overflow-hidden select-none'}
       style={{ height }}
-      onMouseDown={throttledMouseDown}
-      onMouseUp={throttledMouseUp}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
