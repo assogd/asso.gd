@@ -43,7 +43,7 @@ export const Navigation = () => {
             }
           >
             <Link href="/" className={'block'}>
-              ADDD<span className="hidden md:block">:</span>
+              ADDD:
             </Link>
             <Link
               href="/"
