@@ -15,7 +15,7 @@ export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [isResumingFromHold, setIsResumingFromHold] = useState(false) // New state to track if it's resuming from hold
+  const [wasHolding, setWasHolding] = useState(false) // Tracks if it was holding to pause
   const router = useRouter()
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
@@ -72,7 +72,6 @@ export const MainCarousel = ({ content }) => {
   // Resume the timer after pause
   const resumeTimer = () => {
     setIsPaused(false)
-    setIsResumingFromHold(false) // Reset the hold state
     startTimer() // Restart from the last saved progress
   }
 
@@ -99,6 +98,7 @@ export const MainCarousel = ({ content }) => {
     pressStartRef.current = Date.now()
     isHoldingRef.current = false // Reset hold flag
     isSwipingRef.current = false // Reset swipe flag
+    setWasHolding(false) // Reset the was holding state
     pauseTimer()
   }
 
@@ -109,10 +109,11 @@ export const MainCarousel = ({ content }) => {
 
     if (pressDuration >= holdThreshold) {
       isHoldingRef.current = true
+      setWasHolding(true)
     }
 
-    if (!isHoldingRef.current && !isSwipingRef.current) {
-      // Only navigate if it wasn't a long hold or a swipe
+    if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
+      // Only navigate if it wasn't a long hold or a swipe or holding pause
       if (clickX < screenWidth / 2) {
         handlePrev()
       } else {
@@ -132,6 +133,7 @@ export const MainCarousel = ({ content }) => {
     pressStartRef.current = Date.now()
     isHoldingRef.current = false // Reset hold flag
     isSwipingRef.current = false // Reset swipe flag
+    setWasHolding(false) // Reset the was holding state
     pauseTimer()
     const startTouchX = e.touches[0].clientX
     e.target.dataset.startTouchX = startTouchX // Store touch start point for swipe detection
@@ -154,16 +156,17 @@ export const MainCarousel = ({ content }) => {
 
     if (pressDuration >= holdThreshold) {
       isHoldingRef.current = true
+      setWasHolding(true)
     }
 
-    if (!isHoldingRef.current && !isSwipingRef.current) {
-      // Only navigate if it wasn't a long hold or a swipe
+    if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
+      // Only navigate if it wasn't a long hold or a swipe or holding pause
       if (touchX < screenWidth / 2) {
         handlePrev()
       } else {
         handleNext()
       }
-    } else if (isSwipingRef.current) {
+    } else if (isSwipingRef.current && !wasHolding) {
       if (touchX > startTouchX) {
         handlePrev() // Swipe right
       } else {
@@ -173,13 +176,6 @@ export const MainCarousel = ({ content }) => {
 
     isHoldingRef.current = false
     resumeTimer()
-  }
-
-  // Fix navigation when resuming from a hold
-  const handleResume = () => {
-    if (!isResumingFromHold) {
-      resumeTimer()
-    }
   }
 
   // Render fewer slides on mobile (only active one)
