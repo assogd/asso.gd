@@ -28,7 +28,7 @@ export const MainCarousel = ({ content }) => {
     pointer: 'coarse'
   })
 
-  useEffect(() => {
+  /*useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
     const startThemeTransition = setTimeout(() => {
       if (theme !== slideTheme) {
@@ -37,13 +37,13 @@ export const MainCarousel = ({ content }) => {
     }, 50)
 
     return () => clearTimeout(startThemeTransition)
-  }, [setTheme, active, theme])
+  }, [setTheme, active, theme])*/
 
   const totalDuration = 8000
   const holdThreshold = 500
   const swipeThreshold = 50
 
-  // Start the timer and progress bar
+  // Start the timer and progress bar with throttling
   const startTimer = () => {
     if (!isPaused) {
       const initialProgressTime = progress * (totalDuration / 100)
@@ -58,7 +58,7 @@ export const MainCarousel = ({ content }) => {
           setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
           setProgress(0)
         }
-      }, 16)
+      }, 100) // Throttled to 100ms
     }
   }
 
@@ -173,7 +173,11 @@ export const MainCarousel = ({ content }) => {
     resumeTimer()
   }
 
+  // Render fewer slides on mobile (only active one)
   const shouldRenderSlide = (i) => {
+    if (isMobile) {
+      return i === active // Only render the active slide on mobile
+    }
     return (
       i === active ||
       i === active + 1 ||
@@ -237,6 +241,7 @@ export const MainCarousel = ({ content }) => {
                               'row-span-full mb-4'
                           )}
                           paused={isPaused}
+                          preload={i === active ? 'auto' : 'none'} // Preload only active video
                         />
                       )
                     default:

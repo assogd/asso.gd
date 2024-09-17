@@ -42,7 +42,7 @@ export default async function Layout({ children, params }) {
       </head>
       <body>
         <ThemeProvider
-          defaultTheme="offWhite"
+          defaultTheme="dark"
           enableColorScheme
           enableSystem={false}
           themes={['light', 'vibrant', 'dark']}
