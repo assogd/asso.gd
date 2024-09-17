@@ -16,7 +16,7 @@ export const MainCarousel = ({ content }) => {
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
   const [wasHolding, setWasHolding] = useState(false) // Tracks if it was holding to pause
-  const [isLocked, setIsLocked] = useState(false) // To prevent multiple navigation events or hold-triggered navigation
+  const [isLocked, setIsLocked] = useState(false) // To prevent navigation during hold
   const router = useRouter()
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
@@ -30,7 +30,7 @@ export const MainCarousel = ({ content }) => {
     pointer: 'coarse'
   })
 
-  /*useEffect(() => {
+  useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
     const startThemeTransition = setTimeout(() => {
       if (theme !== slideTheme) {
@@ -39,7 +39,7 @@ export const MainCarousel = ({ content }) => {
     }, 50)
 
     return () => clearTimeout(startThemeTransition)
-  }, [setTheme, active, theme])*/
+  }, [setTheme, active, theme])
 
   const totalDuration = 8000
   const holdThreshold = 500
@@ -108,7 +108,6 @@ export const MainCarousel = ({ content }) => {
     isHoldingRef.current = false // Reset hold flag
     isSwipingRef.current = false // Reset swipe flag
     setWasHolding(false) // Reset the was holding state
-    setIsLocked(true) // Lock navigation during hold
     pauseTimer()
   }
 
@@ -122,12 +121,7 @@ export const MainCarousel = ({ content }) => {
       setWasHolding(true)
     }
 
-    if (
-      !isHoldingRef.current &&
-      !isSwipingRef.current &&
-      !wasHolding &&
-      !isLocked
-    ) {
+    if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
       // Only navigate if it wasn't a long hold or a swipe or holding pause
       if (clickX < screenWidth / 2) {
         handlePrev()
@@ -136,8 +130,8 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
-    setIsLocked(false) // Unlock navigation after the hold
     isHoldingRef.current = false
+    setIsLocked(false) // Unlock navigation after releasing hold
     resumeTimer()
   }
 
@@ -150,7 +144,6 @@ export const MainCarousel = ({ content }) => {
     isHoldingRef.current = false // Reset hold flag
     isSwipingRef.current = false // Reset swipe flag
     setWasHolding(false) // Reset the was holding state
-    setIsLocked(true) // Lock navigation during hold
     pauseTimer()
     const startTouchX = e.touches[0].clientX
     e.target.dataset.startTouchX = startTouchX // Store touch start point for swipe detection
@@ -176,19 +169,14 @@ export const MainCarousel = ({ content }) => {
       setWasHolding(true)
     }
 
-    if (
-      !isHoldingRef.current &&
-      !isSwipingRef.current &&
-      !wasHolding &&
-      !isLocked
-    ) {
+    if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
       // Only navigate if it wasn't a long hold or a swipe or holding pause
       if (touchX < screenWidth / 2) {
         handlePrev()
       } else {
         handleNext()
       }
-    } else if (isSwipingRef.current && !wasHolding && !isLocked) {
+    } else if (isSwipingRef.current && !wasHolding) {
       if (touchX > startTouchX) {
         handlePrev() // Swipe right
       } else {
@@ -196,16 +184,12 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
-    setIsLocked(false) // Unlock navigation after the hold
     isHoldingRef.current = false
+    setIsLocked(false) // Unlock navigation after releasing hold
     resumeTimer()
   }
 
-  // Render fewer slides on mobile (only active one)
   const shouldRenderSlide = (i) => {
-    /*if (isMobile) {
-      return i === active // Only render the active slide on mobile
-    }*/
     return (
       i === active ||
       i === active + 1 ||
