@@ -16,6 +16,7 @@ export const MainCarousel = ({ content }) => {
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
   const [wasHolding, setWasHolding] = useState(false) // Tracks if it was holding to pause
+  const [isLocked, setIsLocked] = useState(false) // To prevent multiple navigation events
   const router = useRouter()
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
@@ -81,17 +82,25 @@ export const MainCarousel = ({ content }) => {
   }, [active, isPaused])
 
   const handlePrev = () => {
-    clearInterval(intervalRef.current)
-    setActive((prev) => (prev > 0 ? prev - 1 : content.length - 1))
-    setProgress(0)
-    startTimer()
+    if (!isLocked) {
+      setIsLocked(true) // Prevent further navigation
+      clearInterval(intervalRef.current)
+      setActive((prev) => (prev > 0 ? prev - 1 : content.length - 1))
+      setProgress(0)
+      startTimer()
+      setTimeout(() => setIsLocked(false), 300) // Debounce time of 300ms
+    }
   }
 
   const handleNext = () => {
-    clearInterval(intervalRef.current)
-    setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
-    setProgress(0)
-    startTimer()
+    if (!isLocked) {
+      setIsLocked(true) // Prevent further navigation
+      clearInterval(intervalRef.current)
+      setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
+      setProgress(0)
+      startTimer()
+      setTimeout(() => setIsLocked(false), 300) // Debounce time of 300ms
+    }
   }
 
   const handleMouseDown = () => {
