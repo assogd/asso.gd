@@ -275,7 +275,7 @@ export const MainCarousel = ({ content }) => {
           opacity: isPaused ? 0 : 1,
           transition: { delay: 0.1, duration: 0.1 }
         }}
-        className="fixed top-0 left-0 p-4"
+        className="fixed top-0 left-0 px-4 py-3"
       >
         (Hold to Pause)
       </motion.div>
