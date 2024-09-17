@@ -42,7 +42,12 @@ export const MainCarousel = ({ content }) => {
   }, [setTheme, active, theme])
 
   const totalDuration = 8000
-  const holdThreshold = 250
+  const desktopShortHoldThreshold = 250
+  const mobileShortHoldThreshold = 100 // Higher threshold for mobile
+  const holdThreshold = 500 // The main hold threshold remains the same
+  const shortHoldThreshold = isMobile
+    ? mobileShortHoldThreshold
+    : desktopShortHoldThreshold // Use different thresholds for mobile and desktop
   const swipeThreshold = 50
 
   // Start the timer and progress bar with throttling
@@ -116,22 +121,28 @@ export const MainCarousel = ({ content }) => {
     const screenWidth = window.innerWidth
     const clickX = e.clientX
 
-    if (pressDuration >= holdThreshold) {
+    // If the press duration is longer than the shortHoldThreshold but shorter than the holdThreshold, treat it as a hold
+    if (pressDuration >= shortHoldThreshold && pressDuration < holdThreshold) {
+      // Short hold – no navigation
+      setWasHolding(true)
+    } else if (pressDuration >= holdThreshold) {
+      // Long hold – no navigation
       isHoldingRef.current = true
       setWasHolding(true)
-    }
-
-    if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
-      // Only navigate if it wasn't a long hold or a swipe or holding pause
-      if (clickX < screenWidth / 2) {
-        handlePrev()
-      } else {
-        handleNext()
+    } else {
+      // It's a valid tap (not a hold)
+      if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
+        if (clickX < screenWidth / 2) {
+          handlePrev()
+        } else {
+          handleNext()
+        }
       }
     }
 
+    // Reset flags and resume timer
     isHoldingRef.current = false
-    setIsLocked(false) // Unlock navigation after releasing hold
+    setWasHolding(false)
     resumeTimer()
   }
 
@@ -164,32 +175,42 @@ export const MainCarousel = ({ content }) => {
     const pressDuration = Date.now() - pressStartRef.current
     const startTouchX = parseFloat(e.target.dataset.startTouchX)
 
-    if (pressDuration >= holdThreshold) {
+    // If the press duration is longer than the shortHoldThreshold but shorter than the holdThreshold, treat it as a hold
+    if (pressDuration >= shortHoldThreshold && pressDuration < holdThreshold) {
+      // Short hold – no navigation
+      setWasHolding(true)
+    } else if (pressDuration >= holdThreshold) {
+      // Long hold – no navigation
       isHoldingRef.current = true
       setWasHolding(true)
+    } else {
+      // It's a valid tap (not a hold)
+      if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
+        if (touchX < screenWidth / 2) {
+          handlePrev()
+        } else {
+          handleNext()
+        }
+      } else if (isSwipingRef.current && !wasHolding) {
+        if (touchX > startTouchX) {
+          handlePrev() // Swipe right
+        } else {
+          handleNext() // Swipe left
+        }
+      }
     }
 
-    if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
-      // Only navigate if it wasn't a long hold or a swipe or holding pause
-      if (touchX < screenWidth / 2) {
-        handlePrev()
-      } else {
-        handleNext()
-      }
-    } else if (isSwipingRef.current && !wasHolding) {
-      if (touchX > startTouchX) {
-        handlePrev() // Swipe right
-      } else {
-        handleNext() // Swipe left
-      }
-    }
-
+    // Reset flags and resume timer
     isHoldingRef.current = false
-    setIsLocked(false) // Unlock navigation after releasing hold
+    setWasHolding(false)
     resumeTimer()
   }
 
+  // Render fewer slides on mobile (only active one)
   const shouldRenderSlide = (i) => {
+    if (isMobile) {
+      return i === active // Only render the active slide on mobile
+    }
     return (
       i === active ||
       i === active + 1 ||
