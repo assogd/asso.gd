@@ -15,6 +15,7 @@ export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [isResumingFromHold, setIsResumingFromHold] = useState(false) // New state to track if it's resuming from hold
   const router = useRouter()
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
@@ -71,6 +72,7 @@ export const MainCarousel = ({ content }) => {
   // Resume the timer after pause
   const resumeTimer = () => {
     setIsPaused(false)
+    setIsResumingFromHold(false) // Reset the hold state
     startTimer() // Restart from the last saved progress
   }
 
@@ -171,6 +173,13 @@ export const MainCarousel = ({ content }) => {
 
     isHoldingRef.current = false
     resumeTimer()
+  }
+
+  // Fix navigation when resuming from a hold
+  const handleResume = () => {
+    if (!isResumingFromHold) {
+      resumeTimer()
+    }
   }
 
   // Render fewer slides on mobile (only active one)
