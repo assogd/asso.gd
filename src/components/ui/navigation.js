@@ -22,7 +22,7 @@ export const Navigation = () => {
             animate={{ y: 0, transition: { type: 'tween', duration: 0.5 } }}
             exit={{ y: 0, transition: { type: 'tween', duration: 0.5 } }}
           >
-            <Link href="/" className={'block px-4 py-3'}>
+            <Link href="/" className={'block p-4'}>
               ADDD:
             </Link>
           </motion.div>
@@ -39,7 +39,7 @@ export const Navigation = () => {
         >
           <nav
             className={
-              'inset-x-0 flex gap-2 items-baseline justify-between px-4 py-3 bg-white'
+              'inset-x-0 flex gap-2 items-baseline justify-between p-4 bg-white'
             }
           >
             <Link href="/" className={'block'}>
