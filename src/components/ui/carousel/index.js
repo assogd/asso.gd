@@ -203,9 +203,9 @@ export const MainCarousel = ({ content }) => {
 
   // Render fewer slides on mobile (only active one)
   const shouldRenderSlide = (i) => {
-    if (isMobile) {
+    /*if (isMobile) {
       return i === active // Only render the active slide on mobile
-    }
+    }*/
     return (
       i === active ||
       i === active + 1 ||
