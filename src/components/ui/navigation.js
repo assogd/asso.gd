@@ -22,12 +22,12 @@ export const Navigation = () => {
             animate={{ y: 0, transition: { type: 'tween', duration: 0.5 } }}
             exit={{ y: 0, transition: { type: 'tween', duration: 0.5 } }}
           >
-            <Link href="/" className={'block p-4'}>
+            <Link href="/" className={'block px-4 py-3'}>
               ADDD:
             </Link>
           </motion.div>
           <nav className={clsx('fixed right-0 top-0 z-10', 'select-none')}>
-            <Link href="/about" className={'block p-4'}>
+            <Link href="/about" className={'block px-4 py-3'}>
               About the Studio
             </Link>
           </nav>
