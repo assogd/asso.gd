@@ -42,7 +42,7 @@ export const MainCarousel = ({ content }) => {
   }, [setTheme, active, theme])
 
   const totalDuration = 8000
-  const holdThreshold = 500
+  const holdThreshold = 250
   const swipeThreshold = 50
 
   // Start the timer and progress bar with throttling
