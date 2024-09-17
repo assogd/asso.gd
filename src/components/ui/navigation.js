@@ -27,7 +27,7 @@ export const Navigation = () => {
             </Link>
           </motion.div>
           <nav className={clsx('fixed right-0 top-0 z-10', 'select-none')}>
-            <Link href="/about" className={'block px-4 py-3'}>
+            <Link href="/about" className={'block p-4'}>
               About the Studio
             </Link>
           </nav>
