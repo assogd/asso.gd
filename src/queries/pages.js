@@ -35,6 +35,31 @@ export const SinglePage = `
           caption
           className
         }
+        ... on EntrySection {
+          __typename
+          id
+          className
+          reference {
+            ... on Profile {
+              __typename
+              id
+              name
+              icon {
+                height
+                id
+                url(
+                  transformation: {document: {output: {format: webp}}, image: {resize: {fit: max, height: 180, width: 180}}}
+                )
+                width
+              }
+              slug
+              location
+              url
+              description { raw }
+              providedServices
+            }
+          }
+        }
       }
     }
   }

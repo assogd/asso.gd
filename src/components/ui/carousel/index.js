@@ -43,7 +43,7 @@ export const MainCarousel = ({ content }) => {
 
   const totalDuration = 8000
   const desktopShortHoldThreshold = 250
-  const mobileShortHoldThreshold = 100 // Higher threshold for mobile
+  const mobileShortHoldThreshold = 100
   const holdThreshold = 500 // The main hold threshold remains the same
   const shortHoldThreshold = isMobile
     ? mobileShortHoldThreshold

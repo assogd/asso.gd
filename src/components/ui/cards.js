@@ -4,50 +4,63 @@ import { useState, useEffect } from 'react'
 import clsx from 'clsx'
 import { Preview } from '@/components/ui/players'
 import Link from 'next/link'
-import { applyRandomFonts, replaceHyphenWithEnDash } from '@/lib/text'
+import { RegularImage } from '@/components/ui/images'
+import { RichText } from '@graphcms/rich-text-react-renderer'
 
-export const ProjectCard = ({
+export const ClientCard = ({
   slug,
-  title,
-  video,
-  preview,
-  keyAttributes,
-  className,
-  autoPlay,
-  videoAspectRatio
+  name,
+  location,
+  description,
+  icon,
+  providedServices,
+  url
 }) => {
-  const [isHovered, setIsHovered] = useState(false)
-  const [formattedTitle, setFormattedTitle] = useState(title)
+  const formatServiceName = (service) => {
+    return service
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (str) => str.toUpperCase())
+  }
 
-  useEffect(() => {
-    setFormattedTitle(applyRandomFonts(replaceHyphenWithEnDash(title), 4))
-  }, [title])
+  // Extract domain name from URL
+  const getDomainName = (url) => {
+    try {
+      const { hostname } = new URL(url)
+      return hostname.replace('www.', '') // Remove 'www.' if present
+    } catch (e) {
+      return url // Fallback in case the URL is invalid
+    }
+  }
 
   return (
-    <Link href={`/project/${slug}`}>
-      <motion.div
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className={clsx(className, 'grid gap-1')}
-      >
-        <Preview
-          previewVideo={preview}
-          video={video}
-          shouldPlay={autoPlay || isHovered}
-          videoAspectRatio
-        />
-        <div>
-          <h3 className="font-wideSerif">{formattedTitle}</h3>
-          {keyAttributes?.length
-            ? keyAttributes.map((attribute) => (
-                <div key={attribute.id} className="inline-flex gap-1 hidden">
-                  <span className="font-wideSerif">{attribute.key}</span>
-                  <span className="font-wideSerif">{attribute.value}</span>
-                </div>
-              ))
-            : null}
-        </div>
-      </motion.div>
-    </Link>
+    <div className="bg-[#F6F4E9] bg-[#ffefcf] border border-[#f7b955] p-6 rounded aspect-[3/4] w-80 text-center flex flex-col gap-4">
+      <RegularImage file={icon} manualWidth={180} className="w-12 mx-auto" />
+      <h3 className="uppercase">{name}</h3>
+      <div className="font-sans text-sm">
+        <RichText content={description.raw} />
+      </div>
+      <div className="flex flex-wrap gap-1 justify-center">
+        {providedServices.map((service, i) => (
+          <div
+            key={i}
+            className="py-[.35em] px-2 font-sans text-xs bg-black/10 rounded-lg mix-blend-multiply text-black/80"
+          >
+            {formatServiceName(service)}
+          </div>
+        ))}
+      </div>
+      <p className="opacity-50 text-[#5A5747] font-sans text-sm">{location}</p>
+
+      {url && (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#5A5747] font-sans text-sm underline hover:text-black"
+        >
+          {getDomainName(url)}
+        </a>
+      )}
+    </div>
   )
 }

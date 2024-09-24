@@ -5,6 +5,7 @@ import { RegularImage } from '@/components/ui/images'
 import { notFound } from 'next/navigation'
 import { RichText } from '@graphcms/rich-text-react-renderer'
 import { Main } from '@/components/ui/containers'
+import { ClientCard } from '@/components/ui/cards'
 import { Heading1, Heading2, Heading3 } from '@/components/ui/headings'
 import MegaCover from '@/components/mega-cover'
 import Announcement from '@/components/announcement'
@@ -32,7 +33,6 @@ export async function generateMetadata({ params }) {
 
 export default async function Post({ params }) {
   const { page } = await fetchGraphQL(SinglePage, { slug: 'about' })
-  console.log(page)
   if (!page || !page?.content?.length) return notFound()
 
   return (
@@ -61,6 +61,15 @@ export default async function Post({ params }) {
             )
           case 'Image':
             return <RegularImage {...item} />
+          case 'EntrySection':
+            const cards =
+              item.reference
+                ?.filter((entry) => entry.__typename === 'Profile')
+                .map((entry) => <ClientCard key={entry.id} {...entry} />) || []
+
+            return cards.length > 0 ? (
+              <div className={clsx(item.className)}>{cards}</div>
+            ) : null
           default: {
             console.log(item.__typename)
             return null
