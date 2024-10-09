@@ -32,33 +32,85 @@ export const ClientCard = ({
     }
   }
 
+  // Custom animation for the seamless scrolling effect
+  const scrollSpeed = 20 // Adjust speed for the scrolling (lower = slower)
+
+  const marqueeVariants = {
+    animate: {
+      x: ['0%', '-100%'],
+      transition: {
+        x: {
+          repeat: Infinity,
+          repeatType: 'loop',
+          duration: scrollSpeed, // Adjust for speed
+          ease: 'linear' // Smooth, linear movement
+        }
+      }
+    }
+  }
+
   return (
-    <div className="bg-[#F6F4E9] bg-[#ffefcf] border border-[#f7b955] p-6 rounded aspect-[3/4] w-80 text-center flex flex-col gap-4">
-      <RegularImage file={icon} manualWidth={180} className="w-12 mx-auto" />
-      <h3 className="uppercase">{name}</h3>
-      <div className="font-sans text-sm">
-        <RichText content={description.raw} />
-      </div>
-      <div className="flex flex-wrap gap-1 justify-center">
-        {providedServices.map((service, i) => (
-          <div
-            key={i}
-            className="py-[.35em] px-2 font-sans text-xs bg-black/10 rounded-lg mix-blend-multiply text-black/80"
-          >
-            {formatServiceName(service)}
+    <div className="w-72">
+      <div className="border p-1 rounded flex flex-col gap-4">
+        <div className="flex border-b">
+          <div className="icon border-r aspect-square grow flex items-center p-4">
+            <RegularImage
+              file={icon}
+              manualWidth={180}
+              className="w-16 h-16 mx-auto"
+            />
           </div>
-        ))}
+          <h3 className="uppercase grow flex items-center justify-center p-4">
+            {name}
+          </h3>
+        </div>
+
+        <div className="text-center grid gap-4">
+          <div className="px-3 py-3">
+            <RichText content={description.raw} />
+          </div>
+
+          <div className="relative flex justify-center overflow-hidden pb-4">
+            {/* Container to hide overflow and create seamless loop */}
+            <motion.div
+              className="flex gap-1 whitespace-nowrap"
+              variants={marqueeVariants}
+              animate="animate"
+            >
+              {/* The first set of services */}
+              {providedServices.map((service, i) => (
+                <div
+                  key={i}
+                  className="pt-[.55em] pb-[.15em] px-2 font-sans text-xs rounded-full mix-blend-multiply border uppercase whitespace-nowrap"
+                >
+                  {formatServiceName(service)}
+                </div>
+              ))}
+              {/* The second set of services (duplicate to create continuous loop) */}
+              {providedServices.map((service, i) => (
+                <div
+                  key={`duplicate-${i}`}
+                  className="pt-[.55em] pb-[.15em] px-2 font-sans text-xs rounded-full mix-blend-multiply border uppercase whitespace-nowrap"
+                >
+                  {formatServiceName(service)}
+                </div>
+              ))}
+            </motion.div>
+            <div className="select-none absolute right-0 inset-y-0 bg-gradient-to-l from-white to-transparent w-8" />
+            <div className="select-none absolute left-0 inset-y-0 bg-gradient-to-r from-white to-transparent w-8" />
+          </div>
+        </div>
       </div>
-      <p className="opacity-50 text-[#5A5747] font-sans text-sm">{location}</p>
 
       {url && (
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#5A5747] font-sans text-sm underline hover:text-black"
+          className="p-3 block border rounded mt-[-1px] text-center"
+          title={`Launches ${getDomainName(url)}`}
         >
-          {getDomainName(url)}
+          Launch
         </a>
       )}
     </div>

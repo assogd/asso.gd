@@ -18,6 +18,17 @@ const mono = localFont({
   variable: '--font-mono'
 })
 
+const sans = localFont({
+  src: [
+    {
+      path: '../../public/fonts/HelveticaNeueLTStd-Ex.woff2',
+      weight: '400',
+      style: 'normal'
+    }
+  ],
+  variable: '--font-sans'
+})
+
 export const metadata = {
   metadataBase: new URL('https://www.asso.gd'),
   creator: 'Asso DDD',
@@ -34,7 +45,9 @@ export default async function Layout({ children, params }) {
   return (
     <html
       lang="en"
-      className={clsx(`${mono.variable} font-mono overscroll-none`)}
+      className={clsx(
+        `${mono.variable} ${sans.variable} font-mono overscroll-none`
+      )}
       suppressHydrationWarning
     >
       <head>

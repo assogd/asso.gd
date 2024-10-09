@@ -38,7 +38,7 @@ module.exports = {
     },
     extend: {
       fontSize: {
-        xs: ['0.7rem', '1.2em'],
+        xs: ['0.65rem', '1.2em'],
         sm: ['0.8rem', '1.2em'],
         base: ['1rem', '1.2em'], //18px
         md: ['1.3333333rem', '1.3em'], //24px
@@ -62,7 +62,8 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
       },
       fontFamily: {
-        mono: ['var(--font-mono)']
+        mono: ['var(--font-mono)'],
+        sans: ['var(--font-sans)']
       }
     }
   },

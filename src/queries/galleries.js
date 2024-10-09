@@ -6,6 +6,7 @@ export const GalleryById = `
       content(first: 50, skip: 0) {
         ... on Slide {
           id
+          duration
           assets {
             ... on Image {
               __typename
