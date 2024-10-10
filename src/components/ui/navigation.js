@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { useMedia } from 'use-media'
 import { usePathname } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
+import Announcement from '@/components/announcement'
 
 export const Navigation = () => {
   const pathname = usePathname()
@@ -64,7 +65,9 @@ export const Navigation = () => {
       ) : (
         <motion.div
           key={'adddANNOUNCEMENT' + pathname}
-          className={clsx('relative inset-x-0 select-none z-10')}
+          className={clsx(
+            'relative inset-x-0 select-none z-10 flex flex-col last:flex-col-reverse gap-4 p-4'
+          )}
           initial={{
             y: 0,
             opacity: 0,
@@ -83,7 +86,7 @@ export const Navigation = () => {
         >
           <motion.nav
             className={
-              'inset-x-0 flex gap-2 items-baseline justify-between p-4 bg-white'
+              'inset-x-0 flex gap-2 items-baseline justify-between bg-white'
             }
             initial={{
               y: 0,
@@ -113,6 +116,7 @@ export const Navigation = () => {
               Back to Images
             </Link>
           </motion.nav>
+          <Announcement />
         </motion.div>
       )}
     </AnimatePresence>

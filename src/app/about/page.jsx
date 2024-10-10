@@ -38,7 +38,6 @@ export default async function Post({ params }) {
   return (
     <Main className="p-4 pt-0 md:pt-20">
       <Heading1 className="sr-only">About</Heading1>
-      <Announcement />
       {page?.content.map((item) => {
         switch (item.__typename) {
           case 'Text':
