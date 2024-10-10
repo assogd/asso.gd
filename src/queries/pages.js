@@ -38,6 +38,7 @@ export const SinglePage = `
         ... on EntrySection {
           __typename
           id
+          title
           className
           reference {
             ... on Profile {
@@ -48,7 +49,7 @@ export const SinglePage = `
                 height
                 id
                 url(
-                  transformation: {document: {output: {format: webp}}, image: {resize: {fit: max, height: 180, width: 180}}}
+                  transformation: {document: {output: {format: webp}}, image: {resize: {width: 720}}}
                 )
                 width
               }

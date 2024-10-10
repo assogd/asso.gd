@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 export const RegularImage = ({ file, caption, className, manualWidth }) => {
   const [isLoaded, setIsLoaded] = useState(false)
+  if (!file?.width) return null
 
   // Calculate aspect ratio
   const aspectRatio = file.width / file.height
@@ -18,13 +19,13 @@ export const RegularImage = ({ file, caption, className, manualWidth }) => {
 
   return (
     <figure className={clsx(className)}>
-      <UncoverWhenInView isReady={isLoaded}>
+      <UncoverWhenInView isReady={isLoaded} className="w-full">
         <Image
           src={file.url}
           width={width}
           height={height}
           alt={file.alt ?? ''}
-          className="w-full"
+          className="w-full object-center"
           onLoad={() => setIsLoaded(true)}
         />
       </UncoverWhenInView>

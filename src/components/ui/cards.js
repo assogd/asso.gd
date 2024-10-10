@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { RegularImage } from '@/components/ui/images'
 import { RichText } from '@graphcms/rich-text-react-renderer'
 
-export const ClientCard = ({
+export const PortraitClientCard = ({
   slug,
   name,
   location,
@@ -113,6 +113,95 @@ export const ClientCard = ({
           Launch
         </a>
       )}
+    </div>
+  )
+}
+
+export const LandscapeClientCard = ({
+  slug,
+  name,
+  location,
+  description,
+  icon,
+  providedServices,
+  url
+}) => {
+  const [isHovered, setIsHovered] = useState(false)
+
+  const formatServiceName = (service) => {
+    return service
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (str) => str.toUpperCase())
+  }
+
+  // Extract domain name from URL
+  const getDomainName = (url) => {
+    try {
+      const { hostname } = new URL(url)
+      return hostname.replace('www.', '') // Remove 'www.' if present
+    } catch (e) {
+      return url // Fallback in case the URL is invalid
+    }
+  }
+
+  // Event handlers for hover and touch events
+  const handleMouseEnter = () => setIsHovered(true)
+  const handleMouseLeave = () => setIsHovered(false)
+  const handleTouchStart = () => setIsHovered(true)
+  const handleTouchEnd = () => setIsHovered(false)
+
+  return (
+    <div
+      className="relative select-none"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div className="py-1 border-dashed flex gap-4 items-center justify-between">
+        <h3 className="uppercase flex gap-2 items-center basis-36">{name}</h3>
+        <div className="grow basis-36">{location}</div>
+        <div className="hidden lg:flex gap-2">
+          {providedServices.map((service, i) => (
+            <div key={i} className="whitespace-nowrap">
+              {formatServiceName(service)}
+              {i + 1 !== providedServices.length && ','}
+            </div>
+          ))}
+        </div>
+        {url && (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+            title={`Launches ${getDomainName(url)}`}
+          >
+            Launch
+          </a>
+        )}
+      </div>
+
+      {/* Show fixed container on hover or touch */}
+      <div
+        className={clsx(
+          `fixed inset-0 flex flex-col gap-4 justify-center items-center text-center transition-opacity duration-300 pointer-events-none z-20`,
+          isHovered ? 'opacity-100' : 'opacity-0'
+        )}
+      >
+        <div className="flex flex-col gap-8 p-8 justify-center items-center">
+          <RegularImage
+            file={icon}
+            manualWidth={180}
+            className="w-72 h-72 flex items-center justify-center"
+          />
+          {description?.raw && (
+            <div className="bg-white p-2 hidden">
+              <RichText content={description.raw} />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

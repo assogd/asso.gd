@@ -15,14 +15,14 @@ export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [wasHolding, setWasHolding] = useState(false) // Tracks if it was holding to pause
-  const [isLocked, setIsLocked] = useState(false) // To prevent navigation during hold
+  const [wasHolding, setWasHolding] = useState(false)
+  const [isLocked, setIsLocked] = useState(false)
   const router = useRouter()
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
   const pressStartRef = useRef(null)
-  const isHoldingRef = useRef(false) // Flag to track hold state
-  const isSwipingRef = useRef(false) // Flag to track swipe state
+  const isHoldingRef = useRef(false)
+  const isSwipingRef = useRef(false)
   const { theme, setTheme } = useTheme()
   const height = use100vh()
   const isMobile = useMedia({
@@ -41,26 +41,37 @@ export const MainCarousel = ({ content }) => {
     return () => clearTimeout(startThemeTransition)
   }, [setTheme, active, theme])
 
-  const totalDuration = 8000
   const desktopShortHoldThreshold = 250
   const mobileShortHoldThreshold = 100
-  const holdThreshold = 500 // The main hold threshold remains the same
+  const holdThreshold = 500
   const shortHoldThreshold = isMobile
     ? mobileShortHoldThreshold
-    : desktopShortHoldThreshold // Use different thresholds for mobile and desktop
+    : desktopShortHoldThreshold
   const swipeThreshold = 50
+
+  // Adjust this function to use the current slide's duration
+  const getSlideDuration = () => {
+    return content[active]?.duration ?? 8000 // Default to 8000 if no duration is provided
+  }
+
+  const getTotalDuration = () => {
+    return content.reduce((sum, slide) => sum + (slide.duration ?? 8000), 0)
+  }
+
+  const totalDuration = getTotalDuration()
 
   // Start the timer and progress bar with throttling
   const startTimer = () => {
     if (!isPaused) {
-      const initialProgressTime = progress * (totalDuration / 100)
+      const currentDuration = getSlideDuration() // Get the duration for the current slide
+      const initialProgressTime = progress * (currentDuration / 100)
       startTimeRef.current = Date.now() - initialProgressTime
 
       intervalRef.current = setInterval(() => {
         const elapsedTime = Date.now() - startTimeRef.current
-        setProgress((elapsedTime / totalDuration) * 100)
+        setProgress((elapsedTime / currentDuration) * 100)
 
-        if (elapsedTime >= totalDuration) {
+        if (elapsedTime >= currentDuration) {
           clearInterval(intervalRef.current)
           setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
           setProgress(0)
@@ -121,16 +132,12 @@ export const MainCarousel = ({ content }) => {
     const screenWidth = window.innerWidth
     const clickX = e.clientX
 
-    // If the press duration is longer than the shortHoldThreshold but shorter than the holdThreshold, treat it as a hold
     if (pressDuration >= shortHoldThreshold && pressDuration < holdThreshold) {
-      // Short hold – no navigation
       setWasHolding(true)
     } else if (pressDuration >= holdThreshold) {
-      // Long hold – no navigation
       isHoldingRef.current = true
       setWasHolding(true)
     } else {
-      // It's a valid tap (not a hold)
       if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
         if (clickX < screenWidth / 2) {
           handlePrev()
@@ -140,7 +147,6 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
-    // Reset flags and resume timer
     isHoldingRef.current = false
     setWasHolding(false)
     resumeTimer()
@@ -175,16 +181,12 @@ export const MainCarousel = ({ content }) => {
     const pressDuration = Date.now() - pressStartRef.current
     const startTouchX = parseFloat(e.target.dataset.startTouchX)
 
-    // If the press duration is longer than the shortHoldThreshold but shorter than the holdThreshold, treat it as a hold
     if (pressDuration >= shortHoldThreshold && pressDuration < holdThreshold) {
-      // Short hold – no navigation
       setWasHolding(true)
     } else if (pressDuration >= holdThreshold) {
-      // Long hold – no navigation
       isHoldingRef.current = true
       setWasHolding(true)
     } else {
-      // It's a valid tap (not a hold)
       if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
         if (touchX < screenWidth / 2) {
           handlePrev()
@@ -200,7 +202,6 @@ export const MainCarousel = ({ content }) => {
       }
     }
 
-    // Reset flags and resume timer
     isHoldingRef.current = false
     setWasHolding(false)
     resumeTimer()
@@ -227,7 +228,7 @@ export const MainCarousel = ({ content }) => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove} // Detect swipe movement
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {content.map(
@@ -274,7 +275,7 @@ export const MainCarousel = ({ content }) => {
                               'row-span-full mb-4'
                           )}
                           paused={isPaused}
-                          preload={i === active ? 'auto' : 'none'} // Preload only active video
+                          preload={i === active ? 'auto' : 'none'}
                         />
                       )
                     default:
@@ -307,12 +308,14 @@ export const MainCarousel = ({ content }) => {
           isPaused && 'opacity-0'
         )}
       >
-        {content.map((_, i) => (
+        {content.map((slide, i) => (
           <ProgressBar
             key={i}
             progress={progress}
             isActive={i === active}
             isViewed={i < active}
+            duration={slide.duration ?? 8000}
+            totalDuration={totalDuration}
           />
         ))}
       </div>
