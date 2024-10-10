@@ -4,7 +4,7 @@
 
 html {
   font-size: 19px;
-  line-height: 1.1em;
+  line-height: 1.2em;
 }
 
 @media screen and (min-width: 670px) {
@@ -15,7 +15,7 @@ html {
 
 html,
 body {
-  transition: background 200ms;
+  transition: background 0ms;
 }
 
 [data-theme='light'],

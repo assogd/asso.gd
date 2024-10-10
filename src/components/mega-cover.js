@@ -7,7 +7,7 @@ export default function MegaCover() {
       <motion.div
         initial={{ opacity: 1 }}
         animate={{ opacity: 0 }}
-        transition={{ delay: 2, duration: 0 }}
+        transition={{ delay: 3, duration: 0 }}
         className="pointer-events-none fixed z-20 inset-0 flex flex-col items-center text-mega justify-center md:justify-between pb-16 p-8"
       >
         <p>Direction</p>

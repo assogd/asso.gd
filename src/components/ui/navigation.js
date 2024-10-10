@@ -16,31 +16,90 @@ export const Navigation = () => {
       {isHome ? (
         <>
           <motion.div
-            key={'adddCAPTION'}
+            key={'adddCAPTION' + pathname}
             className={clsx('fixed left-0 bottom-4 select-none z-10')}
-            initial={{ y: 0, transition: { type: 'tween', duration: 0.5 } }}
-            animate={{ y: 0, transition: { type: 'tween', duration: 0.5 } }}
-            exit={{ y: 0, transition: { type: 'tween', duration: 0.5 } }}
+            initial={{
+              y: 0,
+              opacity: 0,
+              transition: { type: 'tween', duration: 0.2, delay: 1 }
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+              transition: { type: 'tween', duration: 0.2, delay: 1 }
+            }}
+            exit={{
+              y: 0,
+              opacity: 0,
+              transition: { type: 'tween', duration: 0.2 }
+            }}
           >
             <Link href="/" className={'block p-4'}>
               ADDD:
             </Link>
           </motion.div>
-          <nav className={clsx('fixed right-0 top-0 z-10', 'select-none')}>
+          <motion.nav
+            className={clsx('fixed right-0 top-0 z-10', 'select-none')}
+            initial={{
+              y: 0,
+              opacity: 0,
+              transition: { type: 'tween', duration: 0.2, delay: 1 }
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+              transition: { type: 'tween', duration: 0.2, delay: 1 }
+            }}
+            exit={{
+              y: 0,
+              opacity: 0,
+              transition: { type: 'tween', duration: 0.2 }
+            }}
+          >
             <Link href="/about" className={'block p-4'}>
               About the Studio
             </Link>
-          </nav>
+          </motion.nav>
         </>
       ) : (
         <motion.div
-          key={'adddANNOUNCEMENT'}
+          key={'adddANNOUNCEMENT' + pathname}
           className={clsx('relative inset-x-0 select-none z-10')}
+          initial={{
+            y: 0,
+            opacity: 0,
+            transition: { type: 'tween', duration: 0.2, delay: 1 }
+          }}
+          animate={{
+            y: 0,
+            opacity: 1,
+            transition: { type: 'tween', duration: 0.2, delay: 1 }
+          }}
+          exit={{
+            y: 0,
+            opacity: 0,
+            transition: { type: 'tween', duration: 0.2 }
+          }}
         >
-          <nav
+          <motion.nav
             className={
               'inset-x-0 flex gap-2 items-baseline justify-between p-4 bg-white'
             }
+            initial={{
+              y: 0,
+              opacity: 0,
+              transition: { type: 'tween', duration: 0.2, delay: 1 }
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+              transition: { type: 'tween', duration: 0.2, delay: 1 }
+            }}
+            exit={{
+              y: 0,
+              opacity: 0,
+              transition: { type: 'tween', duration: 0.2 }
+            }}
           >
             <Link href="/" className={'block'}>
               ADDD:
@@ -53,7 +112,7 @@ export const Navigation = () => {
             >
               Back to Images
             </Link>
-          </nav>
+          </motion.nav>
         </motion.div>
       )}
     </AnimatePresence>
