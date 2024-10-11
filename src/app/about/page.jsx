@@ -70,7 +70,7 @@ export default async function Post({ params }) {
                 .map((entry) => <ClientCard key={entry.id} {...entry} />) || []
 
             return cards.length > 0 ? (
-              <div className={clsx(item.className, 'py-4')}>
+              <div className={clsx(item.className, 'py-4 select-none')}>
                 {item.title && (
                   <Heading2 className="border-b py-3 text-center">
                     {item.title}

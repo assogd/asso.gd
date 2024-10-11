@@ -278,9 +278,17 @@ export const PortraitClientCard2 = ({
   return (
     LogoComponent && (
       <Slider.Slide className="w-full flex justify-center">
-        <div className="w-16 aspect-square">
-          <LogoComponent className="w-full h-full" />
-        </div>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+          title={`Launches ${getDomainName(url)}`}
+        >
+          <div className="w-16 aspect-square">
+            <LogoComponent className="w-full h-full" />
+          </div>
+        </a>
       </Slider.Slide>
     )
   )
