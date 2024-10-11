@@ -1,11 +1,22 @@
 'use client'
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Children } from 'react'
 import clsx from 'clsx'
 import { Preview } from '@/components/ui/players'
 import Link from 'next/link'
 import { RegularImage } from '@/components/ui/images'
 import { RichText } from '@graphcms/rich-text-react-renderer'
+import {
+  CFHILL,
+  Forma,
+  Hem,
+  Muscadet,
+  SubRosa,
+  Slutet,
+  Takeout
+} from '@/components/ui/svgs/logotypes'
+import Slider from 'react-infinite-logo-slider'
+import { useMedia } from 'use-media'
 
 export const PortraitClientCard = ({
   slug,
@@ -202,6 +213,88 @@ export const LandscapeClientCard = ({
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+export const LogoSlider = ({ children }) => {
+  const numOfChildren = Children.count(children)
+  const isWideEnough = useMedia(`(min-width: ${numOfChildren * 200}px)`)
+
+  return isWideEnough ? (
+    <div
+      className="grid max-w-full overflow-hidden"
+      style={{
+        gridTemplateColumns: `repeat(${numOfChildren}, 1fr)`
+      }}
+    >
+      {children}
+    </div>
+  ) : (
+    <Slider
+      width="200px"
+      duration={60}
+      pauseOnHover={false}
+      blurBorders={true}
+      blurBorderColor={'#fff'}
+    >
+      {children}
+    </Slider>
+  )
+}
+
+export const PortraitClientCard2 = ({
+  slug,
+  name,
+  location,
+  description,
+  icon,
+  providedServices,
+  url
+}) => {
+  // Extract domain name from URL
+  const getDomainName = (url) => {
+    try {
+      const { hostname } = new URL(url)
+      return hostname.replace('www.', '') // Remove 'www.' if present
+    } catch (e) {
+      return url // Fallback in case the URL is invalid
+    }
+  }
+
+  const logoMap = {
+    cfhill: CFHILL,
+    forma: Forma,
+    hem: Hem,
+    muscadet: Muscadet,
+    subrosa: SubRosa,
+    slutet: Slutet,
+    takeout: Takeout
+  }
+
+  const normalizedSlug = slug.replace(/-/g, '').toLowerCase()
+  const LogoComponent = logoMap[normalizedSlug]
+
+  return (
+    LogoComponent && (
+      <Slider.Slide className="w-full flex justify-center">
+        <div className="w-16 aspect-square">
+          <LogoComponent className="w-full h-full" />
+        </div>
+      </Slider.Slide>
+    )
+  )
+
+  return (
+    <div className="w-36 mx-auto flex flex-col items-center justify-baseline p-4">
+      {LogoComponent && (
+        <div className="w-16 aspect-square">
+          <LogoComponent className="w-full h-full" />
+        </div>
+      )}
+      <h3 className="hidden uppercase grow flex items-center justify-center p-4">
+        {name}
+      </h3>
     </div>
   )
 }

@@ -31,7 +31,7 @@ export default function Template({ children }) {
       <div
         className={clsx(
           isVisible && 'opacity-0',
-          'duration-200 fixed inset-0 flex justify-center items-center'
+          'duration-200 fixed inset-0 flex justify-center items-center select-none pointer-events-none'
         )}
       >
         ADDD

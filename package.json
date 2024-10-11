@@ -35,6 +35,7 @@
     "react": "^18.3.1",
     "react-div-100vh": "^0.7.0",
     "react-dom": "^18.3.1",
+    "react-infinite-logo-slider": "^1.0.13",
     "react-intersection-observer": "^9.13.0",
     "swr": "^2.2.5",
     "tailwindcss": "3.4.10",

@@ -5,7 +5,10 @@ import { RegularImage } from '@/components/ui/images'
 import { notFound } from 'next/navigation'
 import { RichText } from '@graphcms/rich-text-react-renderer'
 import { Main } from '@/components/ui/containers'
-import { LandscapeClientCard as ClientCard } from '@/components/ui/cards'
+import {
+  PortraitClientCard2 as ClientCard,
+  LogoSlider
+} from '@/components/ui/cards'
 import { Heading1, Heading2, Heading3 } from '@/components/ui/headings'
 import MegaCover from '@/components/mega-cover'
 import Announcement from '@/components/announcement'
@@ -67,11 +70,15 @@ export default async function Post({ params }) {
                 .map((entry) => <ClientCard key={entry.id} {...entry} />) || []
 
             return cards.length > 0 ? (
-              <div className={clsx(item.className)}>
+              <div className={clsx(item.className, 'py-4')}>
                 {item.title && (
-                  <Heading2 className="border-b py-3">{item.title}</Heading2>
+                  <Heading2 className="border-b py-3 text-center">
+                    {item.title}
+                  </Heading2>
                 )}
-                {cards}
+                <div className="-mx-4 py-4">
+                  <LogoSlider>{cards}</LogoSlider>
+                </div>
               </div>
             ) : null
           default: {
