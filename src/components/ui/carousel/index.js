@@ -300,7 +300,7 @@ export const MainCarousel = ({ content }) => {
         transition={{
           opacity: {
             duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
-            delay: isPaused ? 1 : 0 // Delay only when going to 0
+            delay: isPaused ? 2 : 0 // Delay only when going to 0
           }
         }}
         className="fixed top-0 left-0 p-4"
@@ -316,7 +316,7 @@ export const MainCarousel = ({ content }) => {
         transition={{
           y: {
             duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
-            delay: isPaused ? 1.2 : 0 // Delay only when going to 0
+            delay: isPaused ? 2.2 : 0 // Delay only when going to 0
           }
         }}
       >
@@ -331,7 +331,7 @@ export const MainCarousel = ({ content }) => {
         transition={{
           opacity: {
             duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
-            delay: isPaused ? 1 : 0 // Delay only when going to 0
+            delay: isPaused ? 2 : 0 // Delay only when going to 0
           }
         }}
       >
@@ -348,7 +348,7 @@ export const MainCarousel = ({ content }) => {
         transition={{
           opacity: {
             duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
-            delay: isPaused ? 1 : 0 // Delay only when going to 0
+            delay: isPaused ? 2 : 0 // Delay only when going to 0
           }
         }}
       >
