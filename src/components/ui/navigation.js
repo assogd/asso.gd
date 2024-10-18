@@ -15,53 +15,7 @@ export const Navigation = () => {
   return (
     <AnimatePresence>
       {isHome ? (
-        <>
-          <motion.div
-            key={'adddCAPTION' + pathname}
-            className={clsx('fixed left-0 bottom-4 select-none z-10')}
-            initial={{
-              y: 0,
-              opacity: 0,
-              transition: { type: 'tween', duration: 0.2, delay: 1 }
-            }}
-            animate={{
-              y: 0,
-              opacity: 1,
-              transition: { type: 'tween', duration: 0.2, delay: 1 }
-            }}
-            exit={{
-              y: 0,
-              opacity: 0,
-              transition: { type: 'tween', duration: 0.2 }
-            }}
-          >
-            <Link href="/" className={'block p-4'}>
-              ADDD:
-            </Link>
-          </motion.div>
-          <motion.nav
-            className={clsx('fixed right-0 top-0 z-10', 'select-none')}
-            initial={{
-              y: 0,
-              opacity: 0,
-              transition: { type: 'tween', duration: 0.2, delay: 1 }
-            }}
-            animate={{
-              y: 0,
-              opacity: 1,
-              transition: { type: 'tween', duration: 0.2, delay: 1 }
-            }}
-            exit={{
-              y: 0,
-              opacity: 0,
-              transition: { type: 'tween', duration: 0.2 }
-            }}
-          >
-            <Link href="/about" className={'block p-4'}>
-              About the Studio
-            </Link>
-          </motion.nav>
-        </>
+        <></>
       ) : (
         <motion.div
           key={'adddANNOUNCEMENT' + pathname}

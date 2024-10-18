@@ -2,6 +2,7 @@
 import { Caption } from '@/components/ui/rich-texts'
 import { StandardPlayer } from '@/components/ui/players'
 import Image from 'next/image'
+import Link from 'next/link'
 import clsx from 'clsx'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -294,19 +295,62 @@ export const MainCarousel = ({ content }) => {
 
       <motion.div
         animate={{
-          opacity: isPaused ? 0 : 1,
-          transition: { delay: 0.1, duration: 0.1 }
+          opacity: isPaused ? 0 : 1
+        }}
+        transition={{
+          opacity: {
+            duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
+            delay: isPaused ? 1 : 0 // Delay only when going to 0
+          }
         }}
         className="fixed top-0 left-0 p-4"
       >
-        (Hold to Pause)
+        {isPaused ? '(Release when Ready)' : '(Hold to Pause)'}
       </motion.div>
 
-      <div
-        className={clsx(
-          'fixed bottom-0 left-0 right-0 flex gap-1 px-4 py-2',
-          isPaused && 'opacity-0'
-        )}
+      <motion.div
+        className={clsx('fixed left-0 bottom-4 select-none z-10 p-4')}
+        animate={{
+          y: isPaused ? '1rem' : 0
+        }}
+        transition={{
+          y: {
+            duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
+            delay: isPaused ? 1.2 : 0 // Delay only when going to 0
+          }
+        }}
+      >
+        ADDD:
+      </motion.div>
+
+      <motion.nav
+        className={clsx('fixed right-0 top-0 z-10', 'select-none')}
+        animate={{
+          opacity: isPaused ? 0 : 1
+        }}
+        transition={{
+          opacity: {
+            duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
+            delay: isPaused ? 1 : 0 // Delay only when going to 0
+          }
+        }}
+      >
+        <Link href="/about" className={'block p-4'}>
+          About the Studio
+        </Link>
+      </motion.nav>
+
+      <motion.div
+        className={clsx('fixed bottom-0 left-0 right-0 flex gap-1 px-4 py-2')}
+        animate={{
+          opacity: isPaused ? 0 : 1
+        }}
+        transition={{
+          opacity: {
+            duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
+            delay: isPaused ? 1 : 0 // Delay only when going to 0
+          }
+        }}
       >
         {content.map((slide, i) => (
           <ProgressBar
@@ -318,7 +362,7 @@ export const MainCarousel = ({ content }) => {
             totalDuration={totalDuration}
           />
         ))}
-      </div>
+      </motion.div>
     </section>
   )
 }
