@@ -7,7 +7,7 @@ import clsx from 'clsx'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import ProgressBar from './progressBar'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { use100vh } from 'react-div-100vh'
 import { useMedia } from 'use-media'
@@ -294,6 +294,7 @@ export const MainCarousel = ({ content }) => {
       )}
 
       <motion.div
+        className="fixed top-0 left-0 p-4"
         animate={{
           opacity: isPaused ? 0 : 1
         }}
@@ -303,9 +304,36 @@ export const MainCarousel = ({ content }) => {
             delay: isPaused ? 2 : 0 // Delay only when going to 0
           }
         }}
-        className="fixed top-0 left-0 p-4"
       >
-        {isPaused ? '(Release when Ready)' : '(Hold to Pause)'}
+        <AnimatePresence mode="wait">
+          {isPaused ? (
+            <motion.div
+              key="release"
+              initial={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                delay: isPaused ? 0 : 0.2,
+                duration: 0
+              }}
+            >
+              (Release when Ready)
+            </motion.div>
+          ) : (
+            <motion.div
+              key="hold"
+              initial={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 1 }}
+              transition={{
+                delay: 0.2,
+                duration: 0
+              }}
+            >
+              (Hold to Pause)
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       <motion.div
