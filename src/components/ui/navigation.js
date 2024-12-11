@@ -107,7 +107,7 @@ export const Navigation = () => {
           </motion.nav>
           <motion.div
             className={clsx(
-              'fixed inset-0 z-10 bg-white text-black flex items-center justify-center pointer-events-none text-center p-4 sm:p-8 pb-12'
+              'fixed inset-0 z-10 bg-white text-black flex items-center justify-center pointer-events-none text-center p-4 pb-8 sm:p-8 sm:pb-12'
             )}
             initial={{ opacity: 0 }}
             animate={{ opacity: showNotice ? 1 : 0 }}
