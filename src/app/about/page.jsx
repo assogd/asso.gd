@@ -39,7 +39,7 @@ export default async function Post({ params }) {
   if (!page || !page?.content?.length) return notFound()
 
   return (
-    <Main className="p-4 pt-0 md:pt-12">
+    <Main className="p-4 pt-0">
       <Heading1 className="sr-only">About</Heading1>
       {page?.content.map((item) => {
         switch (item.__typename) {

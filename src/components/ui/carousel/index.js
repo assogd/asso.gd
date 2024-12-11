@@ -27,6 +27,7 @@ export const MainCarousel = ({ content }) => {
   const { theme, setTheme } = useTheme()
   const height = use100vh()
   const isMobile = useMedia({ maxWidth: 767, pointer: 'coarse' })
+  const isSmallScreen = useMedia({ maxWidth: '640px' })
 
   useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
@@ -309,8 +310,7 @@ export const MainCarousel = ({ content }) => {
                 duration: 0
               }}
             >
-              (Release
-              <span className="hidden sm:inline-block">&nbsp;when Ready</span>)
+              {isSmallScreen ? '(Release)' : '(Release when ready)'}
             </motion.div>
           ) : (
             <motion.div
@@ -323,8 +323,7 @@ export const MainCarousel = ({ content }) => {
                 duration: 0
               }}
             >
-              (Hold
-              <span className="hidden sm:inline-block">&nbsp;to Pause</span>)
+              {isSmallScreen ? '(Hold)' : '(Hold to pause)'}
             </motion.div>
           )}
         </AnimatePresence>
@@ -362,7 +361,7 @@ export const MainCarousel = ({ content }) => {
         }}
       >
         <Link href="/about" className="block p-4">
-          About<span className="hidden sm:inline-block">&nbsp;the Studio</span>
+          {isSmallScreen ? 'About' : 'About the studio'}
         </Link>
       </motion.nav>
 

@@ -10,8 +10,11 @@ import Announcement from '@/components/announcement'
 export const Navigation = () => {
   const pathname = usePathname()
   const isHome = pathname === '/'
+  const isSmallScreen = useMedia({ maxWidth: '640px' }) // Detect screens smaller than sm (640px)
   const [showNotice, setShowNotice] = useState(false)
-  const [noticeText, setNoticeText] = useState('Hold...') // Dynamic notice text
+  const [noticeText, setNoticeText] = useState(
+    isSmallScreen ? 'Hold...' : 'Hold to continue'
+  ) // Dynamic notice text
   const isHoldingRef = useRef(false) // Tracks if the user is still holding
   const holdStartTimeRef = useRef(null) // Tracks the start time of the hold
   const textTimeoutRef = useRef(null) // Tracks timeout for changing text
@@ -24,12 +27,12 @@ export const Navigation = () => {
 
     // Show the announcement immediately
     setShowNotice(true)
-    setNoticeText('Hold to keep...') // Show initial "Hold to continue"
+    setNoticeText(isSmallScreen ? '(Hold...)' : '(Hold to continue)') // Show initial text
 
-    // Change to "Release to exit" after 1 second
+    // Change to "Release..." after 1 second
     textTimeoutRef.current = setTimeout(() => {
       if (isHoldingRef.current) {
-        setNoticeText('Release to exit')
+        setNoticeText(isSmallScreen ? '(Release)' : '(Release to exit)')
       }
     }, 1000)
   }
@@ -47,14 +50,14 @@ export const Navigation = () => {
     if (holdDuration >= 1000) {
       // If the minimum duration has passed, hide immediately
       setShowNotice(false)
-      setNoticeText('Hold to continue') // Reset text
+      setNoticeText(isSmallScreen ? 'Hold...' : 'Hold to continue') // Reset text
     } else {
       // Otherwise, ensure it remains visible until 1 second has elapsed
       const remainingTime = 1000 - holdDuration
       visibilityTimeoutRef.current = setTimeout(() => {
         if (!isHoldingRef.current) {
           setShowNotice(false)
-          setNoticeText('Hold to continue') // Reset text
+          setNoticeText(isSmallScreen ? 'Hold...' : 'Hold to continue') // Reset text
         }
       }, remainingTime)
     }
@@ -89,8 +92,7 @@ export const Navigation = () => {
               onTouchStart={handleHoldStart}
               onTouchEnd={handleHoldEnd}
             >
-              <span className="sm:hidden">Notice</span>
-              <span className="hidden sm:inline-block">Announcement</span>
+              {isSmallScreen ? 'Notice' : 'Announcement'}
             </div>
 
             <Link
@@ -100,8 +102,7 @@ export const Navigation = () => {
               Association
             </Link>
             <Link href="/" className={'whitespace-nowrap absolute right-0 p-4'}>
-              <span className="hidden sm:inline-block">Back to&nbsp;</span>
-              Images
+              {isSmallScreen ? 'Images' : 'Back to images'}
             </Link>
           </motion.nav>
           <motion.div
