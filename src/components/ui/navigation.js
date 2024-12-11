@@ -78,7 +78,7 @@ export const Navigation = () => {
       ) : (
         <>
           <motion.nav
-            className="p-4 flex items-center relative z-0"
+            className="p-4 flex items-center relative z-0 select-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0, delay: 1 }}
