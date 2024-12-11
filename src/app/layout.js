@@ -7,15 +7,20 @@ import PlausibleProvider from 'next-plausible'
 import { Navigation } from '@/components/ui/navigation'
 import { ThemeProvider } from 'next-themes'
 
-const mono = localFont({
+const serif = localFont({
   src: [
     {
-      path: '../../public/fonts/PanamaMonospaceRegular.woff',
+      path: '../../public/fonts/ABCSynt-Regular-Trial.woff2',
       weight: '400',
       style: 'normal'
+    },
+    {
+      path: '../../public/fonts/ABCSynt-RegularItalic-Trial.woff2',
+      weight: '400',
+      style: 'italic'
     }
   ],
-  variable: '--font-mono'
+  variable: '--font-serif'
 })
 
 const sans = localFont({
@@ -33,7 +38,7 @@ export const metadata = {
   metadataBase: new URL('https://www.asso.gd'),
   creator: 'Asso DDD',
   openGraph: {
-    siteName: 'ADDD',
+    siteName: 'Association',
     type: 'website'
   },
   appleWebApp: {
@@ -46,7 +51,7 @@ export default async function Layout({ children, params }) {
     <html
       lang="en"
       className={clsx(
-        `${mono.variable} ${sans.variable} font-mono overscroll-none`
+        `${serif.variable} ${sans.variable} font-serif overscroll-none`
       )}
       suppressHydrationWarning
     >

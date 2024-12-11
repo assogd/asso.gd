@@ -26,20 +26,13 @@ export const MainCarousel = ({ content }) => {
   const isSwipingRef = useRef(false)
   const { theme, setTheme } = useTheme()
   const height = use100vh()
-  const isMobile = useMedia({
-    maxWidth: 767,
-    pointer: 'coarse'
-  })
+  const isMobile = useMedia({ maxWidth: 767, pointer: 'coarse' })
 
   useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
-    const startThemeTransition = setTimeout(() => {
-      if (theme !== slideTheme) {
-        setTheme(slideTheme)
-      }
-    }, 50)
-
-    return () => clearTimeout(startThemeTransition)
+    if (theme !== slideTheme) {
+      setTheme(slideTheme)
+    }
   }, [setTheme, active, theme])
 
   const desktopShortHoldThreshold = 250
@@ -50,21 +43,15 @@ export const MainCarousel = ({ content }) => {
     : desktopShortHoldThreshold
   const swipeThreshold = 50
 
-  // Adjust this function to use the current slide's duration
-  const getSlideDuration = () => {
-    return content[active]?.duration ?? 8000 // Default to 8000 if no duration is provided
-  }
-
-  const getTotalDuration = () => {
-    return content.reduce((sum, slide) => sum + (slide.duration ?? 8000), 0)
-  }
+  const getSlideDuration = () => content[active]?.duration ?? 8000
+  const getTotalDuration = () =>
+    content.reduce((sum, slide) => sum + (slide.duration ?? 8000), 0)
 
   const totalDuration = getTotalDuration()
 
-  // Start the timer and progress bar with throttling
   const startTimer = () => {
     if (!isPaused) {
-      const currentDuration = getSlideDuration() // Get the duration for the current slide
+      const currentDuration = getSlideDuration()
       const initialProgressTime = progress * (currentDuration / 100)
       startTimeRef.current = Date.now() - initialProgressTime
 
@@ -77,20 +64,18 @@ export const MainCarousel = ({ content }) => {
           setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
           setProgress(0)
         }
-      }, 100) // Throttled to 100ms
+      }, 100)
     }
   }
 
-  // Pause the timer and store progress
   const pauseTimer = () => {
     setIsPaused(true)
     clearInterval(intervalRef.current)
   }
 
-  // Resume the timer after pause
   const resumeTimer = () => {
     setIsPaused(false)
-    startTimer() // Restart from the last saved progress
+    startTimer()
   }
 
   useEffect(() => {
@@ -98,37 +83,50 @@ export const MainCarousel = ({ content }) => {
     return () => clearInterval(intervalRef.current)
   }, [active, isPaused])
 
+  const debounceNavigation = (fn, delay) => {
+    let timeout
+    return (...args) => {
+      if (timeout) clearTimeout(timeout)
+      timeout = setTimeout(() => fn(...args), delay)
+    }
+  }
+
   const handlePrev = () => {
     if (!isLocked) {
-      setIsLocked(true) // Prevent further navigation
+      setIsLocked(true)
       clearInterval(intervalRef.current)
       setActive((prev) => (prev > 0 ? prev - 1 : content.length - 1))
       setProgress(0)
       startTimer()
-      setTimeout(() => setIsLocked(false), 300) // Debounce time of 300ms
+      setTimeout(() => setIsLocked(false), 300)
     }
   }
 
   const handleNext = () => {
     if (!isLocked) {
-      setIsLocked(true) // Prevent further navigation
+      setIsLocked(true)
       clearInterval(intervalRef.current)
       setActive((prev) => (prev < content.length - 1 ? prev + 1 : 0))
       setProgress(0)
       startTimer()
-      setTimeout(() => setIsLocked(false), 300) // Debounce time of 300ms
+      setTimeout(() => setIsLocked(false), 300)
     }
   }
 
   const handleMouseDown = () => {
     pressStartRef.current = Date.now()
-    isHoldingRef.current = false // Reset hold flag
-    isSwipingRef.current = false // Reset swipe flag
-    setWasHolding(false) // Reset the was holding state
+    isHoldingRef.current = false
+    isSwipingRef.current = false
+    setWasHolding(false)
     pauseTimer()
   }
 
   const handleMouseUp = (e) => {
+    if (e.target.tagName === 'A' || e.target.closest('a')) {
+      // Ignore clicks on links
+      return
+    }
+
     const pressDuration = Date.now() - pressStartRef.current
     const screenWidth = window.innerWidth
     const clickX = e.clientX
@@ -140,11 +138,7 @@ export const MainCarousel = ({ content }) => {
       setWasHolding(true)
     } else {
       if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
-        if (clickX < screenWidth / 2) {
-          handlePrev()
-        } else {
-          handleNext()
-        }
+        clickX < screenWidth / 2 ? handlePrev() : handleNext()
       }
     }
 
@@ -153,18 +147,14 @@ export const MainCarousel = ({ content }) => {
     resumeTimer()
   }
 
-  const handleMouseLeave = () => {
-    if (isPaused) resumeTimer()
-  }
-
   const handleTouchStart = (e) => {
     pressStartRef.current = Date.now()
-    isHoldingRef.current = false // Reset hold flag
-    isSwipingRef.current = false // Reset swipe flag
-    setWasHolding(false) // Reset the was holding state
+    isHoldingRef.current = false
+    isSwipingRef.current = false
+    setWasHolding(false)
     pauseTimer()
     const startTouchX = e.touches[0].clientX
-    e.target.dataset.startTouchX = startTouchX // Store touch start point for swipe detection
+    e.target.dataset.startTouchX = startTouchX
   }
 
   const handleTouchMove = (e) => {
@@ -177,6 +167,11 @@ export const MainCarousel = ({ content }) => {
   }
 
   const handleTouchEnd = (e) => {
+    if (e.target.tagName === 'A' || e.target.closest('a')) {
+      // Ignore touch events on links
+      return
+    }
+
     const touchX = e.changedTouches[0].clientX
     const screenWidth = window.innerWidth
     const pressDuration = Date.now() - pressStartRef.current
@@ -189,17 +184,9 @@ export const MainCarousel = ({ content }) => {
       setWasHolding(true)
     } else {
       if (!isHoldingRef.current && !isSwipingRef.current && !wasHolding) {
-        if (touchX < screenWidth / 2) {
-          handlePrev()
-        } else {
-          handleNext()
-        }
+        touchX < screenWidth / 2 ? handlePrev() : handleNext()
       } else if (isSwipingRef.current && !wasHolding) {
-        if (touchX > startTouchX) {
-          handlePrev() // Swipe right
-        } else {
-          handleNext() // Swipe left
-        }
+        touchX > startTouchX ? handlePrev() : handleNext()
       }
     }
 
@@ -208,18 +195,13 @@ export const MainCarousel = ({ content }) => {
     resumeTimer()
   }
 
-  // Render fewer slides on mobile (only active one)
-  const shouldRenderSlide = (i) => {
-    if (isMobile) {
-      return i === active // Only render the active slide on mobile
-    }
-    return (
-      i === active ||
-      i === active + 1 ||
-      i === active - 1 ||
-      (active === content.length - 1 && i === 0)
-    )
-  }
+  const shouldRenderSlide = (i) =>
+    isMobile
+      ? i === active
+      : i === active ||
+        i === active + 1 ||
+        i === active - 1 ||
+        (active === content.length - 1 && i === 0)
 
   return (
     <section
@@ -227,7 +209,6 @@ export const MainCarousel = ({ content }) => {
       style={{ height }}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -285,9 +266,20 @@ export const MainCarousel = ({ content }) => {
                 })}
               </div>
               {item.caption?.raw && (
-                <div className="fixed bottom-8 left-16">
+                <motion.div
+                  className="fixed bottom-8 inset-x-4 text-center"
+                  animate={{
+                    y: isPaused ? '1rem' : 0
+                  }}
+                  transition={{
+                    y: {
+                      duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
+                      delay: isPaused ? 2.2 : 0 // Delay only when going to 0
+                    }
+                  }}
+                >
                   <Caption content={item.caption} />
-                </div>
+                </motion.div>
               )}
             </div>
           )
@@ -317,7 +309,8 @@ export const MainCarousel = ({ content }) => {
                 duration: 0
               }}
             >
-              (Release when Ready)
+              (Release
+              <span className="hidden sm:inline-block">&nbsp;when Ready</span>)
             </motion.div>
           ) : (
             <motion.div
@@ -330,17 +323,22 @@ export const MainCarousel = ({ content }) => {
                 duration: 0
               }}
             >
-              (Hold to Pause)
+              (Hold
+              <span className="hidden sm:inline-block">&nbsp;to Pause</span>)
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
       <motion.div
-        className={clsx('fixed left-0 bottom-4 select-none z-10 p-4')}
-        animate={{
-          y: isPaused ? '1rem' : 0
-        }}
+        className={clsx(
+          'fixed left-1/2 -translate-x-1/2 top-0 select-none z-10 p-4 uppercase'
+        )}
+        animate={
+          {
+            //y: isPaused ? '1rem' : 0
+          }
+        }
         transition={{
           y: {
             duration: isPaused ? 0.5 : 0.2, // Duration when going to 0
@@ -348,7 +346,7 @@ export const MainCarousel = ({ content }) => {
           }
         }}
       >
-        ADDD:
+        Association
       </motion.div>
 
       <motion.nav
@@ -363,8 +361,8 @@ export const MainCarousel = ({ content }) => {
           }
         }}
       >
-        <Link href="/about" className={'block p-4'}>
-          About the Studio
+        <Link href="/about" className="block p-4">
+          About<span className="hidden sm:inline-block">&nbsp;the Studio</span>
         </Link>
       </motion.nav>
 

@@ -9,13 +9,15 @@ html {
 
 @media screen and (min-width: 670px) {
   html {
-    font-size: 18px;
+    font-size: 22px;
   }
 }
 
 html,
 body {
   transition: background 0ms;
+  -webkit-font-smoothing: antialiased; /* Lighter appearance */
+  -moz-osx-font-smoothing: grayscale; /* Similar effect */
 }
 
 [data-theme='light'],
@@ -54,4 +56,10 @@ mux-player.no-controls {
 
 .extra-tracking {
   letter-spacing: 0.5em;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }

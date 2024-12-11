@@ -4,110 +4,126 @@ import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { useMedia } from 'use-media'
 import { usePathname } from 'next/navigation'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Announcement from '@/components/announcement'
 
 export const Navigation = () => {
   const pathname = usePathname()
   const isHome = pathname === '/'
-  const isMobile = useMedia({ maxWidth: '638px' })
+  const [showNotice, setShowNotice] = useState(false)
+  const [noticeText, setNoticeText] = useState('Hold...') // Dynamic notice text
+  const isHoldingRef = useRef(false) // Tracks if the user is still holding
+  const holdStartTimeRef = useRef(null) // Tracks the start time of the hold
+  const textTimeoutRef = useRef(null) // Tracks timeout for changing text
+  const visibilityTimeoutRef = useRef(null) // Tracks timeout for hiding notice
+
+  const handleHoldStart = () => {
+    // Mark the start of the hold
+    isHoldingRef.current = true
+    holdStartTimeRef.current = Date.now()
+
+    // Show the announcement immediately
+    setShowNotice(true)
+    setNoticeText('Hold to keep...') // Show initial "Hold to continue"
+
+    // Change to "Release to exit" after 1 second
+    textTimeoutRef.current = setTimeout(() => {
+      if (isHoldingRef.current) {
+        setNoticeText('Release to exit')
+      }
+    }, 1000)
+  }
+
+  const handleHoldEnd = () => {
+    // Mark the end of the hold
+    isHoldingRef.current = false
+
+    // Clear any pending text change timeout
+    clearTimeout(textTimeoutRef.current)
+
+    // Calculate how long the announcement has been visible
+    const holdDuration = Date.now() - holdStartTimeRef.current
+
+    if (holdDuration >= 1000) {
+      // If the minimum duration has passed, hide immediately
+      setShowNotice(false)
+      setNoticeText('Hold to continue') // Reset text
+    } else {
+      // Otherwise, ensure it remains visible until 1 second has elapsed
+      const remainingTime = 1000 - holdDuration
+      visibilityTimeoutRef.current = setTimeout(() => {
+        if (!isHoldingRef.current) {
+          setShowNotice(false)
+          setNoticeText('Hold to continue') // Reset text
+        }
+      }, remainingTime)
+    }
+  }
+
+  // Clear timeouts if the component unmounts
+  useEffect(() => {
+    return () => {
+      clearTimeout(textTimeoutRef.current)
+      clearTimeout(visibilityTimeoutRef.current)
+    }
+  }, [])
 
   return (
     <AnimatePresence>
       {isHome ? (
         <></>
       ) : (
-        <motion.div
-          key={'adddANNOUNCEMENT' + pathname}
-          className={clsx(
-            'relative inset-x-0 select-none z-10 flex flex-col last:flex-col-reverse gap-4 p-4'
-          )}
-          initial={{
-            y: 0,
-            opacity: 0,
-            transition: { type: 'tween', duration: 0.2, delay: 1 }
-          }}
-          animate={{
-            y: 0,
-            opacity: 1,
-            transition: { type: 'tween', duration: 0.2, delay: 1 }
-          }}
-          exit={{
-            y: 0,
-            opacity: 0,
-            transition: { type: 'tween', duration: 0.2 }
-          }}
-        >
+        <>
           <motion.nav
-            className={
-              'inset-x-0 flex gap-2 items-baseline justify-between bg-white'
-            }
-            initial={{
-              y: 0,
-              opacity: 0,
-              transition: { type: 'tween', duration: 0.2, delay: 1 }
-            }}
-            animate={{
-              y: 0,
-              opacity: 1,
-              transition: { type: 'tween', duration: 0.2, delay: 1 }
-            }}
-            exit={{
-              y: 0,
-              opacity: 0,
-              transition: { type: 'tween', duration: 0.2 }
-            }}
+            className="p-4 flex items-center relative z-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0, delay: 1 }}
           >
-            <Link href="/" className={'block'}>
-              ADDD:
-            </Link>
+            {/* Hold-to-show "Notice" */}
+            <div
+              className="whitespace-nowrap absolute left-0 p-4 cursor-pointer"
+              onMouseDown={handleHoldStart}
+              onMouseUp={handleHoldEnd}
+              onMouseLeave={handleHoldEnd}
+              onTouchStart={handleHoldStart}
+              onTouchEnd={handleHoldEnd}
+            >
+              <span className="sm:hidden">Notice</span>
+              <span className="hidden sm:inline-block">Announcement</span>
+            </div>
+
             <Link
               href="/"
-              className={
-                'whitespace-nowrap absolute right-4 sm:static shrink-0'
-              }
+              className={'block uppercase relative left-1/2 -translate-x-1/2'}
             >
-              Back to Images
+              Association
+            </Link>
+            <Link href="/" className={'whitespace-nowrap absolute right-0 p-4'}>
+              <span className="hidden sm:inline-block">Back to&nbsp;</span>
+              Images
             </Link>
           </motion.nav>
-          <Announcement />
-        </motion.div>
+          <motion.div
+            className={clsx(
+              'fixed inset-0 z-10 bg-white text-black flex items-center justify-center pointer-events-none text-center p-4 sm:p-8 pb-12'
+            )}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: showNotice ? 1 : 0 }}
+            transition={{ duration: 0 }}
+          >
+            <div className="absolute left-0 top-0 p-4">{noticeText}</div>
+            <div
+              className={
+                'absolute top-0 left-1/2 -translate-x-1/2 uppercase p-4'
+              }
+            >
+              Association
+            </div>
+            <Announcement />
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
-  )
-}
-
-const HackyMarquee = ({ text, speed, divider = ' | ' }) => {
-  const [currentText, setCurrentText] = useState(
-    text + divider + text + divider
-  ) // Add divider to the text
-  const [index, setIndex] = useState(0)
-
-  useEffect(() => {
-    const fullText = text + divider // Add divider to the full text
-    const interval = setInterval(() => {
-      setCurrentText((prevText) => {
-        // Move one character at a time
-        return prevText.slice(1) + prevText[0]
-      })
-
-      // Update index for next rotation
-      setIndex((prevIndex) => (prevIndex + 1) % fullText.length)
-    }, speed)
-
-    return () => clearInterval(interval) // Cleanup interval on unmount
-  }, [text, speed, divider])
-
-  return (
-    <div
-      style={{
-        display: 'inline-block',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        width: '100%'
-      }}
-    >
-      {currentText}
-    </div>
   )
 }

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
   const { title, description, image } = page?.seo ?? []
 
   return {
-    title: title ? `${title} – ADDD` : 'ADDD',
+    title: title ? `${title} – Association` : 'Association',
     description: description,
     openGraph: {
       description: description,
@@ -64,6 +64,7 @@ export default async function Post({ params }) {
           case 'Image':
             return <RegularImage {...item} />
           case 'EntrySection':
+            return null
             const cards =
               item.reference
                 ?.filter((entry) => entry.__typename === 'Profile')

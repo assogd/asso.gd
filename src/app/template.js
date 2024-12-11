@@ -31,10 +31,15 @@ export default function Template({ children }) {
       <div
         className={clsx(
           isVisible && 'opacity-0',
-          'duration-200 fixed inset-0 flex justify-center items-center select-none pointer-events-none'
+          'duration-200 fixed inset-0 flex flex-col gap-[.15em] justify-center items-center select-none pointer-events-none z-20 p-4 pb-12 text-center'
         )}
       >
-        ADDD
+        <div className="uppercase">Association</div>
+        <div className="">
+          <span className="hidden sm:inline-block">Office for&nbsp;</span>
+          Direction, Design and Development
+        </div>
+        <div className="">Vita bergen, Stockholm</div>
       </div>
       <div className={clsx(!isVisible && 'opacity-0', 'duration-200')}>
         {children}
