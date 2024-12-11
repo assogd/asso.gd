@@ -13,7 +13,7 @@ export const Navigation = () => {
   const isSmallScreen = useMedia({ maxWidth: '640px' }) // Detect screens smaller than sm (640px)
   const [showNotice, setShowNotice] = useState(false)
   const [noticeText, setNoticeText] = useState(
-    isSmallScreen ? 'Hold...' : 'Hold to continue'
+    isSmallScreen ? '(Hold...)' : '(Hold to keep)'
   ) // Dynamic notice text
   const isHoldingRef = useRef(false) // Tracks if the user is still holding
   const holdStartTimeRef = useRef(null) // Tracks the start time of the hold
@@ -27,14 +27,14 @@ export const Navigation = () => {
 
     // Show the announcement immediately
     setShowNotice(true)
-    setNoticeText(isSmallScreen ? '(Hold...)' : '(Hold to continue)') // Show initial text
+    setNoticeText(isSmallScreen ? '(Hold...)' : '(Hold to keep)') // Show initial text
 
     // Change to "Release..." after 1 second
     textTimeoutRef.current = setTimeout(() => {
       if (isHoldingRef.current) {
         setNoticeText(isSmallScreen ? '(Release)' : '(Release to exit)')
       }
-    }, 1000)
+    }, 2000)
   }
 
   const handleHoldEnd = () => {
