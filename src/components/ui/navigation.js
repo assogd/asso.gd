@@ -32,7 +32,7 @@ export const Navigation = () => {
     // Change to "Release..." after 1 second
     textTimeoutRef.current = setTimeout(() => {
       if (isHoldingRef.current) {
-        setNoticeText(isSmallScreen ? '(Release)' : '(Release to exit)')
+        setNoticeText(isSmallScreen ? '(Release)' : '(Release when ready)')
       }
     }, 2000)
   }
