@@ -47,9 +47,9 @@ export const MainCarousel = ({ content }) => {
     : desktopShortHoldThreshold
   const swipeThreshold = 50
 
-  const getSlideDuration = () => content[active]?.duration ?? 8000
+  const getSlideDuration = () => content[active]?.duration ?? 5000
   const getTotalDuration = () =>
-    content.reduce((sum, slide) => sum + (slide.duration ?? 8000), 0)
+    content.reduce((sum, slide) => sum + (slide.duration ?? 5000), 0)
 
   const totalDuration = getTotalDuration()
 
