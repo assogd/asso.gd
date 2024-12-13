@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { use100vh } from 'react-div-100vh'
 import { useMedia } from 'use-media'
-import { usePreloadAdjacentAssets } from '@/hooks/use-preload-assets'
+import { usePreloadAdjacentAssets } from '@/hooks/carousel/use-preload-assets'
 
 export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
