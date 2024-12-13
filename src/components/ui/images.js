@@ -12,19 +12,30 @@ export const RegularImage = ({
   manualWidth,
   delay = 0 // Default delay to 0 seconds
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [isReady, setIsReady] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false) // Tracks if the image is loaded
+  const [isDelayElapsed, setIsDelayElapsed] = useState(false) // Tracks if the delay has elapsed
+  const [isReady, setIsReady] = useState(false) // Tracks if the component is fully ready
   const { hasRun } = useMegaCover() // Get the `hasRun` state from the context
 
   useEffect(() => {
-    if (isLoaded) {
-      // Calculate delay based on hasRun
-      const adjustedDelay = hasRun && delay > 0 ? 1 : delay
+    // Calculate the appropriate delay
+    const adjustedDelay = hasRun && delay > 0 ? 1 : delay
 
-      const timeout = setTimeout(() => setIsReady(true), adjustedDelay * 1000)
-      return () => clearTimeout(timeout)
+    // Start the delay timer immediately
+    const timeout = setTimeout(
+      () => setIsDelayElapsed(true),
+      adjustedDelay * 1000
+    )
+
+    return () => clearTimeout(timeout)
+  }, [delay, hasRun])
+
+  useEffect(() => {
+    // Component is ready only when both image is loaded and delay has elapsed
+    if (isLoaded && isDelayElapsed) {
+      setIsReady(true)
     }
-  }, [isLoaded, delay, hasRun])
+  }, [isLoaded, isDelayElapsed])
 
   if (!file?.width) return null
 
@@ -57,7 +68,7 @@ export const RegularImage = ({
             'w-full object-center object-contain',
             hasMaxHeight && 'h-full'
           )}
-          onLoad={() => setIsLoaded(true)}
+          onLoad={() => setIsLoaded(true)} // Trigger when the image loads
         />
       </UncoverWhenInView>
       {caption && <figcaption className="text-sm mt-1">{caption}</figcaption>}
