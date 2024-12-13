@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { use100vh } from 'react-div-100vh'
 import { useMedia } from 'use-media'
+import { usePreloadAdjacentAssets } from '@/hooks/use-preload-assets'
 
 export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
@@ -28,6 +29,8 @@ export const MainCarousel = ({ content }) => {
   const height = use100vh()
   const isMobile = useMedia({ maxWidth: 767, pointer: 'coarse' })
   const isSmallScreen = useMedia({ maxWidth: '640px' })
+
+  usePreloadAdjacentAssets(content, active)
 
   useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
