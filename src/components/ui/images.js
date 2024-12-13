@@ -19,13 +19,13 @@ export const RegularImage = ({ file, caption, className, manualWidth }) => {
 
   return (
     <figure className={clsx(className)}>
-      <UncoverWhenInView isReady={isLoaded} className="w-full">
+      <UncoverWhenInView isReady={isLoaded} className="w-full h-full">
         <Image
           src={file.url}
           width={width}
           height={height}
           alt={file.alt ?? ''}
-          className="w-full object-center"
+          className="w-full h-full object-center object-contain"
           onLoad={() => setIsLoaded(true)}
         />
       </UncoverWhenInView>

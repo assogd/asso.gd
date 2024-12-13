@@ -31,6 +31,9 @@ module.exports = {
     {
       pattern: /^max-w-(sm|md|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl)$/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
+    },
+    {
+      pattern: /^max-h-(1\/2-screen)$/ // Safelist the max-height class
     }
   ],
   theme: {
@@ -70,6 +73,9 @@ module.exports = {
       fontFamily: {
         serif: ['var(--font-serif)'],
         sans: ['var(--font-sans)']
+      },
+      maxHeight: {
+        '1/2-screen': '50vh'
       }
     }
   },

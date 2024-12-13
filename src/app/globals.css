@@ -63,3 +63,19 @@ a:hover {
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.blinking-path {
+  animation: blink 2s steps(1, start) infinite;
+}
