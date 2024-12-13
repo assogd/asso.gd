@@ -39,7 +39,7 @@ export default async function Post({ params }) {
   if (!page || !page?.content?.length) return notFound()
 
   return (
-    <Main className="p-4 pt-0">
+    <Main className="px-4 pt-0 pb-12">
       <Heading1 className="sr-only">About</Heading1>
       {page?.content.map((item) => {
         switch (item.__typename) {
@@ -62,7 +62,7 @@ export default async function Post({ params }) {
               </section>
             )
           case 'Image':
-            return <RegularImage {...item} />
+            return <RegularImage {...item} delay={1} />
           case 'EntrySection':
             return null
             const cards =
