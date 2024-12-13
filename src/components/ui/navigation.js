@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import React, { useState, useEffect, useRef } from 'react'
 import Announcement from '@/components/announcement'
 
-export const Navigation = () => {
+export const Navigation = ({ align }) => {
   const pathname = usePathname()
   const isHome = pathname === '/'
   const isSmallScreen = useMedia({ maxWidth: '640px' }) // Detect screens smaller than sm (640px)
@@ -113,11 +113,19 @@ export const Navigation = () => {
             animate={{ opacity: showNotice ? 1 : 0 }}
             transition={{ duration: 0 }}
           >
-            <div className="absolute left-0 top-0 p-4">{noticeText}</div>
             <div
-              className={
-                'absolute top-0 left-1/2 -translate-x-1/2 uppercase p-4'
-              }
+              className={clsx(
+                'absolute left-0 p-4',
+                align === 'top' ? 'top-0' : 'bottom-0'
+              )}
+            >
+              {noticeText}
+            </div>
+            <div
+              className={clsx(
+                'absolute left-1/2 -translate-x-1/2 uppercase p-4',
+                align === 'top' ? 'top-0' : 'bottom-0'
+              )}
             >
               Association
             </div>
