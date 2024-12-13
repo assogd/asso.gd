@@ -6,6 +6,7 @@ import { fetchGraphQL } from '@/lib/graphql'
 import PlausibleProvider from 'next-plausible'
 import { Navigation } from '@/components/ui/navigation'
 import { ThemeProvider } from 'next-themes'
+import { MegaCoverProvider } from '@/components/mega-cover-context'
 
 const serif = localFont({
   src: [
@@ -65,9 +66,11 @@ export default async function Layout({ children, params }) {
           enableSystem={false}
           themes={['light', 'vibrant', 'dark']}
         >
-          <Navigation align="top" />
-          {children}
-          <Navigation />
+          <MegaCoverProvider>
+            <Navigation align="top" />
+            {children}
+            <Navigation />
+          </MegaCoverProvider>
         </ThemeProvider>
       </body>
     </html>

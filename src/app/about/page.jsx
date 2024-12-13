@@ -62,7 +62,7 @@ export default async function Post({ params }) {
               </section>
             )
           case 'Image':
-            return <RegularImage {...item} delay={1} />
+            return <RegularImage {...item} delay={3} />
           case 'EntrySection':
             return null
             const cards =

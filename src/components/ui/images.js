@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { UncoverWhenInView } from './animations'
 import clsx from 'clsx'
 import { useState, useEffect } from 'react'
+import { useMegaCover } from '@/components/mega-cover-context'
 
 export const RegularImage = ({
   file,
@@ -13,14 +14,17 @@ export const RegularImage = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isReady, setIsReady] = useState(false)
+  const { hasRun } = useMegaCover() // Get the `hasRun` state from the context
 
   useEffect(() => {
     if (isLoaded) {
-      // Delay the animation if a delay is specified
-      const timeout = setTimeout(() => setIsReady(true), delay * 1000)
+      // Calculate delay based on hasRun
+      const adjustedDelay = hasRun && delay > 0 ? 1 : delay
+
+      const timeout = setTimeout(() => setIsReady(true), adjustedDelay * 1000)
       return () => clearTimeout(timeout)
     }
-  }, [isLoaded, delay])
+  }, [isLoaded, delay, hasRun])
 
   if (!file?.width) return null
 
