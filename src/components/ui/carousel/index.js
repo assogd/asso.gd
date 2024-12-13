@@ -197,12 +197,10 @@ export const MainCarousel = ({ content }) => {
   }
 
   const shouldRenderSlide = (i) =>
-    isMobile
-      ? i === active
-      : i === active ||
-        i === active + 1 ||
-        i === active - 1 ||
-        (active === content.length - 1 && i === 0)
+    i === active ||
+    i === active + 1 ||
+    i === active - 1 ||
+    (active === content.length - 1 && i === 0)
 
   return (
     <section
@@ -242,8 +240,8 @@ export const MainCarousel = ({ content }) => {
                               'row-span-full mb-4'
                           )}
                           draggable="false"
-                          loading={i === active ? 'eager' : 'lazy'}
-                          priority={i === active}
+                          loading={'eager'}
+                          priority={true}
                         />
                       )
                     case 'Video':
@@ -258,7 +256,7 @@ export const MainCarousel = ({ content }) => {
                               'row-span-full mb-4'
                           )}
                           paused={isPaused}
-                          preload={i === active ? 'auto' : 'none'}
+                          preload={'auto'}
                         />
                       )
                     default:
