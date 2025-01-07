@@ -39,7 +39,7 @@ export const metadata = {
   metadataBase: new URL('https://www.asso.gd'),
   creator: 'Asso DDD',
   openGraph: {
-    siteName: 'Association',
+    siteName: 'Asso',
     type: 'website'
   },
   appleWebApp: {

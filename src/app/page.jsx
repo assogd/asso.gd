@@ -11,7 +11,7 @@ export async function generateMetadata() {
   const { title, description, image } = page?.seo ?? []
 
   return {
-    title: title ?? 'Association',
+    title: title ?? 'Asso',
     description: description,
     openGraph: {
       description: description,

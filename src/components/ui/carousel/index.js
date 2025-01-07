@@ -225,7 +225,7 @@ export const MainCarousel = ({ content }) => {
                 active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
               )}
             >
-              <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full">
+              <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full items-center">
                 {item.assets.map((asset) => {
                   switch (asset.__typename) {
                     case 'Image':
@@ -239,6 +239,8 @@ export const MainCarousel = ({ content }) => {
                           className={clsx(
                             'object-center h-full object-contain pointer-events-none',
                             asset.className,
+                            !asset.className.includes('row-end-13') &&
+                              'max-h-[870px]',
                             !asset.className.includes('row-') &&
                               'row-span-full mb-4'
                           )}
@@ -346,7 +348,7 @@ export const MainCarousel = ({ content }) => {
           }
         }}
       >
-        Association
+        Asso (DDD)
       </motion.div>
 
       <motion.nav

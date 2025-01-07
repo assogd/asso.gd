@@ -99,7 +99,7 @@ export const Navigation = ({ align }) => {
               href="/"
               className={'block uppercase relative left-1/2 -translate-x-1/2'}
             >
-              Association
+              Asso Stockholm
             </Link>
             <Link href="/" className={'whitespace-nowrap absolute right-0 p-4'}>
               {isSmallScreen ? 'Images' : 'Back to images'}
@@ -127,7 +127,7 @@ export const Navigation = ({ align }) => {
                 align === 'top' ? 'top-0' : 'bottom-0'
               )}
             >
-              Association
+              Asso Stockholm
             </div>
             <Announcement />
           </motion.div>
