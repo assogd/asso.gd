@@ -348,7 +348,7 @@ export const MainCarousel = ({ content }) => {
           }
         }}
       >
-        Asso Stockholm
+        {isSmallScreen ? 'Asso' : 'Asso Stockholm'}
       </motion.div>
 
       <motion.nav
