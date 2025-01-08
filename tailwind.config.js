@@ -75,8 +75,7 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
       },
       fontFamily: {
-        serif: ['var(--font-serif)'],
-        sans: ['var(--font-sans)']
+        serif: ['var(--font-serif)']
       },
       maxHeight: {
         '1/2-screen': '50vh'

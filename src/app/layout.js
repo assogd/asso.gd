@@ -11,28 +11,17 @@ import { MegaCoverProvider } from '@/components/mega-cover-context'
 const serif = localFont({
   src: [
     {
-      path: '../../public/fonts/ABCSynt-Regular-Trial.woff2',
+      path: '../../public/fonts/ABCSynt-Regular.woff2',
       weight: '400',
       style: 'normal'
     },
     {
-      path: '../../public/fonts/ABCSynt-RegularItalic-Trial.woff2',
+      path: '../../public/fonts/ABCSynt-RegularItalic.woff2',
       weight: '400',
       style: 'italic'
     }
   ],
   variable: '--font-serif'
-})
-
-const sans = localFont({
-  src: [
-    {
-      path: '../../public/fonts/HelveticaNeueLTStd-Ex.woff2',
-      weight: '400',
-      style: 'normal'
-    }
-  ],
-  variable: '--font-sans'
 })
 
 export const metadata = {
@@ -51,9 +40,7 @@ export default async function Layout({ children, params }) {
   return (
     <html
       lang="en"
-      className={clsx(
-        `${serif.variable} ${sans.variable} font-serif overscroll-none`
-      )}
+      className={clsx(`${serif.variable} font-serif overscroll-none`)}
       suppressHydrationWarning
     >
       <head>
