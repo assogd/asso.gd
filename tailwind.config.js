@@ -19,13 +19,17 @@ module.exports = {
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
+      pattern: /^text-(left|center|right)$/,
+      variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
+    },
+    {
       pattern:
         /^(p|px|py|pb|pt|pl|pr)-(1[0-2]|[1-9]|16|20|24|28|32|36|40|44|48|1\/2|1\/3|2\/3|1\/4|3\/4|1\/5|2\/5|3\/5|4\/5|1\/6|5\/6|full)$/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
       pattern:
-        /^(-mt)-(1[0-2]|[1-9]|16|20|24|28|32|36|40|44|48|64|72|1\/2|1\/3|2\/3|1\/4|3\/4|1\/5|2\/5|3\/5|4\/5|1\/6|5\/6|full)$/,
+        /^(-mt|mb|mt)-(0|1[0-2]|[1-9]|16|20|24|28|32|36|40|44|48|64|72|1\/2|1\/3|2\/3|1\/4|3\/4|1\/5|2\/5|3\/5|4\/5|1\/6|5\/6|full)$/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'] // Responsive variants
     },
     {
