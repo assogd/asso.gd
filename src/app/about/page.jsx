@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
   const { title, description, image } = page?.seo ?? []
 
   return {
-    title: title ? `${title} – Asso` : 'Asso',
+    title: title ?? 'Asso',
     description: description,
     openGraph: {
       description: description,
@@ -62,7 +62,7 @@ export default async function Post({ params }) {
               </section>
             )
           case 'Image':
-            return <RegularImage {...item} delay={3} />
+            return <RegularImage {...item} delay={2} />
           case 'EntrySection':
             return null
             const cards =

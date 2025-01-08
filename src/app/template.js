@@ -31,7 +31,7 @@ export default function Template({ children }) {
       <div
         className={clsx(
           isVisible && 'opacity-0',
-          'duration-200 fixed inset-0 flex flex-col gap-[.15em] justify-center items-center select-none pointer-events-none z-20 p-4 pb-8 text-center'
+          'duration-200 fixed inset-0 flex flex-col gap-[.25em] justify-center items-center select-none pointer-events-none z-20 p-4 pb-8 text-center'
         )}
       >
         <div className="uppercase">Asso (DDD) 2019–</div>

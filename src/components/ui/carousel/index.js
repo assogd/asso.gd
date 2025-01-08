@@ -348,7 +348,7 @@ export const MainCarousel = ({ content }) => {
           }
         }}
       >
-        Asso (DDD)
+        Asso Stockholm
       </motion.div>
 
       <motion.nav
