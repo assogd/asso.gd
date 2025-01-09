@@ -201,9 +201,10 @@ export const MainCarousel = ({ content }) => {
 
   const shouldRenderSlide = (i) =>
     i === active ||
-    i === active + 1 ||
-    i === active - 1 ||
-    (active === content.length - 1 && i === 0)
+    i === (active + 1) % content.length ||
+    i === (active + 2) % content.length ||
+    i === (active - 1 + content.length) % content.length ||
+    i === (active - 2 + content.length) % content.length
 
   return (
     <section
@@ -221,6 +222,7 @@ export const MainCarousel = ({ content }) => {
             <div
               key={item.id}
               className={clsx(
+                `slide-${i + 1}`,
                 'absolute inset-0 transition-opacity duration-250',
                 active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
               )}
