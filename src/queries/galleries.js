@@ -14,7 +14,7 @@ export const GalleryById = `
               file {
                 height
                 url(
-                  transformation: {document: {output: {format: webp}}, image: {resize: {height: 1200, width: 1600}}}
+                  transformation: {document: {output: {format: webp}}, image: {resize: {height: 1200, width: 1600, fit: max}}}
                 )
                 width
               }

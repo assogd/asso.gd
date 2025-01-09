@@ -229,26 +229,37 @@ export const MainCarousel = ({ content }) => {
                 {item.assets.map((asset) => {
                   switch (asset.__typename) {
                     case 'Image':
-                      const isFullWidth =
-                        asset.className.includes('col-start-1') &&
-                        (asset.className.includes('col-end-13') ||
-                          asset.className.includes('col-span-full'))
+                      const isFullWidthDefault =
+                        asset.className.includes('object-cover')
+
+                      const sizes =
+                        '(max-width: 768px) 100vw, (min-width: 769px) and (max-width: 1200px) 100vw, 100vw'
+
+                      const { width, height } =
+                        asset.file.width && asset.file.height
+                          ? calculateResizedDimensions(
+                              asset.file.width,
+                              asset.file.height,
+                              1600,
+                              1200
+                            )
+                          : { width: 1600, height: 1200 }
 
                       return (
                         <Image
                           key={asset.id}
                           src={asset.file.url}
-                          width={asset.file.width}
-                          height={asset.file.height}
+                          width={width}
+                          height={height}
                           alt={asset.file.alt ?? ''}
                           className={clsx(
                             'object-center h-full object-contain pointer-events-none',
                             asset.className,
-                            !isFullWidth && 'max-h-[870px]',
+                            !isFullWidthDefault && 'max-h-[870px]',
                             !asset.className.includes('row-') &&
                               'row-span-full mb-4'
                           )}
-                          sizes="(max-width: 768px) 100vw, (min-width: 769px) and (max-width: 1200px) 50vw, 33vw"
+                          sizes={sizes}
                           draggable="false"
                           loading={'eager'}
                           priority={true}
@@ -398,4 +409,23 @@ export const MainCarousel = ({ content }) => {
       </motion.div>
     </section>
   )
+}
+
+const calculateResizedDimensions = (
+  originalWidth,
+  originalHeight,
+  maxWidth,
+  maxHeight
+) => {
+  const aspectRatio = originalWidth / originalHeight
+
+  if (originalWidth > maxWidth || originalHeight > maxHeight) {
+    if (originalWidth / maxWidth > originalHeight / maxHeight) {
+      return { width: maxWidth, height: Math.round(maxWidth / aspectRatio) }
+    } else {
+      return { width: Math.round(maxHeight * aspectRatio), height: maxHeight }
+    }
+  }
+
+  return { width: originalWidth, height: originalHeight } // No resizing needed
 }
