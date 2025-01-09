@@ -15,7 +15,7 @@ html {
 
 html,
 body {
-  transition: background 250ms;
+  transition: background 0ms;
   -webkit-font-smoothing: antialiased; /* Lighter appearance */
   -moz-osx-font-smoothing: grayscale; /* Similar effect */
 }

@@ -30,7 +30,7 @@ export const MainCarousel = ({ content }) => {
   const isMobile = useMedia({ maxWidth: 767, pointer: 'coarse' })
   const isSmallScreen = useMedia({ maxWidth: '640px' })
 
-  usePreloadAdjacentAssets(content, active)
+  //usePreloadAdjacentAssets(content, active)
 
   useEffect(() => {
     const slideTheme = content[active]?.theme ?? 'light'
@@ -223,8 +223,8 @@ export const MainCarousel = ({ content }) => {
               key={item.id}
               className={clsx(
                 `slide-${i + 1}`,
-                'absolute inset-0 transition-opacity duration-250',
-                active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
+                'absolute inset-0 transition-opacity duration-0',
+                active === i ? 'opacity-100' : 'opacity-0'
               )}
             >
               <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full items-center">
