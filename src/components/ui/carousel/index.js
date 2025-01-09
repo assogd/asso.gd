@@ -253,7 +253,7 @@ export const MainCarousel = ({ content }) => {
                           height={height}
                           alt={asset.file.alt ?? ''}
                           className={clsx(
-                            'object-center h-full object-contain pointer-events-none',
+                            'object-center h-full w-full object-contain pointer-events-none',
                             asset.className,
                             !isFullWidthDefault && 'max-h-[870px]',
                             !asset.className.includes('row-') &&
