@@ -10,6 +10,7 @@ export const RegularImage = ({
   caption,
   className,
   manualWidth,
+  sizes = '(max-width: 768px) 100vw, (min-width: 769px) and (max-width: 1200px) 50vw, 33vw',
   delay = 0 // Default delay to 0 seconds
 }) => {
   const [isLoaded, setIsLoaded] = useState(false) // Tracks if the image is loaded
@@ -68,6 +69,7 @@ export const RegularImage = ({
             'w-full object-center object-contain',
             hasMaxHeight && 'h-full'
           )}
+          sizes={sizes}
           onLoad={() => setIsLoaded(true)} // Trigger when the image loads
         />
       </UncoverWhenInView>

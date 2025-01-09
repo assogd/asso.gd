@@ -221,7 +221,7 @@ export const MainCarousel = ({ content }) => {
             <div
               key={item.id}
               className={clsx(
-                'absolute inset-0 transition-opacity duration-0',
+                'absolute inset-0 transition-opacity duration-250',
                 active === i ? 'opacity-100 visible' : 'opacity-0 invisible'
               )}
             >
@@ -229,6 +229,11 @@ export const MainCarousel = ({ content }) => {
                 {item.assets.map((asset) => {
                   switch (asset.__typename) {
                     case 'Image':
+                      const isFullWidth =
+                        asset.className.includes('col-start-1') &&
+                        (asset.className.includes('col-end-13') ||
+                          asset.className.includes('col-span-full'))
+
                       return (
                         <Image
                           key={asset.id}
@@ -239,11 +244,11 @@ export const MainCarousel = ({ content }) => {
                           className={clsx(
                             'object-center h-full object-contain pointer-events-none',
                             asset.className,
-                            !asset.className.includes('row-end-13') &&
-                              'max-h-[870px]',
+                            !isFullWidth && 'max-h-[870px]',
                             !asset.className.includes('row-') &&
                               'row-span-full mb-4'
                           )}
+                          sizes="(max-width: 768px) 100vw, (min-width: 769px) and (max-width: 1200px) 50vw, 33vw"
                           draggable="false"
                           loading={'eager'}
                           priority={true}
