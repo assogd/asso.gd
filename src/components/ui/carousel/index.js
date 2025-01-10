@@ -193,6 +193,12 @@ export const MainCarousel = ({ content }) => {
     isHoldingRef.current = false
     setWasHolding(false)
     resumeTimer()
+
+    if (sectionRef.current && isCursorEnabled) {
+      // Set the cursor style again to ensure consistency
+      sectionRef.current.style.cursor =
+        clickX < screenWidth / 2 ? 'w-resize' : 'e-resize'
+    }
   }
 
   const handleTouchStart = (e) => {
@@ -258,6 +264,7 @@ export const MainCarousel = ({ content }) => {
     const screenWidth = window.innerWidth
     const mouseX = e.clientX
 
+    // Update cursor dynamically during mouse movement
     sectionRef.current.style.cursor =
       mouseX < screenWidth / 2 ? 'w-resize' : 'e-resize'
   }
