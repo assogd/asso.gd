@@ -7,6 +7,7 @@ import PlausibleProvider from 'next-plausible'
 import { Navigation } from '@/components/ui/navigation'
 import { ThemeProvider } from 'next-themes'
 import { MegaCoverProvider } from '@/components/mega-cover-context'
+import { FirstImageLoadedProvider } from '@/hooks/use-first-image-loaded'
 
 const serif = localFont({
   src: [
@@ -54,9 +55,11 @@ export default async function Layout({ children, params }) {
           themes={['light', 'vibrant', 'dark']}
         >
           <MegaCoverProvider>
-            <Navigation align="top" />
-            {children}
-            <Navigation />
+            <FirstImageLoadedProvider>
+              <Navigation align="top" />
+              {children}
+              <Navigation />
+            </FirstImageLoadedProvider>
           </MegaCoverProvider>
         </ThemeProvider>
       </body>

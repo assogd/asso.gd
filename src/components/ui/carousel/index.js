@@ -12,6 +12,7 @@ import { useTheme } from 'next-themes'
 import { use100vh } from 'react-div-100vh'
 import { useMedia } from 'use-media'
 import { usePreloadAdjacentAssets } from '@/hooks/carousel/use-preload-assets'
+import { useFirstImageLoaded } from '@/hooks/use-first-image-loaded'
 
 export const MainCarousel = ({ content }) => {
   const [active, setActive] = useState(0)
@@ -29,6 +30,9 @@ export const MainCarousel = ({ content }) => {
   const height = use100vh()
   const isMobile = useMedia({ maxWidth: 767, pointer: 'coarse' })
   const isSmallScreen = useMedia({ maxWidth: '640px' })
+  const { setIsFirstImageLoaded } = useFirstImageLoaded()
+  const [isFirstImageLoadedInternally, setIsFirstImageLoadedInternally] =
+    useState(false)
 
   //usePreloadAdjacentAssets(content, active)
 
@@ -38,6 +42,25 @@ export const MainCarousel = ({ content }) => {
       setTheme(slideTheme)
     }
   }, [setTheme, active, theme])
+
+  const handleFirstImageLoad = () => {
+    if (!isFirstImageLoadedInternally) {
+      setIsFirstImageLoadedInternally(true)
+      setIsFirstImageLoaded(true)
+    }
+  }
+
+  useEffect(() => {
+    // Fallback in case the first image never loads
+    const timer = setTimeout(() => {
+      if (!isFirstImageLoadedInternally) {
+        setIsFirstImageLoadedInternally(true)
+        setIsFirstImageLoaded(true)
+      }
+    }, 5000) // e.g., 5 seconds
+
+    return () => clearTimeout(timer)
+  }, [isFirstImageLoadedInternally, setIsFirstImageLoaded])
 
   const desktopShortHoldThreshold = 250
   const mobileShortHoldThreshold = 100
@@ -265,6 +288,7 @@ export const MainCarousel = ({ content }) => {
                           draggable="false"
                           loading={'eager'}
                           priority={true}
+                          onLoad={i === 0 && handleFirstImageLoad}
                         />
                       )
                     case 'Video':
