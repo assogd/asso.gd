@@ -28,7 +28,7 @@ export const MainCarousel = ({ content }) => {
   const isSwipingRef = useRef(false)
   const { theme, setTheme } = useTheme()
   const height = use100vh()
-  const isMobile = useMedia({ maxWidth: 767, pointer: 'coarse' })
+  const isTouchDevice = useMedia({ pointer: 'coarse' })
   const isSmallScreen = useMedia({ maxWidth: '640px' })
   const { setIsFirstImageLoaded } = useFirstImageLoaded()
   const [isFirstImageLoadedInternally, setIsFirstImageLoadedInternally] =
@@ -66,7 +66,7 @@ export const MainCarousel = ({ content }) => {
   const desktopShortHoldThreshold = 250
   const mobileShortHoldThreshold = 100
   const holdThreshold = 500
-  const shortHoldThreshold = isMobile
+  const shortHoldThreshold = isTouchDevice
     ? mobileShortHoldThreshold
     : desktopShortHoldThreshold
   const swipeThreshold = 50
@@ -233,6 +233,16 @@ export const MainCarousel = ({ content }) => {
     }
   }
 
+  useEffect(() => {
+    // Only attach `mousemove` handler on devices with fine pointers (e.g., mouse)
+    if (!isTouchDevice && sectionRef.current) {
+      const section = sectionRef.current
+      section.addEventListener('mousemove', handleMouseMove)
+
+      return () => section.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [isTouchDevice])
+
   const shouldRenderSlide = (i) =>
     i === active ||
     i === (active + 1) % content.length ||
@@ -245,7 +255,6 @@ export const MainCarousel = ({ content }) => {
       ref={sectionRef}
       className={'relative w-screen overflow-hidden select-none'}
       style={{ height }}
-      onMouseMove={handleMouseMove}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onTouchStart={handleTouchStart}
