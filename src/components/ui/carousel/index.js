@@ -306,8 +306,8 @@ export const MainCarousel = ({ content }) => {
               key={item.id}
               className={clsx(
                 `slide-${i + 1}`,
-                'absolute inset-0 transition-opacity duration-0',
-                active === i ? 'opacity-100' : 'opacity-0'
+                'absolute inset-0',
+                active === i ? 'visible' : 'invisible'
               )}
             >
               <div className="grid grid-cols-12 grid-rows-12 max-h-full h-full items-center">
