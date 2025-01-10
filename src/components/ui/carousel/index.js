@@ -33,6 +33,7 @@ export const MainCarousel = ({ content }) => {
   const { setIsFirstImageLoaded } = useFirstImageLoaded()
   const [isFirstImageLoadedInternally, setIsFirstImageLoadedInternally] =
     useState(false)
+  const sectionRef = useRef(null)
 
   //usePreloadAdjacentAssets(content, active)
 
@@ -222,6 +223,16 @@ export const MainCarousel = ({ content }) => {
     resumeTimer()
   }
 
+  const handleMouseMove = (e) => {
+    const screenWidth = window.innerWidth
+    const mouseX = e.clientX
+
+    if (sectionRef.current) {
+      sectionRef.current.style.cursor =
+        mouseX < screenWidth / 2 ? 'w-resize' : 'e-resize'
+    }
+  }
+
   const shouldRenderSlide = (i) =>
     i === active ||
     i === (active + 1) % content.length ||
@@ -231,8 +242,10 @@ export const MainCarousel = ({ content }) => {
 
   return (
     <section
+      ref={sectionRef}
       className={'relative w-screen overflow-hidden select-none'}
       style={{ height }}
+      onMouseMove={handleMouseMove}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onTouchStart={handleTouchStart}
