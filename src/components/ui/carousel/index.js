@@ -35,6 +35,7 @@ export const MainCarousel = ({ content }) => {
   const [isFirstImageLoadedInternally, setIsFirstImageLoadedInternally] =
     useState(false)
   const sectionRef = useRef(null)
+  const [isCursorEnabled, setIsCursorEnabled] = useState(false)
 
   //usePreloadAdjacentAssets(content, active)
 
@@ -44,6 +45,16 @@ export const MainCarousel = ({ content }) => {
       setTheme(slideTheme)
     }
   }, [setTheme, active, theme])
+
+  useEffect(() => {
+    if (isFirstImageLoadedInternally) {
+      const timer = setTimeout(() => {
+        setIsCursorEnabled(true) // Enable cursor after 1 second
+      }, 1000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [isFirstImageLoadedInternally, setIsCursorEnabled])
 
   const handleFirstImageLoad = () => {
     if (!isFirstImageLoadedInternally) {
@@ -152,6 +163,10 @@ export const MainCarousel = ({ content }) => {
     isSwipingRef.current = false
     setWasHolding(false)
     pauseTimer()
+
+    if (sectionRef.current) {
+      sectionRef.current.style.cursor = 'default'
+    }
   }
 
   const handleMouseUp = (e) => {
@@ -229,24 +244,35 @@ export const MainCarousel = ({ content }) => {
   }
 
   const handleMouseMove = (e) => {
+    if (
+      isPaused ||
+      isHoldingRef.current ||
+      !sectionRef.current ||
+      !isCursorEnabled
+    ) {
+      // Reset cursor to default if paused or holding
+      sectionRef.current.style.cursor = 'default'
+      return
+    }
+
     const screenWidth = window.innerWidth
     const mouseX = e.clientX
 
-    if (sectionRef.current) {
-      sectionRef.current.style.cursor =
-        mouseX < screenWidth / 2 ? 'w-resize' : 'e-resize'
-    }
+    sectionRef.current.style.cursor =
+      mouseX < screenWidth / 2 ? 'w-resize' : 'e-resize'
   }
 
   useEffect(() => {
-    // Only attach `mousemove` handler on devices with fine pointers (e.g., mouse)
     if (!isTouchDevice && sectionRef.current) {
       const section = sectionRef.current
-      section.addEventListener('mousemove', handleMouseMove)
 
-      return () => section.removeEventListener('mousemove', handleMouseMove)
+      const mouseMoveListener = (e) => handleMouseMove(e)
+
+      section.addEventListener('mousemove', mouseMoveListener)
+
+      return () => section.removeEventListener('mousemove', mouseMoveListener)
     }
-  }, [isTouchDevice])
+  }, [isTouchDevice, isPaused, isCursorEnabled]) // Depend on `isPaused` and `isHoldingRef.current`
 
   const shouldRenderSlide = (i) =>
     i === active ||
