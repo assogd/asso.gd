@@ -20,6 +20,7 @@ export const MainCarousel = ({ content }) => {
   const [progress, setProgress] = useState(0)
   const [wasHolding, setWasHolding] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
+  const [isTimerStarted, setIsTimerStarted] = useState(false)
   const router = useRouter()
   const intervalRef = useRef(null)
   const startTimeRef = useRef(null)
@@ -48,6 +49,7 @@ export const MainCarousel = ({ content }) => {
     if (!isFirstImageLoadedInternally) {
       setIsFirstImageLoadedInternally(true)
       setIsFirstImageLoaded(true)
+      setIsTimerStarted(true)
     }
   }
 
@@ -57,6 +59,7 @@ export const MainCarousel = ({ content }) => {
       if (!isFirstImageLoadedInternally) {
         setIsFirstImageLoadedInternally(true)
         setIsFirstImageLoaded(true)
+        setIsTimerStarted(true)
       }
     }, 5000) // e.g., 5 seconds
 
@@ -107,9 +110,11 @@ export const MainCarousel = ({ content }) => {
   }
 
   useEffect(() => {
-    startTimer()
+    if (isTimerStarted) {
+      startTimer()
+    }
     return () => clearInterval(intervalRef.current)
-  }, [active, isPaused])
+  }, [active, isPaused, isTimerStarted])
 
   const debounceNavigation = (fn, delay) => {
     let timeout
