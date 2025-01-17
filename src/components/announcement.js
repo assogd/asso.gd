@@ -17,7 +17,11 @@ const Announcement = () => {
 
   if (!announcement) return null
 
-  return <RichText content={announcement.message.raw} />
+  return (
+    <div className="max-w-2xl">
+      <RichText content={announcement.message.raw} />
+    </div>
+  )
 }
 
 export default Announcement

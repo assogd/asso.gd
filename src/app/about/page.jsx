@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/cards'
 import { Heading1, Heading2, Heading3 } from '@/components/ui/headings'
 import MegaCover from '@/components/mega-cover'
-import Announcement from '@/components/announcement'
 import clsx from 'clsx'
 
 export async function generateMetadata({ params }) {
