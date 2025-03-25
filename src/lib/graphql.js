@@ -1,6 +1,5 @@
 export async function fetchGraphQL(query, variables = {}) {
   const response = await fetch(process.env.HYGRAPH_ENDPOINT, {
-    cache: 'no-store',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
