@@ -45,7 +45,7 @@ export const UncoverWhenInView = ({
   return (
     <MotionComponent
       ref={ref}
-      className={clipPathCompatible ? '' : 'relative z-10'}
+      className={(clipPathCompatible ? '' : 'relative z-10', className)}
       {...(clipPathCompatible ? clipProps : fadeProps)}
     >
       {children}
