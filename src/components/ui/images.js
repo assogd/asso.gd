@@ -1,6 +1,10 @@
 'use client'
 import Image from 'next/image'
-import { UncoverWhenInView } from './animations'
+import dynamic from 'next/dynamic'
+const UncoverWhenInView = dynamic(
+  () => import('./animations').then((mod) => mod.UncoverWhenInView),
+  { ssr: false }
+)
 import clsx from 'clsx'
 import { useState, useEffect } from 'react'
 import { useMegaCover } from '@/components/mega-cover-context'
@@ -11,7 +15,8 @@ export const RegularImage = ({
   className,
   manualWidth,
   sizes = '(max-width: 768px) 100vw, (min-width: 769px) and (max-width: 1200px) 50vw, 33vw',
-  delay = 0 // Default delay to 0 seconds
+  delay = 0,
+  clipPathCompatible = true
 }) => {
   const [isLoaded, setIsLoaded] = useState(false) // Tracks if the image is loaded
   const [isDelayElapsed, setIsDelayElapsed] = useState(false) // Tracks if the delay has elapsed
@@ -59,6 +64,7 @@ export const RegularImage = ({
       <UncoverWhenInView
         isReady={isReady}
         className={clsx('w-full', hasMaxHeight && 'h-full')}
+        clipPathCompatible={clipPathCompatible}
       >
         <Image
           src={file.url}

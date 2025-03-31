@@ -12,6 +12,7 @@ import {
 import { Heading1, Heading2, Heading3 } from '@/components/ui/headings'
 import MegaCover from '@/components/mega-cover'
 import clsx from 'clsx'
+import { headers } from 'next/headers'
 
 export async function generateMetadata({ params }) {
   const pageData = await fetchGraphQL(SinglePageSeo, { slug: 'about' })
@@ -34,6 +35,14 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function Post({ params }) {
+  const headersList = await headers()
+  const userAgent = headersList.get('user-agent')
+  const isChrome =
+    /Chrome/.test(userAgent) &&
+    !/Edg/.test(userAgent) &&
+    !/OPR/.test(userAgent) &&
+    !/Brave/.test(userAgent) &&
+    !/CriOS/.test(userAgent)
   const { page } = await fetchGraphQL(SinglePage, { slug: 'about' })
   if (!page || !page?.content?.length) return notFound()
 
@@ -64,8 +73,9 @@ export default async function Post({ params }) {
             return (
               <RegularImage
                 {...item}
-                delay={2}
+                delay={isChrome ? 3 : 2}
                 sizes={'(max-width: 768px) 50vw, 33vw'}
+                clipPathCompatible={!isChrome}
               />
             )
           case 'EntrySection':

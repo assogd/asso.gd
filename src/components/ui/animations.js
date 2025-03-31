@@ -1,5 +1,5 @@
 'use client'
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useMemo } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 export const FadeInOnLoad = ({ children, className = '', as = 'div' }) => {
@@ -21,19 +21,32 @@ export const UncoverWhenInView = ({
   children,
   className = '',
   as = 'div',
-  isReady
+  isReady,
+  clipPathCompatible
 }) => {
   const MotionComponent = motion[as] || motion.div
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.1 })
 
+  const isVisible = isInView && isReady
+
+  const clipProps = {
+    initial: { clipPath: 'inset(0% 0% 100% 0%)' },
+    animate: isVisible ? { clipPath: 'inset(0% 0% 0% 0%)' } : {},
+    transition: { duration: 1.2, ease: 'easeOut' }
+  }
+
+  const fadeProps = {
+    initial: { opacity: 0 },
+    animate: isVisible ? { opacity: 1 } : {},
+    transition: { duration: 0, ease: 'easeOut' }
+  }
+
   return (
     <MotionComponent
       ref={ref}
-      initial={{ clipPath: 'inset(0 0 100% 0)' }} // Start fully hidden (from the bottom)
-      animate={isInView && isReady ? { clipPath: 'inset(0% 0 0 0)' } : {}} // Reveal from bottom to top
-      transition={{ duration: 2, ease: 'easeOut' }}
-      className={className}
+      className={clipPathCompatible ? '' : 'relative z-10'}
+      {...(clipPathCompatible ? clipProps : fadeProps)}
     >
       {children}
     </MotionComponent>
