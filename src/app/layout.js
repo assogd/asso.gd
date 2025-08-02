@@ -1,8 +1,6 @@
 import './globals.css'
 import localFont from 'next/font/local'
 import clsx from 'clsx'
-import Loading from '@/components/loading'
-import { fetchGraphQL } from '@/lib/graphql'
 import PlausibleProvider from 'next-plausible'
 import { Navigation } from '@/components/ui/navigation'
 import { ThemeProvider } from 'next-themes'
