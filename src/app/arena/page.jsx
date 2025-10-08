@@ -1,5 +1,6 @@
 'use client'
 import { ArenaCarousel, MultiChannelArenaCarousel } from '@/components/arena-carousel'
+import { DevRevalidateButton } from '@/components/dev-revalidate-button'
 import { useState } from 'react'
 
 export default function ArenaPage() {
@@ -136,6 +137,9 @@ export default function MyPage() {
           </div>
         )}
       </div>
+
+      {/* Dev revalidate button */}
+      <DevRevalidateButton />
     </div>
   )
 }
