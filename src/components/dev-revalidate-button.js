@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 
 export function DevRevalidateButton() {
+  console.log('DevRevalidateButton component rendered!')
   const [isRevalidating, setIsRevalidating] = useState(false)
   const [lastUpdate, setLastUpdate] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
@@ -84,7 +85,12 @@ export function DevRevalidateButton() {
     return `${diffDays}d ago`
   }
 
-  if (!isVisible) return null
+  if (!isVisible) {
+    console.log('DevRevalidateButton not visible, returning null')
+    return null
+  }
+  
+  console.log('DevRevalidateButton is visible, rendering button')
 
   return (
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
