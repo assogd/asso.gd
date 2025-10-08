@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 export function DevRevalidateButton() {
   const [lastUpdate, setLastUpdate] = useState(null)
   const [isRevalidating, setIsRevalidating] = useState(false)
+  const isDev = process.env.NODE_ENV === 'development'
 
   useEffect(() => {
     // Get timestamp from the existing page data (already server-side rendered)
@@ -46,20 +47,21 @@ export function DevRevalidateButton() {
       <div className="">
         Last updated: {formatLastUpdate(lastUpdate)}
       </div>
-      <button
-        id="dev-revalidate-btn"
-        onClick={handleRevalidate}
-        disabled={isRevalidating}
-        className=""
-        title="Revalidate Are.na cache"
-      >
-        {isRevalidating ? (
-          "Revalidating..."
-        ) : (
-          <span>[Revalidate]</span>
-        )}
-      </button>
-
+      {isDev && (
+        <button
+          id="dev-revalidate-btn"
+          onClick={handleRevalidate}
+          disabled={isRevalidating}
+          className=""
+          title="Revalidate Are.na cache"
+        >
+          {isRevalidating ? (
+            "Revalidating..."
+          ) : (
+            <span>[Revalidate]</span>
+          )}
+        </button>
+      )}
     </div>
   )
 }
