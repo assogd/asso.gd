@@ -83,23 +83,33 @@ Fetches a complete channel with metadata.
 ### `/api/arena?action=blocks&channel=SLUG&page=1&per=20`
 Fetches blocks from a channel with pagination.
 
-### `/api/arena?action=carousel&channel=SLUG&page=1&per=20`
-Fetches channel data formatted for carousel use.
+### `/api/arena?action=channel-with-blocks&channel=SLUG&page=1&per=20`
+Fetches channel data with blocks included.
 
 ## 🎨 Customization
 
-### Custom Block Transformation
+### Working with Raw Are.na Data
 
-You can customize how Are.na blocks are transformed for your carousel:
+The integration returns raw Are.na data, so you can adapt it however you need:
 
 ```jsx
-import { transformArenaBlockToCarouselItem } from '@/lib/arena'
+import { useArenaChannelWithBlocks } from '@/hooks/use-arena'
 
-const customTransform = (block) => ({
-  ...transformArenaBlockToCarouselItem(block),
-  duration: block.title?.length > 50 ? 8000 : 5000, // Longer duration for longer titles
-  theme: block.source?.provider === 'YouTube' ? 'dark' : 'light'
-})
+const { channel, isLoading, isError } = useArenaChannelWithBlocks('your-channel-slug')
+
+// channel contains:
+// - channel.title, channel.description, channel.created_at, etc.
+// - channel.blocks[] array with all block data
+// - Each block has: id, title, description, image, source, etc.
+
+// Adapt the data for your specific use case
+const adaptedBlocks = channel?.blocks?.map(block => ({
+  // Your custom transformation here
+  id: block.id,
+  title: block.title,
+  imageUrl: block.image?.display?.url,
+  // ... whatever you need
+}))
 ```
 
 ### Custom Styling
@@ -125,14 +135,13 @@ The carousel components accept all the same props as your existing `MainCarousel
 - `fetchArenaBlock(blockId)` - Fetch specific block
 - `searchArenaChannels(query, options)` - Search channels
 - `fetchArenaUser(username)` - Fetch user data
-- `transformArenaBlockToCarouselItem(block)` - Transform block for carousel
-- `fetchArenaChannelForCarousel(channelSlug, options)` - Fetch and transform for carousel
+- `fetchArenaChannelWithBlocks(channelSlug, options)` - Fetch channel with blocks
 
 ### React Hooks (`/src/hooks/use-arena.js`)
 
 - `useArenaChannel(channelSlug, options)` - Hook for channel data
 - `useArenaBlocks(channelSlug, options)` - Hook for blocks data
-- `useArenaCarousel(channelSlug, options)` - Hook for carousel-formatted data
+- `useArenaChannelWithBlocks(channelSlug, options)` - Hook for channel with blocks data
 - `useMultipleArenaChannels(channelSlugs, options)` - Hook for multiple channels
 
 ### Components (`/src/components/arena-carousel.js`)

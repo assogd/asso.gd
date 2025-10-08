@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { 
   fetchArenaChannel, 
   fetchArenaBlocks, 
-  fetchArenaChannelForCarousel 
+  fetchArenaChannelWithBlocks 
 } from '@/lib/arena'
 
 export async function GET(request) {
@@ -44,19 +44,19 @@ export async function GET(request) {
         data = await fetchArenaBlocks(channelSlug, { page: parseInt(page), per: parseInt(per) })
         break
 
-      case 'carousel':
+      case 'channel-with-blocks':
         if (!channelSlug) {
           return NextResponse.json(
-            { error: 'Channel slug is required for carousel action' },
+            { error: 'Channel slug is required for channel-with-blocks action' },
             { status: 400 }
           )
         }
-        data = await fetchArenaChannelForCarousel(channelSlug, { page: parseInt(page), per: parseInt(per) })
+        data = await fetchArenaChannelWithBlocks(channelSlug, { page: parseInt(page), per: parseInt(per) })
         break
 
       default:
         return NextResponse.json(
-          { error: 'Invalid action. Supported actions: channel, blocks, carousel' },
+          { error: 'Invalid action. Supported actions: channel, blocks, channel-with-blocks' },
           { status: 400 }
         )
     }

@@ -85,52 +85,21 @@ export async function fetchArenaUser(username) {
 }
 
 /**
- * Transform Are.na block data to match your carousel format
- * @param {object} block - Are.na block data
- * @returns {object} Transformed block data
- */
-export function transformArenaBlockToCarouselItem(block) {
-  return {
-    id: block.id,
-    title: block.title,
-    description: block.description,
-    source: block.source,
-    image: block.image?.display?.url || block.image?.thumb?.url,
-    video: block.source?.url && block.source?.provider === 'YouTube' ? block.source.url : null,
-    created_at: block.created_at,
-    updated_at: block.updated_at,
-    user: block.user,
-    // Add any additional fields you need for your carousel
-    duration: 5000, // Default duration, you can customize this
-    theme: 'light' // Default theme, you can customize this
-  }
-}
-
-/**
- * Transform Are.na channel data to carousel content
- * @param {object} channel - Are.na channel data
- * @returns {Array} Array of carousel items
- */
-export function transformArenaChannelToCarouselContent(channel) {
-  if (!channel.contents || !Array.isArray(channel.contents)) {
-    return []
-  }
-  
-  return channel.contents.map(block => transformArenaBlockToCarouselItem(block))
-}
-
-/**
- * Fetch and transform channel data for carousel use
+ * Fetch channel data with blocks included
  * @param {string} channelSlug - Channel slug
  * @param {object} options - Fetch options
- * @returns {Promise<Array>} Transformed carousel content
+ * @returns {Promise<object>} Channel data with blocks
  */
-export async function fetchArenaChannelForCarousel(channelSlug, options = {}) {
+export async function fetchArenaChannelWithBlocks(channelSlug, options = {}) {
   try {
     const channel = await fetchArenaChannel(channelSlug, options)
-    return transformArenaChannelToCarouselContent(channel)
+    const blocks = await fetchArenaBlocks(channelSlug, options)
+    return {
+      ...channel,
+      blocks: blocks
+    }
   } catch (error) {
-    console.error(`Error fetching Are.na channel for carousel:`, error)
+    console.error(`Error fetching Are.na channel with blocks:`, error)
     throw error
   }
 }

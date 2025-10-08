@@ -53,15 +53,15 @@ export function useArenaBlocks(channelSlug, options = {}) {
 }
 
 /**
- * Custom hook for fetching Are.na data formatted for carousel
+ * Custom hook for fetching Are.na channel with blocks
  * @param {string} channelSlug - The channel slug
  * @param {object} options - Fetch options
- * @returns {object} Carousel data and loading state
+ * @returns {object} Channel with blocks data and loading state
  */
-export function useArenaCarousel(channelSlug, options = {}) {
+export function useArenaChannelWithBlocks(channelSlug, options = {}) {
   const { page = 1, per = 20 } = options
   const { data, error, isLoading, mutate } = useSWR(
-    channelSlug ? `/api/arena?action=carousel&channel=${channelSlug}&page=${page}&per=${per}` : null,
+    channelSlug ? `/api/arena?action=channel-with-blocks&channel=${channelSlug}&page=${page}&per=${per}` : null,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -71,7 +71,7 @@ export function useArenaCarousel(channelSlug, options = {}) {
   )
 
   return {
-    content: data || [],
+    channel: data,
     isLoading,
     isError: error,
     mutate
@@ -119,7 +119,7 @@ export function useMultipleArenaChannels(channelSlugs, options = {}) {
       
       try {
         const promises = channelSlugs.map(slug => 
-          fetch(`/api/arena?action=carousel&channel=${slug}`)
+          fetch(`/api/arena?action=channel-with-blocks&channel=${slug}`)
             .then(res => res.json())
             .catch(err => {
               console.error(`Error fetching channel ${slug}:`, err)

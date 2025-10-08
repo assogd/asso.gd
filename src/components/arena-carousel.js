@@ -1,7 +1,6 @@
 'use client'
 import { MainCarousel } from '@/components/ui/carousel'
-import { useArenaCarousel, useMultipleArenaChannels } from '@/hooks/use-arena'
-import { transformArenaBlockToCarouselItem } from '@/lib/arena'
+import { useArenaChannelWithBlocks, useMultipleArenaChannels } from '@/hooks/use-arena'
 
 /**
  * Carousel component that displays Are.na channel content
@@ -17,7 +16,7 @@ export function ArenaCarousel({
   carouselProps = {},
   fallbackContent = null 
 }) {
-  const { content, isLoading, isError } = useArenaCarousel(channelSlug, options)
+  const { channel, isLoading, isError } = useArenaChannelWithBlocks(channelSlug, options)
 
   // Show loading state
   if (isLoading) {
@@ -51,7 +50,7 @@ export function ArenaCarousel({
   }
 
   // Show empty state
-  if (!content || content.length === 0) {
+  if (!channel || !channel.blocks || channel.blocks.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -69,49 +68,20 @@ export function ArenaCarousel({
     )
   }
 
-  // Transform Are.na content to match your carousel format
-  const transformedContent = content.map(item => ({
-    id: item.id,
-    assets: [
-      {
-        id: item.id,
-        __typename: item.video ? 'Video' : 'Image',
-        file: item.video ? null : {
-          url: item.image,
-          alt: item.title || '',
-          width: 1600,
-          height: 1200
-        },
-        source: item.video ? {
-          url: item.video,
-          provider: 'YouTube'
-        } : null,
-        className: 'col-span-12 row-span-12 object-cover'
-      }
-    ],
-    caption: item.description ? {
-      raw: {
-        children: [
-          {
-            type: 'paragraph',
-            children: [
-              {
-                text: item.description
-              }
-            ]
-          }
-        ]
-      }
-    } : null,
-    duration: item.duration || 5000,
-    theme: item.theme || 'light'
-  }))
-
+  // Return raw Are.na content - no transformation
   return (
-    <MainCarousel 
-      content={transformedContent} 
-      {...carouselProps}
-    />
+    <div className="arena-content">
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-4">{channel.title}</h2>
+        <p className="text-gray-600 mb-4">{channel.description}</p>
+        <div className="bg-gray-100 p-4 rounded overflow-auto">
+          <h3 className="font-semibold mb-2">Raw Channel Data:</h3>
+          <pre className="text-sm">
+            {JSON.stringify(channel, null, 2)}
+          </pre>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -185,48 +155,18 @@ export function MultiChannelArenaCarousel({
     )
   }
 
-  // Transform content (same as single channel)
-  const transformedContent = content.map(item => ({
-    id: item.id,
-    assets: [
-      {
-        id: item.id,
-        __typename: item.video ? 'Video' : 'Image',
-        file: item.video ? null : {
-          url: item.image,
-          alt: item.title || '',
-          width: 1600,
-          height: 1200
-        },
-        source: item.video ? {
-          url: item.video,
-          provider: 'YouTube'
-        } : null,
-        className: 'col-span-12 row-span-12 object-cover'
-      }
-    ],
-    caption: item.description ? {
-      raw: {
-        children: [
-          {
-            type: 'paragraph',
-            children: [
-              {
-                text: item.description
-              }
-            ]
-          }
-        ]
-      }
-    } : null,
-    duration: item.duration || 5000,
-    theme: item.theme || 'light'
-  }))
-
+  // Return raw Are.na content - no transformation
   return (
-    <MainCarousel 
-      content={transformedContent} 
-      {...carouselProps}
-    />
+    <div className="arena-content">
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-4">Multiple Channels Data</h2>
+        <div className="bg-gray-100 p-4 rounded overflow-auto">
+          <h3 className="font-semibold mb-2">Raw Channels Data:</h3>
+          <pre className="text-sm">
+            {JSON.stringify(content, null, 2)}
+          </pre>
+        </div>
+      </div>
+    </div>
   )
 }

@@ -115,14 +115,20 @@ export default function ArenaPage() {
                 <h4 className="font-semibold text-blue-900 mb-2">Example Usage in Code:</h4>
                 <pre className="text-sm text-blue-800 bg-blue-100 p-3 rounded overflow-x-auto">
 {`import { ArenaCarousel } from '@/components/arena-carousel'
+import { useArenaChannelWithBlocks } from '@/hooks/use-arena'
 
 export default function MyPage() {
+  // Option 1: Use the component
   return (
     <ArenaCarousel 
       channelSlug="your-channel-slug"
       options={{ per: 20 }}
     />
   )
+  
+  // Option 2: Use the hook directly
+  const { channel, isLoading, isError } = useArenaChannelWithBlocks('your-channel-slug')
+  // channel contains raw Are.na data - adapt as needed
 }`}
                 </pre>
               </div>
