@@ -77,56 +77,34 @@ export function DevRevalidateButton() {
     if (!date) return 'Never'
     
     // Format as exact date and time
-    return date.toLocaleString('en-US', {
+    return date.toLocaleString('en-GB', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit',
       hour12: false
     })
   }
 
-  if (!isVisible) {
-    console.log('DevRevalidateButton not visible, returning null')
-    return null
-  }
-  
-  console.log('DevRevalidateButton is visible, rendering button')
-
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
-      {/* Last update time */}
-      <div className="bg-black/80 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
-        Last update: {formatLastUpdate(lastUpdate)}
+    <div className="items-center justify-center flex flex-col gap-x-2 gap-y-1 py-16">
+      <div className="">
+        Last updated: {formatLastUpdate(lastUpdate)}
       </div>
-      
-      {/* Revalidate button */}
       <button
         id="dev-revalidate-btn"
         onClick={handleRevalidate}
         disabled={isRevalidating}
-        className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white p-3 rounded-full shadow-lg transition-all duration-200 backdrop-blur-sm"
+        className=""
         title="Revalidate Are.na cache"
       >
         {isRevalidating ? (
-          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          "Revalidating..."
         ) : (
-          <svg 
-            className="w-5 h-5" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-            />
-          </svg>
+          <span>[Revalidate]</span>
         )}
       </button>
+
     </div>
   )
 }
