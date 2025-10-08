@@ -13,6 +13,7 @@
     "@mux/mux-node": "^8.8.0",
     "@mux/mux-player-react": "^2.9.1",
     "@uidotdev/usehooks": "^2.4.1",
+    "are.na": "^0.1.5",
     "autoprefixer": "10.4.20",
     "axios": "^1.7.5",
     "base-64": "^1.0.0",

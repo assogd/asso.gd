@@ -1,0 +1,169 @@
+# Are.na API Integration Setup
+
+This document explains how to set up and use the Are.na API integration in your ADDD project.
+
+## 🔑 Authentication Setup
+
+### 1. Get Are.na Access Token
+
+1. Go to [Are.na Developer Settings](https://www.are.na/settings/developer)
+2. Create a new application or use an existing one
+3. Copy your access token
+
+### 2. Environment Variables
+
+Add the following to your `.env.local` file:
+
+```env
+# Are.na Configuration
+ARENA_ACCESS_TOKEN="your-arena-access-token-here"
+```
+
+## 🚀 Usage Examples
+
+### Basic Channel Display
+
+```jsx
+import { ArenaCarousel } from '@/components/arena-carousel'
+
+export default function MyPage() {
+  return (
+    <ArenaCarousel 
+      channelSlug="your-channel-slug"
+      options={{ per: 20 }}
+    />
+  )
+}
+```
+
+### Multiple Channels
+
+```jsx
+import { MultiChannelArenaCarousel } from '@/components/arena-carousel'
+
+export default function MyPage() {
+  return (
+    <MultiChannelArenaCarousel 
+      channelSlugs={['channel-1', 'channel-2', 'channel-3']}
+      options={{ per: 10 }}
+    />
+  )
+}
+```
+
+### Using Hooks Directly
+
+```jsx
+import { useArenaChannel, useArenaBlocks } from '@/hooks/use-arena'
+
+export default function MyComponent() {
+  const { channel, isLoading, isError } = useArenaChannel('your-channel-slug')
+  const { blocks } = useArenaBlocks('your-channel-slug', { per: 20 })
+
+  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>Error loading channel</div>
+
+  return (
+    <div>
+      <h1>{channel.title}</h1>
+      <p>{channel.description}</p>
+      {/* Render blocks */}
+    </div>
+  )
+}
+```
+
+## 📡 API Endpoints
+
+The integration provides several API endpoints:
+
+### `/api/arena?action=channel&channel=SLUG`
+Fetches a complete channel with metadata.
+
+### `/api/arena?action=blocks&channel=SLUG&page=1&per=20`
+Fetches blocks from a channel with pagination.
+
+### `/api/arena?action=carousel&channel=SLUG&page=1&per=20`
+Fetches channel data formatted for carousel use.
+
+## 🎨 Customization
+
+### Custom Block Transformation
+
+You can customize how Are.na blocks are transformed for your carousel:
+
+```jsx
+import { transformArenaBlockToCarouselItem } from '@/lib/arena'
+
+const customTransform = (block) => ({
+  ...transformArenaBlockToCarouselItem(block),
+  duration: block.title?.length > 50 ? 8000 : 5000, // Longer duration for longer titles
+  theme: block.source?.provider === 'YouTube' ? 'dark' : 'light'
+})
+```
+
+### Custom Styling
+
+The carousel components accept all the same props as your existing `MainCarousel`:
+
+```jsx
+<ArenaCarousel 
+  channelSlug="your-channel"
+  carouselProps={{
+    // Any props you'd pass to MainCarousel
+    customClassName: "my-custom-class"
+  }}
+/>
+```
+
+## 🔧 Available Functions
+
+### Core API Functions (`/src/lib/arena.js`)
+
+- `fetchArenaChannel(channelSlug, options)` - Fetch channel data
+- `fetchArenaBlocks(channelSlug, options)` - Fetch channel blocks
+- `fetchArenaBlock(blockId)` - Fetch specific block
+- `searchArenaChannels(query, options)` - Search channels
+- `fetchArenaUser(username)` - Fetch user data
+- `transformArenaBlockToCarouselItem(block)` - Transform block for carousel
+- `fetchArenaChannelForCarousel(channelSlug, options)` - Fetch and transform for carousel
+
+### React Hooks (`/src/hooks/use-arena.js`)
+
+- `useArenaChannel(channelSlug, options)` - Hook for channel data
+- `useArenaBlocks(channelSlug, options)` - Hook for blocks data
+- `useArenaCarousel(channelSlug, options)` - Hook for carousel-formatted data
+- `useMultipleArenaChannels(channelSlugs, options)` - Hook for multiple channels
+
+### Components (`/src/components/arena-carousel.js`)
+
+- `ArenaCarousel` - Single channel carousel
+- `MultiChannelArenaCarousel` - Multiple channels carousel
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **"Failed to fetch data from Are.na"**
+   - Check that your `ARENA_ACCESS_TOKEN` is set correctly
+   - Verify the channel slug exists and is public
+   - Check the browser console for detailed error messages
+
+2. **"No content found in this channel"**
+   - Ensure the channel has blocks/content
+   - Check that the channel is public
+   - Verify the channel slug is correct
+
+3. **CORS Issues**
+   - The API calls are made server-side, so CORS shouldn't be an issue
+   - If you're making direct client-side calls, you may need to proxy through your API routes
+
+### Debug Mode
+
+Enable debug logging by setting `IS_DEV_MODE=true` in your environment variables.
+
+## 📚 Resources
+
+- [Are.na API Documentation](https://dev.are.na/)
+- [Are.na JavaScript SDK](https://www.npmjs.com/package/are.na)
+- [Are.na Developer Portal](https://www.are.na/settings/developer)
