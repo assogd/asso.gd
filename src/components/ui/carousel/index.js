@@ -321,7 +321,7 @@ export const MainCarousel = ({ content }) => {
                         '(max-width: 768px) 100vw, (min-width: 769px) and (max-width: 1200px) 100vw, 100vw'
 
                       const { width, height } =
-                        asset.file.width && asset.file.height
+                        asset.file && asset.file.width && asset.file.height
                           ? calculateResizedDimensions(
                               asset.file.width,
                               asset.file.height,
@@ -330,7 +330,7 @@ export const MainCarousel = ({ content }) => {
                             )
                           : { width: 1600, height: 1200 }
 
-                      return (
+                      return asset.file ? (
                         <Image
                           key={asset.id}
                           src={asset.file.url}
@@ -350,7 +350,7 @@ export const MainCarousel = ({ content }) => {
                           priority={true}
                           onLoad={i === 0 && handleFirstImageLoad}
                         />
-                      )
+                      ) : null
                     case 'Video':
                       return (
                         <StandardPlayer
