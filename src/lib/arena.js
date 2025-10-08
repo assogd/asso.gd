@@ -1,11 +1,3 @@
-import Arena from 'are.na'
-import { IS_DEV_MODE } from '@/lib/config'
-
-// Initialize Are.na client
-const arena = new Arena({
-  accessToken: process.env.ARENA_ACCESS_TOKEN
-})
-
 // Cache configuration - never revalidate unless manually triggered
 const CACHE_CONFIG = {
   next: { 
@@ -15,7 +7,7 @@ const CACHE_CONFIG = {
 }
 
 /**
- * Fetch a channel from Are.na
+ * Fetch a channel from Are.na with caching
  * @param {string} channelSlug - The slug of the channel to fetch
  * @param {object} options - Additional options for the request
  * @returns {Promise<object>} Channel data
@@ -43,72 +35,6 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
     }
   } catch (error) {
     console.error(`Error fetching Are.na channel ${channelSlug}:`, error)
-    throw error
-  }
-}
-
-/**
- * Fetch blocks from a specific channel
- * @param {string} channelSlug - The slug of the channel
- * @param {object} options - Query options (page, per, direction, etc.)
- * @returns {Promise<object>} Blocks data
- */
-export async function fetchArenaBlocks(channelSlug, options = {}) {
-  try {
-    const blocks = await arena.channel(channelSlug).blocks(options)
-    // Add timestamp to track when data was fetched
-    return {
-      ...blocks,
-      _fetchedAt: new Date().toISOString()
-    }
-  } catch (error) {
-    console.error(`Error fetching Are.na blocks for channel ${channelSlug}:`, error)
-    throw error
-  }
-}
-
-/**
- * Fetch a specific block by ID
- * @param {number} blockId - The ID of the block
- * @returns {Promise<object>} Block data
- */
-export async function fetchArenaBlock(blockId) {
-  try {
-    const block = await arena.block(blockId).get()
-    return block
-  } catch (error) {
-    console.error(`Error fetching Are.na block ${blockId}:`, error)
-    throw error
-  }
-}
-
-/**
- * Search channels on Are.na
- * @param {string} query - Search query
- * @param {object} options - Search options
- * @returns {Promise<object>} Search results
- */
-export async function searchArenaChannels(query, options = {}) {
-  try {
-    const results = await arena.search.channels(query, options)
-    return results
-  } catch (error) {
-    console.error(`Error searching Are.na channels:`, error)
-    throw error
-  }
-}
-
-/**
- * Get user information
- * @param {string} username - Username to fetch
- * @returns {Promise<object>} User data
- */
-export async function fetchArenaUser(username) {
-  try {
-    const user = await arena.user(username).get()
-    return user
-  } catch (error) {
-    console.error(`Error fetching Are.na user ${username}:`, error)
     throw error
   }
 }
