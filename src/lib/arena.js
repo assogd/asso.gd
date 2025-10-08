@@ -3,8 +3,12 @@ const CACHE_CONFIG = {
   next: { 
     revalidate: false, // Never automatically revalidate
     tags: ['arena-data'] // Tag for manual revalidation
-  }
+  },
+  cache: 'force-cache' // Force cache usage even in development
 }
+
+// Simple in-memory cache for development mode
+const devCache = new Map()
 
 /**
  * Fetch a channel from Are.na with caching
@@ -14,6 +18,14 @@ const CACHE_CONFIG = {
  */
 export async function fetchArenaChannel(channelSlug, options = {}) {
   try {
+    const isDev = process.env.NODE_ENV === 'development'
+    
+    // In development, use in-memory cache to prevent repeated fetches
+    if (isDev && devCache.has(channelSlug)) {
+      console.log(`[DEV] Using cached data for channel: ${channelSlug}`)
+      return devCache.get(channelSlug)
+    }
+    
     // Use Next.js fetch with caching for server-side rendering
     const response = await fetch(`https://api.are.na/v2/channels/${channelSlug}`, {
       headers: {
@@ -29,15 +41,19 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
     
     const channel = await response.json()
     
-    // Check if this is a cache hit by looking for existing _fetchedAt
-    // If it exists, preserve it; if not, add a new timestamp
-    const existingTimestamp = channel._fetchedAt
-    const timestamp = existingTimestamp || new Date().toISOString()
-    
-    return {
+    // Add timestamp to track when data was fetched
+    const result = {
       ...channel,
-      _fetchedAt: timestamp
+      _fetchedAt: new Date().toISOString()
     }
+    
+    // Cache in development mode
+    if (isDev) {
+      console.log(`[DEV] Caching fresh data for channel: ${channelSlug}`)
+      devCache.set(channelSlug, result)
+    }
+    
+    return result
   } catch (error) {
     console.error(`Error fetching Are.na channel ${channelSlug}:`, error)
     throw error
@@ -58,5 +74,15 @@ export async function fetchArenaChannelWithBlocks(channelSlug, options = {}) {
   } catch (error) {
     console.error(`Error fetching Are.na channel with blocks:`, error)
     throw error
+  }
+}
+
+/**
+ * Clear development cache (used by revalidation)
+ */
+export function clearDevCache() {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[DEV] Clearing in-memory cache')
+    devCache.clear()
   }
 }

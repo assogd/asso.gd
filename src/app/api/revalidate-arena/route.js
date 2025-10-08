@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
+import { clearDevCache } from '@/lib/arena'
 
 // Simple in-memory store for revalidation history
 // In production, you might want to use a database or external storage
@@ -30,6 +31,9 @@ export async function POST(request) {
       revalidateTag(tag)
       results.push({ type: 'tag', value: tag })
     }
+
+    // Clear development cache
+    clearDevCache()
 
     // Store revalidation history
     const historyEntry = {
@@ -78,6 +82,9 @@ export async function GET(request) {
       revalidateTag(tag)
       results.push({ type: 'tag', value: tag })
     }
+
+    // Clear development cache
+    clearDevCache()
 
     // Store revalidation history
     const historyEntry = {
