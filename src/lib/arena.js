@@ -28,10 +28,15 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
     }
     
     const channel = await response.json()
-    // Add timestamp to track when data was fetched
+    
+    // Check if this is a cache hit by looking for existing _fetchedAt
+    // If it exists, preserve it; if not, add a new timestamp
+    const existingTimestamp = channel._fetchedAt
+    const timestamp = existingTimestamp || new Date().toISOString()
+    
     return {
       ...channel,
-      _fetchedAt: new Date().toISOString()
+      _fetchedAt: timestamp
     }
   } catch (error) {
     console.error(`Error fetching Are.na channel ${channelSlug}:`, error)
