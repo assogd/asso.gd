@@ -10,7 +10,8 @@ export function DevRevalidateButton() {
   useEffect(() => {
     const isDev = process.env.NODE_ENV === 'development'
     console.log('Dev button visibility:', isDev, 'NODE_ENV:', process.env.NODE_ENV)
-    setIsVisible(isDev)
+    // Always show for now to test
+    setIsVisible(true)
   }, [])
 
   // Fetch last update time on mount
