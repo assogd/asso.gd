@@ -86,6 +86,9 @@ Fetches blocks from a channel with pagination.
 ### `/api/arena?action=channel-with-blocks&channel=SLUG&page=1&per=20`
 Fetches channel data with blocks included.
 
+### `/api/revalidate-arena`
+Revalidates cached Are.na data. Supports both GET and POST methods.
+
 ## 🎨 Customization
 
 ### Working with Raw Are.na Data
@@ -170,6 +173,48 @@ The carousel components accept all the same props as your existing `MainCarousel
 ### Debug Mode
 
 Enable debug logging by setting `IS_DEV_MODE=true` in your environment variables.
+
+## 🔄 Cache Management
+
+The Are.na integration uses aggressive caching to improve performance:
+
+### **Cache Behavior:**
+- **Never auto-revalidates** - Data is cached indefinitely
+- **Manual revalidation only** - Use the revalidation endpoint to update data
+- **Tagged caching** - All Are.na data is tagged with `arena-data`
+
+### **Revalidation Methods:**
+
+#### **1. Revalidate by Path (GET):**
+```bash
+curl "http://localhost:3000/api/revalidate-arena?path=/arena"
+```
+
+#### **2. Revalidate by Path (POST):**
+```bash
+curl -X POST "http://localhost:3000/api/revalidate-arena" \
+  -H "Content-Type: application/json" \
+  -d '{"path": "/arena"}'
+```
+
+#### **3. Revalidate by Tag:**
+```bash
+curl -X POST "http://localhost:3000/api/revalidate-arena" \
+  -H "Content-Type: application/json" \
+  -d '{"tag": "arena-data"}'
+```
+
+#### **4. Revalidate Both:**
+```bash
+curl -X POST "http://localhost:3000/api/revalidate-arena" \
+  -H "Content-Type: application/json" \
+  -d '{"path": "/arena", "tag": "arena-data"}'
+```
+
+### **When to Revalidate:**
+- After updating content in Are.na
+- When you want to refresh the data
+- Before important presentations or deployments
 
 ## 📚 Resources
 

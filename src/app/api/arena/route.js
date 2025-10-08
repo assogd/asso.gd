@@ -5,6 +5,14 @@ import {
   fetchArenaChannelWithBlocks 
 } from '@/lib/arena'
 
+// Cache configuration - never revalidate unless manually triggered
+const CACHE_CONFIG = {
+  next: { 
+    revalidate: false, // Never automatically revalidate
+    tags: ['arena-data'] // Tag for manual revalidation
+  }
+}
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -61,7 +69,11 @@ export async function GET(request) {
         )
     }
 
-    return NextResponse.json(data)
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'public, max-age=31536000, immutable', // Cache for 1 year
+      }
+    })
   } catch (error) {
     console.error('Are.na API error:', error)
     return NextResponse.json(

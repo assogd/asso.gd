@@ -6,6 +6,14 @@ const arena = new Arena({
   accessToken: process.env.ARENA_ACCESS_TOKEN
 })
 
+// Cache configuration - never revalidate unless manually triggered
+const CACHE_CONFIG = {
+  next: { 
+    revalidate: false, // Never automatically revalidate
+    tags: ['arena-data'] // Tag for manual revalidation
+  }
+}
+
 /**
  * Fetch a channel from Are.na
  * @param {string} channelSlug - The slug of the channel to fetch
