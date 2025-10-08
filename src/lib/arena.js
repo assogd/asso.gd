@@ -92,12 +92,9 @@ export async function fetchArenaUser(username) {
  */
 export async function fetchArenaChannelWithBlocks(channelSlug, options = {}) {
   try {
+    // Fetch the channel which already includes contents/blocks
     const channel = await fetchArenaChannel(channelSlug, options)
-    const blocks = await fetchArenaBlocks(channelSlug, options)
-    return {
-      ...channel,
-      blocks: blocks
-    }
+    return channel
   } catch (error) {
     console.error(`Error fetching Are.na channel with blocks:`, error)
     throw error

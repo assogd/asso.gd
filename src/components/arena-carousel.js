@@ -50,7 +50,7 @@ export function ArenaCarousel({
   }
 
   // Show empty state
-  if (!channel || !channel.blocks || channel.blocks.length === 0) {
+  if (!channel || !channel.contents || channel.contents.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
