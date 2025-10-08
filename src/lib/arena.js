@@ -23,7 +23,11 @@ const CACHE_CONFIG = {
 export async function fetchArenaChannel(channelSlug, options = {}) {
   try {
     const channel = await arena.channel(channelSlug).get(options)
-    return channel
+    // Add timestamp to track when data was fetched
+    return {
+      ...channel,
+      _fetchedAt: new Date().toISOString()
+    }
   } catch (error) {
     console.error(`Error fetching Are.na channel ${channelSlug}:`, error)
     throw error
@@ -39,7 +43,11 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
 export async function fetchArenaBlocks(channelSlug, options = {}) {
   try {
     const blocks = await arena.channel(channelSlug).blocks(options)
-    return blocks
+    // Add timestamp to track when data was fetched
+    return {
+      ...blocks,
+      _fetchedAt: new Date().toISOString()
+    }
   } catch (error) {
     console.error(`Error fetching Are.na blocks for channel ${channelSlug}:`, error)
     throw error

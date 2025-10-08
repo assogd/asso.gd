@@ -24,13 +24,13 @@ export function DevRevalidateButton() {
 
   const fetchLastUpdate = async () => {
     try {
-      // Get revalidation history instead of cache status to avoid triggering new requests
-      const response = await fetch('/api/arena-history')
+      // Get cached data to check the _fetchedAt timestamp
+      const response = await fetch('/api/arena?action=channel&channel=adddgd-about', {
+        cache: 'force-cache' // Use cached data, don't trigger new fetch
+      })
       const data = await response.json()
-      if (data.history && data.history.length > 0) {
-        // Get the most recent revalidation timestamp
-        const lastRevalidation = data.history[0]
-        setLastUpdate(new Date(lastRevalidation.timestamp))
+      if (data._fetchedAt) {
+        setLastUpdate(new Date(data._fetchedAt))
       }
     } catch (error) {
       console.error('Failed to fetch last update:', error)
