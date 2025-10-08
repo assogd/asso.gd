@@ -216,6 +216,58 @@ curl -X POST "http://localhost:3000/api/revalidate-arena" \
 - When you want to refresh the data
 - Before important presentations or deployments
 
+## 📊 Tracking Revalidation History
+
+### **View Revalidation History:**
+The revalidation endpoint now tracks and returns the last 10 revalidation events:
+
+```bash
+curl "http://localhost:3000/api/revalidate-arena?path=/arena"
+```
+
+**Response includes:**
+```json
+{
+  "revalidated": true,
+  "results": [{"type": "path", "value": "/arena"}],
+  "timestamp": "2025-10-08T07:06:27.648Z",
+  "history": [
+    {
+      "timestamp": "2025-10-08T07:06:27.648Z",
+      "results": [{"type": "path", "value": "/arena"}],
+      "method": "GET"
+    }
+  ]
+}
+```
+
+### **Check Cache Status:**
+View when data was last fetched from Are.na:
+
+```bash
+curl "http://localhost:3000/api/arena-status"
+```
+
+**Response includes:**
+```json
+{
+  "cacheInfo": {
+    "cacheControl": "public, max-age=31536000, immutable",
+    "date": "Wed, 08 Oct 2025 07:06:25 GMT",
+    "status": 200
+  },
+  "timestamp": "2025-10-08T07:06:25.013Z",
+  "note": "Cache headers show when data was last fetched from Are.na"
+}
+```
+
+### **History Endpoint:**
+Get information about tracking:
+
+```bash
+curl "http://localhost:3000/api/arena-history"
+```
+
 ## 📚 Resources
 
 - [Are.na API Documentation](https://dev.are.na/)

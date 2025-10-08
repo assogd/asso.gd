@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 
+// Simple in-memory store for revalidation history
+// In production, you might want to use a database or external storage
+let revalidationHistory = []
+
 export async function POST(request) {
   try {
     const { path, tag } = await request.json()
@@ -13,6 +17,7 @@ export async function POST(request) {
     }
 
     const results = []
+    const timestamp = new Date().toISOString()
 
     // Revalidate by path if provided
     if (path) {
@@ -25,11 +30,25 @@ export async function POST(request) {
       revalidateTag(tag)
       results.push({ type: 'tag', value: tag })
     }
+
+    // Store revalidation history
+    const historyEntry = {
+      timestamp,
+      results,
+      method: 'POST'
+    }
+    revalidationHistory.unshift(historyEntry) // Add to beginning
+    
+    // Keep only last 50 entries
+    if (revalidationHistory.length > 50) {
+      revalidationHistory = revalidationHistory.slice(0, 50)
+    }
     
     return NextResponse.json({
       revalidated: true,
       results: results,
-      timestamp: new Date().toISOString()
+      timestamp,
+      history: revalidationHistory.slice(0, 10) // Return last 10 entries
     })
   } catch (error) {
     console.error('Revalidation error:', error)
@@ -48,6 +67,7 @@ export async function GET(request) {
   
   try {
     const results = []
+    const timestamp = new Date().toISOString()
 
     // Revalidate by path
     revalidatePath(path)
@@ -58,11 +78,25 @@ export async function GET(request) {
       revalidateTag(tag)
       results.push({ type: 'tag', value: tag })
     }
+
+    // Store revalidation history
+    const historyEntry = {
+      timestamp,
+      results,
+      method: 'GET'
+    }
+    revalidationHistory.unshift(historyEntry) // Add to beginning
+    
+    // Keep only last 50 entries
+    if (revalidationHistory.length > 50) {
+      revalidationHistory = revalidationHistory.slice(0, 50)
+    }
     
     return NextResponse.json({
       revalidated: true,
       results: results,
-      timestamp: new Date().toISOString()
+      timestamp,
+      history: revalidationHistory.slice(0, 10) // Return last 10 entries
     })
   } catch (error) {
     console.error('Revalidation error:', error)
