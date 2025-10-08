@@ -1,11 +1,14 @@
-import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { DevRevalidateButton } from '@/components/dev-revalidate-button'
 
 export default async function ArenaPage() {
-  // Fetch both channels server-side
+  // Fetch both channels server-side using the cached API route
   const [aboutChannel, mainChannel] = await Promise.allSettled([
-    fetchArenaChannelWithBlocks('adddgd-about'),
-    fetchArenaChannelWithBlocks('adddgd')
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/arena?action=channel-with-blocks&channel=adddgd-about`, {
+      cache: 'force-cache' // Use cached data
+    }).then(res => res.json()),
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/arena?action=channel-with-blocks&channel=adddgd`, {
+      cache: 'force-cache' // Use cached data
+    }).then(res => res.json())
   ])
 
   return (
@@ -26,7 +29,7 @@ export default async function ArenaPage() {
                   {aboutChannel.value.description && (
                     <p className="text-gray-600 mt-2">{aboutChannel.value.description}</p>
                   )}
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="text-sm text-gray-500 mt-2" data-fetched-at={aboutChannel.value._fetchedAt}>
                     Last fetched: {aboutChannel.value._fetchedAt ? new Date(aboutChannel.value._fetchedAt).toLocaleString() : 'Unknown'}
                   </p>
                 </div>
@@ -90,7 +93,7 @@ export default async function ArenaPage() {
                   {mainChannel.value.description && (
                     <p className="text-gray-600 mt-2">{mainChannel.value.description}</p>
                   )}
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="text-sm text-gray-500 mt-2" data-fetched-at={mainChannel.value._fetchedAt}>
                     Last fetched: {mainChannel.value._fetchedAt ? new Date(mainChannel.value._fetchedAt).toLocaleString() : 'Unknown'}
                   </p>
                 </div>

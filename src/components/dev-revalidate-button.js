@@ -2,72 +2,27 @@
 import { useState, useEffect } from 'react'
 
 export function DevRevalidateButton() {
-  console.log('DevRevalidateButton component rendered!')
-  const [isRevalidating, setIsRevalidating] = useState(false)
   const [lastUpdate, setLastUpdate] = useState(null)
-  const [isVisible, setIsVisible] = useState(false)
+  const [isRevalidating, setIsRevalidating] = useState(false)
 
-  // Only show in development mode
   useEffect(() => {
-    const isDev = process.env.NODE_ENV === 'development'
-    console.log('Dev button visibility:', isDev, 'NODE_ENV:', process.env.NODE_ENV)
-    // Always show for now to test
-    setIsVisible(true)
+    // Get timestamp from the existing page data (already server-side rendered)
+    const timestampElement = document.querySelector('[data-fetched-at]')
+    if (timestampElement) {
+      const timestamp = timestampElement.getAttribute('data-fetched-at')
+      if (timestamp) {
+        setLastUpdate(new Date(timestamp))
+      }
+    }
   }, [])
 
-  // Fetch last update time on mount
-  useEffect(() => {
-    if (isVisible) {
-      fetchLastUpdate()
-    }
-  }, [isVisible])
-
-  const fetchLastUpdate = async () => {
-    try {
-      // Get cached data to check the _fetchedAt timestamp
-      const response = await fetch('/api/arena?action=channel&channel=adddgd-about', {
-        cache: 'force-cache' // Use cached data, don't trigger new fetch
-      })
-      const data = await response.json()
-      if (data._fetchedAt) {
-        setLastUpdate(new Date(data._fetchedAt))
-      }
-    } catch (error) {
-      console.error('Failed to fetch last update:', error)
-    }
-  }
 
   const handleRevalidate = async () => {
     setIsRevalidating(true)
     try {
-      const response = await fetch('/api/revalidate-arena?path=/arena&tag=arena-data', {
-        method: 'GET'
-      })
-      const data = await response.json()
-      
-      if (data.revalidated) {
-        // Update the last update time
-        setLastUpdate(new Date(data.timestamp))
-        
-        // Show success feedback
-        const button = document.getElementById('dev-revalidate-btn')
-        if (button) {
-          button.style.backgroundColor = '#10b981' // green
-          setTimeout(() => {
-            button.style.backgroundColor = '#3b82f6' // blue
-          }, 1000)
-        }
-      }
-    } catch (error) {
-      console.error('Revalidation failed:', error)
-      // Show error feedback
-      const button = document.getElementById('dev-revalidate-btn')
-      if (button) {
-        button.style.backgroundColor = '#ef4444' // red
-        setTimeout(() => {
-          button.style.backgroundColor = '#3b82f6' // blue
-        }, 1000)
-      }
+      const res = await fetch('/api/revalidate-arena?path=/arena&tag=arena-data')
+      const data = await res.json()
+      if (data.revalidated) setLastUpdate(new Date(data.timestamp))
     } finally {
       setIsRevalidating(false)
     }
