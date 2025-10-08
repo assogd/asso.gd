@@ -22,7 +22,20 @@ const CACHE_CONFIG = {
  */
 export async function fetchArenaChannel(channelSlug, options = {}) {
   try {
-    const channel = await arena.channel(channelSlug).get(options)
+    // Use Next.js fetch with caching for server-side rendering
+    const response = await fetch(`https://api.are.na/v2/channels/${channelSlug}`, {
+      headers: {
+        'Authorization': `Bearer ${process.env.ARENA_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      ...CACHE_CONFIG
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch channel: ${response.status}`)
+    }
+    
+    const channel = await response.json()
     // Add timestamp to track when data was fetched
     return {
       ...channel,

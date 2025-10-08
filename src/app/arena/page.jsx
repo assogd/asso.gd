@@ -1,14 +1,11 @@
 import { DevRevalidateButton } from '@/components/dev-revalidate-button'
+import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 
 export default async function ArenaPage() {
-  // Fetch both channels server-side using the cached API route
+  // Fetch both channels server-side directly from Are.na
   const [aboutChannel, mainChannel] = await Promise.allSettled([
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/arena?action=channel-with-blocks&channel=adddgd-about`, {
-      cache: 'force-cache' // Use cached data
-    }).then(res => res.json()),
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/arena?action=channel-with-blocks&channel=adddgd`, {
-      cache: 'force-cache' // Use cached data
-    }).then(res => res.json())
+    fetchArenaChannelWithBlocks('adddgd-about'),
+    fetchArenaChannelWithBlocks('adddgd')
   ])
 
   return (
