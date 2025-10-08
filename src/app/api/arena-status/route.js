@@ -6,10 +6,13 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url)
     const channel = searchParams.get('channel')
     
-    // Get cache headers from the arena API response
+    // Build URL using the current request's origin
+    const url = new URL(request.url)
+    const baseUrl = `${url.protocol}//${url.host}`
+    
     const arenaUrl = channel 
-      ? `http://localhost:3000/api/arena?action=channel-with-blocks&channel=${channel}`
-      : 'http://localhost:3000/api/arena?action=channel&channel=adddgd-about'
+      ? `${baseUrl}/api/arena?action=channel-with-blocks&channel=${channel}`
+      : `${baseUrl}/api/arena?action=channel&channel=adddgd-about`
     
     let cacheInfo = {}
     

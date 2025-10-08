@@ -13,12 +13,12 @@ export async function GET(request) {
       howToView: {
         method: 'GET or POST to /api/revalidate-arena',
         description: 'The response includes the last 10 revalidation entries',
-        example: 'curl "http://localhost:3000/api/revalidate-arena?path=/arena"'
+        example: 'curl "https://your-domain.com/api/revalidate-arena?path=/arena"'
       },
       cacheStatus: {
         method: 'GET to /api/arena-status',
         description: 'Check cache headers and last fetch time',
-        example: 'curl "http://localhost:3000/api/arena-status"'
+        example: 'curl "https://your-domain.com/api/arena-status"'
       },
       timestamp: new Date().toISOString()
     })

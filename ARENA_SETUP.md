@@ -187,26 +187,26 @@ The Are.na integration uses aggressive caching to improve performance:
 
 #### **1. Revalidate by Path (GET):**
 ```bash
-curl "http://localhost:3000/api/revalidate-arena?path=/arena"
+curl "https://your-domain.com/api/revalidate-arena?path=/arena"
 ```
 
 #### **2. Revalidate by Path (POST):**
 ```bash
-curl -X POST "http://localhost:3000/api/revalidate-arena" \
+curl -X POST "https://your-domain.com/api/revalidate-arena" \
   -H "Content-Type: application/json" \
   -d '{"path": "/arena"}'
 ```
 
 #### **3. Revalidate by Tag:**
 ```bash
-curl -X POST "http://localhost:3000/api/revalidate-arena" \
+curl -X POST "https://your-domain.com/api/revalidate-arena" \
   -H "Content-Type: application/json" \
   -d '{"tag": "arena-data"}'
 ```
 
 #### **4. Revalidate Both:**
 ```bash
-curl -X POST "http://localhost:3000/api/revalidate-arena" \
+curl -X POST "https://your-domain.com/api/revalidate-arena" \
   -H "Content-Type: application/json" \
   -d '{"path": "/arena", "tag": "arena-data"}'
 ```
@@ -222,7 +222,7 @@ curl -X POST "http://localhost:3000/api/revalidate-arena" \
 The revalidation endpoint now tracks and returns the last 10 revalidation events:
 
 ```bash
-curl "http://localhost:3000/api/revalidate-arena?path=/arena"
+curl "https://your-domain.com/api/revalidate-arena?path=/arena"
 ```
 
 **Response includes:**
@@ -245,7 +245,7 @@ curl "http://localhost:3000/api/revalidate-arena?path=/arena"
 View when data was last fetched from Are.na:
 
 ```bash
-curl "http://localhost:3000/api/arena-status"
+curl "https://your-domain.com/api/arena-status"
 ```
 
 **Response includes:**
@@ -265,7 +265,7 @@ curl "http://localhost:3000/api/arena-status"
 Get information about tracking:
 
 ```bash
-curl "http://localhost:3000/api/arena-history"
+curl "https://your-domain.com/api/arena-history"
 ```
 
 ## 📚 Resources
