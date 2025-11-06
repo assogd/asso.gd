@@ -2,10 +2,10 @@ import './globals.css'
 import localFont from 'next/font/local'
 import clsx from 'clsx'
 import PlausibleProvider from 'next-plausible'
-import { Navigation } from '@/components/ui/navigation'
 import { ThemeProvider } from 'next-themes'
 import { MegaCoverProvider } from '@/components/mega-cover-context'
 import { FirstImageLoadedProvider } from '@/hooks/use-first-image-loaded'
+import Header from '@/components/header'
 
 const serif = localFont({
   src: [
@@ -47,16 +47,16 @@ export default async function Layout({ children, params }) {
       </head>
       <body>
         <ThemeProvider
-          defaultTheme="dark"
+          defaultTheme="system"
           enableColorScheme
-          enableSystem={false}
+          enableSystem={true}
           themes={['light', 'vibrant', 'dark']}
+          attribute="data-theme"
         >
           <MegaCoverProvider>
             <FirstImageLoadedProvider>
-              <Navigation align="top" />
+              <Header />
               {children}
-              <Navigation />
             </FirstImageLoadedProvider>
           </MegaCoverProvider>
         </ThemeProvider>
