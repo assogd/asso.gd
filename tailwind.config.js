@@ -50,19 +50,6 @@ module.exports = {
       red: '#FF0000'
     },
     extend: {
-      fontSize: {
-        xs: ['0.65rem', '1.2em'],
-        sm: ['0.8rem', '1.2em'],
-        base: ['1rem', '1.2em'], //18px
-        md: ['1.3333333rem', '1.3em'], //24px
-        lg: ['1.5rem', '1.3em'], //24px
-        xl: ['2.6666666rem', '1em'], //48px
-        '2xl': ['clamp(1.25rem, 6vw, 4rem)', '1em'],
-        mega: ['clamp(2.5rem, 15vw, 12rem)', '1em']
-      },
-      gridTemplateColumns: {
-        16: 'repeat(16, minmax(0, 1fr))'
-      },
       screens: {
         xs: '480px',
         shortest: { raw: '(max-height: 400px)' },

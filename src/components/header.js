@@ -8,16 +8,20 @@ export default function Header() {
   const isHome = pathname === '/'
 
   return (
-    <header className="flex w-screen p-4 pb-0">
-      <p className={clsx('', isHome ? 'truncate whitespace-nowrap' : '')}>
-        Asso is a design studio committed to creating well-reasoned and
-        impactful visual concepts for institutions, artists, and commercial
-        clients. We seek partnerships with those daring to challenge conventions
-        and those committed to making a positive societal impact, whether in the
-        cultural field or industries striving to innovate and improve society.
-        Our work has taken shape in various forms, including books, visual
-        identities, installations, magazines, websites, videos, posters, and
-        more.
+    <header className="flex w-screen p-4 pb-0 relative z-10">
+      <p
+        className={clsx(
+          '',
+          isHome ? 'truncate whitespace-nowrap select-none' : ''
+        )}
+      >
+        Asso is a design studio committed to creating well-reasoned visual
+        concepts for institutions, artists, and commercial clients. We seek
+        partnerships with those daring to challenge conventions and those
+        committed to making a positive societal impact, whether in the cultural
+        field or industries striving to innovate and improve society. Our work
+        has taken shape in various forms, including books, visual identities,
+        installations, magazines, websites, videos, posters, and more.
       </p>
       <nav className="basis-32">
         {isHome ? (

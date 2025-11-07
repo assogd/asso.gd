@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 html {
-  font-size: 19px;
-  line-height: 1.25em;
+  font-size: 20px;
+  line-height: 1.15em;
 }
 
 @media screen and (min-width: 670px) {
   html {
-    font-size: 22px;
+    font-size: 26px;
   }
 }
 
@@ -23,19 +23,23 @@ body {
 [data-theme='light'],
 [data-theme='light'] body {
   background: rgba(255, 255, 255, 1);
-  color: rgba(0, 0, 0, 1);
+  color: rgb(1, 14, 0);
 }
 
 [data-theme='dark'],
 [data-theme='dark'] body {
-  background: rgba(0, 0, 0, 1);
-  color: rgba(255, 255, 255, 1);
+  background: hsl(0, 0%, 5%);
+  color: hsl(0, 0%, 95%);
 }
 
 [data-theme='vibrant'],
 [data-theme='vibrant'] body {
   background: rgba(255, 255, 255, 1);
   color: #de0000;
+}
+
+.bg-black {
+  background: hsl(0, 0%, 5%);
 }
 
 mux-player {
@@ -54,14 +58,40 @@ mux-player.no-controls {
   letter-spacing: 0.025em;
 }
 
-.extra-tracking {
-  letter-spacing: 0.5em;
+h2 {
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
-a:hover {
+h3:after {
+  content: ':';
+}
+
+.extra-tracking {
+  letter-spacing: 0.05em;
+}
+
+a:link:not(.button-style) {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+}
+
+.button-style {
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.button-style:before {
+  content: '[';
+}
+
+.button-style:after {
+  content: ']';
+}
+
+a:hover {
+  text-decoration: none;
 }
 
 @keyframes blink {

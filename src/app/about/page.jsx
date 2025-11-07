@@ -1,20 +1,11 @@
 import { fetchGraphQL } from '@/lib/graphql'
-import { AllPages, SinglePage, SinglePageSeo } from '@/queries/pages'
-import Link from 'next/link'
-import { RegularImage } from '@/components/ui/images'
-import { notFound } from 'next/navigation'
-import { RichText } from '@graphcms/rich-text-react-renderer'
-import { Main } from '@/components/ui/containers'
+import { SinglePageSeo } from '@/queries/pages'
 import {
-  PortraitClientCard2 as ClientCard,
-  LogoSlider
-} from '@/components/ui/cards'
-import { Heading1, Heading2, Heading3 } from '@/components/ui/headings'
-import MegaCover from '@/components/mega-cover'
-import clsx from 'clsx'
-import { headers } from 'next/headers'
+  OpacityBlink,
+  AlternatingCharactersColorBlink
+} from '@/components/ui/animations'
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata() {
   const pageData = await fetchGraphQL(SinglePageSeo, { slug: 'about' })
   const page = pageData?.page
 
@@ -34,76 +25,74 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function Post({ params }) {
-  const headersList = await headers()
-  const userAgent = headersList.get('user-agent')
-  const isChrome =
-    /Chrome/.test(userAgent) &&
-    !/Edg/.test(userAgent) &&
-    !/OPR/.test(userAgent) &&
-    !/Brave/.test(userAgent) &&
-    !/CriOS/.test(userAgent)
-  const { page } = await fetchGraphQL(SinglePage, { slug: 'about' })
-  if (!page || !page?.content?.length) return notFound()
-
+export default async function About() {
   return (
-    <Main className="px-4 pt-0 pb-12">
-      <Heading1 className="sr-only">About</Heading1>
-      {page?.content.map((item) => {
-        switch (item.__typename) {
-          case 'Text':
-            return (
-              <section className={clsx('', item.className)}>
-                <RichText
-                  content={item.content.raw}
-                  renderers={{
-                    h2: ({ children }) => <Heading2>{children}</Heading2>,
-                    h3: ({ children }) => <Heading3>{children}</Heading3>,
-                    p: ({ children }) => (
-                      <p className="mb-4 last:mb-0">{children}</p>
-                    ),
-                    li: ({ children }) => (
-                      <li className="odd:ml-0 even:ml-4">{children}</li>
-                    )
-                  }}
-                />
-              </section>
-            )
-          case 'Image':
-            return (
-              <RegularImage
-                {...item}
-                delay={isChrome ? 3 : 2}
-                sizes={'(max-width: 768px) 50vw, 33vw'}
-                clipPathCompatible={!isChrome}
-              />
-            )
-          case 'EntrySection':
-            return null
-            const cards =
-              item.reference
-                ?.filter((entry) => entry.__typename === 'Profile')
-                .map((entry) => <ClientCard key={entry.id} {...entry} />) || []
-
-            return cards.length > 0 ? (
-              <div className={clsx(item.className, 'pb-8 pt-8 select-none')}>
-                {item.title && (
-                  <Heading2 className="border-b py-3 text-center">
-                    {item.title}
-                  </Heading2>
-                )}
-                <div className="-mx-4 py-4">
-                  <LogoSlider>{cards}</LogoSlider>
-                </div>
-              </div>
-            ) : null
-          default: {
-            console.log(item.__typename)
-            return null
-          }
-        }
-      })}
-      <MegaCover />
-    </Main>
+    <main className="grid gap-y-6 py-4">
+      <h1 className="sr-only">
+        About Asso, a design studio based in Stockholm, Sweden
+      </h1>
+      <section className="grid grid-cols-12 gap-x-2 gap-y-3 px-4">
+        <p className="col-start-1 col-end-12 grid gap-4">
+          Founded in 2019 by Mathias Dag Lindahl and Tilda Ragnartz, the Asso
+          atelier has been based in the southern part of Stockholm ever since.
+        </p>
+      </section>
+      <section as="section" className="grid grid-cols-12 gap-x-2 gap-y-0 px-4">
+        <h2 as="h2" className="col-start-2 col-end-12">
+          <AlternatingCharactersColorBlink text="Announcement" />
+        </h2>
+        <p className="col-start-1 col-end-12 grid gap-4">
+          We are currently accepting internship applications for Spring/Summer
+          2026. Application deadline is February 26, 2026. A minimum duration of
+          three months is required.
+        </p>
+      </section>
+      <section className="grid grid-cols-12 gap-x-2 gap-y-3 px-4">
+        <h2 className="col-start-2 col-end-12">Our addresses</h2>
+        <div className="col-start-1 col-end-4">
+          <h3>Office</h3>
+          <p>
+            Bondegatan 21A
+            <br /> Stockholm, Sweden
+          </p>
+        </div>
+        <div className="col-start-4 col-end-7">
+          <h3>General enquiries</h3>
+          <p>
+            <a href="mailto:office@asso.gd">office@asso.gd</a>
+            <br />
+            <a href="tel:+46841400147">+46 8 414 001 47</a>
+          </p>
+        </div>
+        <div className="col-start-2 col-end-5">
+          <h3>New business</h3>
+          <p>
+            Tilda Ragnartz
+            <br />
+            <a href="mailto:tilda@asso.gd">tilda@asso.gd</a>
+          </p>
+        </div>
+        <div className="col-start-5 col-end-8">
+          <h3>Applications</h3>
+          <p>
+            Mathias Dag Lindahl
+            <br />
+            <a href="mailto:mathias@asso.gd">mathias@asso.gd</a>
+          </p>
+        </div>
+        <div className="col-start-3 col-end-6">
+          <h3>Occasional updates</h3>
+          <p>
+            <a
+              href="https://www.instagram.com/asso4077/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+          </p>
+        </div>
+      </section>
+    </main>
   )
 }

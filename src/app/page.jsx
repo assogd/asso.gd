@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation'
-import { SinglePage, SinglePageSeo } from '@/queries/pages'
-import { GalleryById } from '@/queries/galleries'
+import { SinglePageSeo } from '@/queries/pages'
 import { fetchGraphQL } from '@/lib/graphql'
-import { MainCarousel } from '@/components/ui/carousel/'
+import { fetchArenaChannelWithBlocks } from '@/lib/arena'
+import { transformArenaBlocksForCarousel } from '@/lib/arena-carousel'
+import { ArenaCarousel } from '@/components/ui/carousel/arena-carousel'
 
 export async function generateMetadata() {
   const pageData = await fetchGraphQL(SinglePageSeo, { slug: 'home' })
@@ -25,19 +26,28 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const pageData = await fetchGraphQL(SinglePage, { slug: 'home' })
-  const page = pageData?.page
+  // Fetch the adddgd channel data
+  let carouselItems = []
 
-  const galleryData = await fetchGraphQL(GalleryById, {
-    id: 'cm0fdalorfvgo07w2wji3wbv0'
-  })
-  const gallery = galleryData?.gallery
+  try {
+    const channel = await fetchArenaChannelWithBlocks('adddgd')
+    if (channel?.contents) {
+      carouselItems = transformArenaBlocksForCarousel(
+        channel.contents
+      ).reverse()
+    }
+  } catch (error) {
+    console.error('Failed to fetch Arena channel:', error)
+  }
 
-  if (!page) return notFound()
+  // Show not found page if no data available
+  if (!carouselItems || carouselItems.length === 0) {
+    notFound()
+  }
+
   return (
-    <main>
-      <h1 className="sr-only">Projects</h1>
-      <MainCarousel {...gallery} />
+    <main className="fixed inset-0">
+      <ArenaCarousel items={carouselItems} />
     </main>
   )
 }
