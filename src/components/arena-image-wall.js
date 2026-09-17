@@ -50,6 +50,7 @@ export function ArenaImageWall({ items = [] }) {
     if (!wall) return
 
     let animationFrame
+    let recenterFrame = null
     let currentLag = 0
     let targetLag = 0
     let lastScrollY = window.scrollY
@@ -63,15 +64,21 @@ export function ArenaImageWall({ items = [] }) {
 
     const handleScroll = () => {
       const scrollY = window.scrollY
-      const loopHeight = wall.scrollHeight / 3
+      const loopHeight = wall.scrollHeight / 5
       const relativeScroll = scrollY - wall.offsetTop
 
-      if (relativeScroll < loopHeight * 0.5) {
-        window.scrollTo(0, scrollY + loopHeight)
-        lastScrollY += loopHeight
-      } else if (relativeScroll > loopHeight * 1.5) {
-        window.scrollTo(0, scrollY - loopHeight)
-        lastScrollY -= loopHeight
+      if (!recenterFrame && relativeScroll < loopHeight * 1.25) {
+        recenterFrame = window.requestAnimationFrame(() => {
+          window.scrollTo(0, window.scrollY + loopHeight * 2)
+          lastScrollY += loopHeight * 2
+          recenterFrame = null
+        })
+      } else if (!recenterFrame && relativeScroll > loopHeight * 3.75) {
+        recenterFrame = window.requestAnimationFrame(() => {
+          window.scrollTo(0, window.scrollY - loopHeight * 2)
+          lastScrollY -= loopHeight * 2
+          recenterFrame = null
+        })
       }
 
       targetLag = Math.max(-32, Math.min(32, scrollY - lastScrollY))
@@ -84,6 +91,9 @@ export function ArenaImageWall({ items = [] }) {
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.cancelAnimationFrame(animationFrame)
+      if (recenterFrame) {
+        window.cancelAnimationFrame(recenterFrame)
+      }
     }
   }, [])
 
@@ -166,9 +176,9 @@ export function ArenaImageWall({ items = [] }) {
     <section
       ref={wallRef}
       aria-label="Images from the Asso archive"
-      className="grid grid-cols-12 gap-y-32 p-2 sm:p-4"
+      className="grid grid-cols-12 gap-y-32 p-4"
     >
-      {Array.from({ length: 3 }, (_, pass) =>
+      {Array.from({ length: 5 }, (_, pass) =>
         items.reduce(
         (rows, item, index) => {
           const previous = rows.at(-1)
@@ -205,7 +215,7 @@ export function ArenaImageWall({ items = [] }) {
           <div
             ref={(tile) => {
               const tileKey = `${pass}-${item.id}`
-              if (pass === 1 && index === items.length) {
+              if (pass === 2 && index === items.length * 2) {
                 firstTileRef.current = tile
               }
               if (tile) {
@@ -215,7 +225,7 @@ export function ArenaImageWall({ items = [] }) {
               }
             }}
             data-arena-image-id={item.id}
-            className="arena-image-tile relative aspect-[4/3] sm:aspect-[6/4] w-full max-w-[30rem] justify-self-center"
+            className="arena-image-tile relative aspect-[6/4] w-full max-w-[30rem] justify-self-center"
             style={{
               '--arena-mobile-column-start': mobileStart,
               '--arena-desktop-column-start': desktopStart,
