@@ -19,6 +19,7 @@ function getStableColumnStart(id, columnCount, previousStart) {
 
 export function ArenaImageWall({ items = [] }) {
   const wallRef = useRef(null)
+  const firstTileRef = useRef(null)
   const tileRefs = useRef(new Map())
   const captionTimer = useRef(null)
   const eligibleIdsRef = useRef([])
@@ -32,7 +33,13 @@ export function ArenaImageWall({ items = [] }) {
     if (!wall) return
 
     const frame = window.requestAnimationFrame(() => {
-      window.scrollTo({ top: wall.offsetTop + wall.scrollHeight / 3 })
+      const firstTile = firstTileRef.current
+      if (!firstTile) return
+
+      const { top, height } = firstTile.getBoundingClientRect()
+      window.scrollTo({
+        top: window.scrollY + top + height / 2 - window.innerHeight / 2
+      })
     })
 
     return () => window.cancelAnimationFrame(frame)
@@ -159,7 +166,7 @@ export function ArenaImageWall({ items = [] }) {
     <section
       ref={wallRef}
       aria-label="Images from the Asso archive"
-      className="grid grid-cols-12 gap-y-32 p-4"
+      className="grid grid-cols-12 gap-y-32 p-2 sm:p-4"
     >
       {Array.from({ length: 3 }, (_, pass) =>
         items.reduce(
@@ -198,6 +205,9 @@ export function ArenaImageWall({ items = [] }) {
           <div
             ref={(tile) => {
               const tileKey = `${pass}-${item.id}`
+              if (pass === 1 && index === items.length) {
+                firstTileRef.current = tile
+              }
               if (tile) {
                 tileRefs.current.set(tileKey, tile)
               } else {
@@ -205,7 +215,7 @@ export function ArenaImageWall({ items = [] }) {
               }
             }}
             data-arena-image-id={item.id}
-            className="arena-image-tile relative aspect-[6/4] w-full max-w-[30rem] justify-self-center"
+            className="arena-image-tile relative aspect-[4/3] sm:aspect-[6/4] w-full max-w-[30rem] justify-self-center"
             style={{
               '--arena-mobile-column-start': mobileStart,
               '--arena-desktop-column-start': desktopStart,

@@ -20,7 +20,7 @@ export default async function About() {
       <h1 className="sr-only">
         About Asso, a design studio based in Stockholm, Sweden
       </h1>
-      <section className="grid grid-cols-12 gap-x-2 gap-y-3 px-4">
+      <section className="grid grid-cols-12 gap-x-2 gap-y-3 px-2 sm:px-4">
         <p className="col-start-1 col-end-12 grid gap-4">
           Founded in 2019 by Mathias Dag Lindahl and Tilda Ragnartz, the Asso
           atelier has been based in the southern part of Stockholm ever since.

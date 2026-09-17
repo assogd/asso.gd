@@ -10,7 +10,7 @@ export default function Header() {
   return (
     <>
     {isHome && <><div className="fixed inset-x-0 top-0 h-24 z-10 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" /><div className="fixed inset-x-0 bottom-0 h-24 z-10 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" /></>}
-    <header className={clsx(isHome ? "fixed inset-x-0 top-0" : "pb-0", "flex w-screen p-4 z-10")}>
+    <header className={clsx(isHome ? "fixed inset-x-0 top-0" : "pb-0", "flex w-screen p-2 sm:p-4 z-10")}>
       <p
         className={clsx(
           '',
@@ -40,7 +40,7 @@ export default function Header() {
             </span>
             <Link
               href="/"
-              className="fixed top-4 right-4 button-style whitespace-nowrap"
+              className="fixed top-2 sm:top-4 right-2 sm:right-4 button-style whitespace-nowrap"
             >
               Images
             </Link>
