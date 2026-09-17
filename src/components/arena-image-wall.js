@@ -18,6 +18,7 @@ function getStableColumnStart(id, columnCount, previousStart) {
 }
 
 export function ArenaImageWall({ items = [] }) {
+  const wallRef = useRef(null)
   const tileRefs = useRef(new Map())
   const captionTimer = useRef(null)
   const eligibleIdsRef = useRef([])
@@ -25,6 +26,59 @@ export function ArenaImageWall({ items = [] }) {
   const [activeId, setActiveId] = useState(null)
   const [captionVisible, setCaptionVisible] = useState(false)
   eligibleIdsRef.current = eligibleIds
+
+  useEffect(() => {
+    const wall = wallRef.current
+    if (!wall) return
+
+    const frame = window.requestAnimationFrame(() => {
+      window.scrollTo({ top: wall.offsetTop + wall.scrollHeight / 3 })
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [])
+
+  useEffect(() => {
+    const wall = wallRef.current
+    if (!wall) return
+
+    let animationFrame
+    let currentLag = 0
+    let targetLag = 0
+    let lastScrollY = window.scrollY
+
+    const settle = () => {
+      currentLag += (targetLag - currentLag) * 0.08
+      wall.style.setProperty('--arena-scroll-lag', `${currentLag}px`)
+      targetLag *= 0.9
+      animationFrame = window.requestAnimationFrame(settle)
+    }
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      const loopHeight = wall.scrollHeight / 3
+      const relativeScroll = scrollY - wall.offsetTop
+
+      if (relativeScroll < loopHeight * 0.5) {
+        window.scrollTo(0, scrollY + loopHeight)
+        lastScrollY += loopHeight
+      } else if (relativeScroll > loopHeight * 1.5) {
+        window.scrollTo(0, scrollY - loopHeight)
+        lastScrollY -= loopHeight
+      }
+
+      targetLag = Math.max(-32, Math.min(32, scrollY - lastScrollY))
+      lastScrollY = scrollY
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    animationFrame = window.requestAnimationFrame(settle)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.cancelAnimationFrame(animationFrame)
+    }
+  }, [])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -103,10 +157,12 @@ export function ArenaImageWall({ items = [] }) {
   return (
     <>
     <section
+      ref={wallRef}
       aria-label="Images from the Asso archive"
       className="grid grid-cols-12 gap-y-32 p-4"
     >
-      {items.reduce(
+      {Array.from({ length: 3 }, (_, pass) =>
+        items.reduce(
         (rows, item, index) => {
           const previous = rows.at(-1)
           const mobileStart =
@@ -127,24 +183,33 @@ export function ArenaImageWall({ items = [] }) {
           return rows
         },
         []
-      ).map(({ item, index, mobileStart, desktopStart }) => (
+        ).map(({ item, index, mobileStart, desktopStart }) => ({
+          item,
+          index: pass * items.length + index,
+          mobileStart,
+          desktopStart,
+          pass
+        }))
+      ).flat().map(({ item, index, mobileStart, desktopStart, pass }) => (
         <figure
-          key={item.id}
+          key={`${pass}-${item.id}`}
           className="col-span-full grid grid-cols-12 grid-rows-[auto_auto]"
         >
           <div
             ref={(tile) => {
+              const tileKey = `${pass}-${item.id}`
               if (tile) {
-                tileRefs.current.set(String(item.id), tile)
+                tileRefs.current.set(tileKey, tile)
               } else {
-                tileRefs.current.delete(String(item.id))
+                tileRefs.current.delete(tileKey)
               }
             }}
             data-arena-image-id={item.id}
-            className="arena-image-tile relative aspect-[4/3] w-full max-w-[28rem] justify-self-center"
+            className="arena-image-tile relative aspect-[6/4] w-full max-w-[30rem] justify-self-center"
             style={{
               '--arena-mobile-column-start': mobileStart,
-              '--arena-desktop-column-start': desktopStart
+              '--arena-desktop-column-start': desktopStart,
+              '--arena-lag-factor': 0.7 + (index % 3) * 0.15
             }}
           >
             <Image

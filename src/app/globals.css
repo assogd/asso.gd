@@ -18,9 +18,15 @@ body {
   background: hsl(0, 0%, 5%);
   color: hsl(0, 0%, 95%);
   color-scheme: dark;
+  scrollbar-width: none;
   transition: background 0ms;
   -webkit-font-smoothing: antialiased; /* Lighter appearance */
   -moz-osx-font-smoothing: grayscale; /* Similar effect */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 .bg-black {
@@ -97,6 +103,12 @@ a:hover {
 
 .arena-image-tile {
   grid-column: var(--arena-mobile-column-start) / span 8;
+  transform: translate3d(
+    0,
+    calc(var(--arena-scroll-lag, 0px) * var(--arena-lag-factor, 1)),
+    0
+  );
+  will-change: transform;
 }
 
 .arena-caption-container {

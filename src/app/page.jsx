@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { headers } from 'next/headers'
 import siteContent from '@/content/site.json'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { transformArenaBlocksForImageWall } from '@/lib/arena-image-wall'
@@ -18,6 +19,9 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
+  const host = (await headers()).get('host') || ''
+  const isLocalhost = /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host)
+
   // Fetch the adddgd channel data
   let imageItems = []
 
@@ -40,7 +44,9 @@ export default async function Home() {
   return (
     <main className="pt-24">
       <ArenaImageWall items={imageItems} />
-      {process.env.PREVIEW_MODE === 'true' && <PublishButton />}
+      {(process.env.PREVIEW_MODE === 'true' || isLocalhost) && (
+        <PublishButton isLocalhost={isLocalhost} />
+      )}
     </main>
   )
 }
