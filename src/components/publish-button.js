@@ -25,7 +25,7 @@ export function PublishButton() {
       type="button"
       onClick={handlePublish}
       disabled={status === 'publishing'}
-      className="fixed bottom-4 right-4 z-20 rounded-full border border-white/60 bg-black px-4 py-2 text-sm text-white transition-opacity hover:opacity-70 disabled:cursor-wait disabled:opacity-50"
+      className="fixed underline bottom-0 right-0 z-20 p-4 disabled:cursor-wait disabled:opacity-50"
     >
       {status === 'publishing'
         ? 'Publishing...'
