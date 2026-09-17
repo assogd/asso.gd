@@ -225,7 +225,7 @@ export function ArenaImageWall({ items = [] }) {
               }
             }}
             data-arena-image-id={item.id}
-            className="arena-image-tile relative aspect-[6/4] w-full max-w-[30rem] justify-self-center"
+            className="arena-image-tile relative aspect-square w-full max-w-[30rem] justify-self-center sm:aspect-[6/4]"
             style={{
               '--arena-mobile-column-start': mobileStart,
               '--arena-desktop-column-start': desktopStart,
@@ -247,13 +247,17 @@ export function ArenaImageWall({ items = [] }) {
     <div
       aria-live="polite"
       aria-label="Visible image captions"
-      className="arena-caption-container fixed inset-x-0 bottom-0 z-10"
+      className="fixed inset-x-0 bottom-0 z-10 pointer-events-none flex flex-col gap-[0.15rem] px-2 sm:px-4 pt-2 pb-4"
     >
       {activeId && (
-        <p className={`arena-caption ${captionVisible ? 'is-visible' : ''}`}>
+        <figcaption
+          className={`m-0 text-center transition-opacity duration-[200ms] ease-in-out ${
+            captionVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
           {items.find((item) => String(item.id) === activeId)?.title ||
             'Untitled'}
-        </p>
+        </figcaption>
       )}
     </div>
     </>

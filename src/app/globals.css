@@ -112,25 +112,6 @@ a:hover {
   will-change: transform;
 }
 
-.arena-caption-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.75rem 1rem 1rem;
-  pointer-events: none;
-}
-
-.arena-caption {
-  margin: 0;
-  opacity: 0;
-  text-align: center;
-  transition: opacity 900ms ease;
-}
-
-.arena-caption.is-visible {
-  opacity: 1;
-}
-
 @media screen and (min-width: 768px) {
   .arena-image-tile {
     grid-column: var(--arena-desktop-column-start) / span 6;
