@@ -114,11 +114,23 @@ export function ArenaImageWall({ items = [] }) {
       },
       { threshold: 0.8 }
     )
+    const nearViewportObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(({ isIntersecting, target }) => {
+          target.classList.toggle('arena-image-tile-near', isIntersecting)
+        })
+      },
+      { rootMargin: '200% 0px' }
+    )
 
-    tileRefs.current.forEach((tile) => observer.observe(tile))
+    tileRefs.current.forEach((tile) => {
+      observer.observe(tile)
+      nearViewportObserver.observe(tile)
+    })
 
     return () => {
       observer.disconnect()
+      nearViewportObserver.disconnect()
     }
   }, [items])
 
@@ -225,7 +237,7 @@ export function ArenaImageWall({ items = [] }) {
               }
             }}
             data-arena-image-id={item.id}
-            className="arena-image-tile relative aspect-square w-full max-w-[30rem] justify-self-center sm:aspect-[6/4]"
+            className="arena-image-tile relative aspect-square w-full max-w-[30rem] justify-self-center sm:aspect-[4/3]"
             style={{
               '--arena-mobile-column-start': mobileStart,
               '--arena-desktop-column-start': desktopStart,

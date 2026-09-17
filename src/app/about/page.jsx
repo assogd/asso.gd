@@ -1,8 +1,7 @@
+import ReactMarkdown from 'react-markdown'
 import siteContent from '@/content/site.json'
-import {
-  OpacityBlink,
-  AlternatingCharactersColorBlink
-} from '@/components/ui/animations'
+import { getAboutContent } from '@/lib/about'
+import { AlternatingCharactersColorBlink } from '@/components/ui/animations'
 
 export async function generateMetadata() {
   const { title, description } = siteContent.seo.about
@@ -14,74 +13,88 @@ export async function generateMetadata() {
   }
 }
 
-export default async function About() {
+function renderMarkdown(content) {
   return (
-    <main className="grid gap-y-6 py-4">
+    <ReactMarkdown
+      components={{
+        a: ({ node, ...props }) => (
+          <a {...props} target="_blank" rel="noopener noreferrer" />
+        )
+      }}
+    >
+      {content}
+    </ReactMarkdown>
+  )
+}
+
+function renderMarkdownInGrid(content, className) {
+  return <div className={className}>{renderMarkdown(content)}</div>
+}
+
+const addressGridClasses = [
+  'sm:col-start-1 sm:col-end-4',
+  'sm:col-start-4 sm:col-end-7',
+  'sm:col-start-2 sm:col-end-5',
+  'sm:col-start-5 sm:col-end-8',
+  'sm:col-start-3 sm:col-end-6'
+]
+
+export default async function About() {
+  const content = getAboutContent()
+  const addressSection = content.sections.find(
+    (section) => section.title === 'Our addresses'
+  )
+  const addressEntries = addressSection?.content
+    .split(/^### /m)
+    .filter(Boolean)
+    .map((entry) => {
+      const [title, ...body] = entry.split('\n')
+      return { title: title.trim(), content: body.join('\n').trim() }
+    })
+
+  return (
+    <main className="grid gap-y-6 pt-0 pb-4">
       <h1 className="sr-only">
         About Asso, a design studio based in Stockholm, Sweden
       </h1>
-      <section className="grid grid-cols-12 gap-x-2 gap-y-3 px-2 sm:px-4">
-        <p className="col-start-1 col-end-12 grid gap-4">
-          Founded in 2019 by Mathias Dag Lindahl and Tilda Ragnartz, the Asso
-          atelier has been based in the southern part of Stockholm ever since.
-        </p>
+      <section className="grid grid-cols-12 gap-x-2 px-2 sm:px-4">
+        {renderMarkdownInGrid(content.intro, 'col-start-1 col-end-12')}
       </section>
-      <section as="section" className="grid grid-cols-12 gap-x-2 gap-y-0 px-4">
-        <h2 as="h2" className="col-start-2 col-end-12">
-          <AlternatingCharactersColorBlink text="Announcement" />
-        </h2>
-        <p className="col-start-1 col-end-12 grid gap-4">
-          We are currently accepting internship applications for Spring/Summer
-          2026. Application deadline is February 26, 2026. A minimum duration of
-          three months is required.
-        </p>
-      </section>
-      <section className="grid grid-cols-12 gap-x-2 gap-y-3 px-4">
-        <h2 className="col-start-2 col-end-12">Our addresses</h2>
-        <div className="col-start-1 col-end-4">
-          <h3>Office</h3>
-          <p>
-            Bondegatan 21A
-            <br /> Stockholm, Sweden
-          </p>
-        </div>
-        <div className="col-start-4 col-end-7">
-          <h3>General enquiries</h3>
-          <p>
-            <a href="mailto:office@asso.gd">office@asso.gd</a>
-            <br />
-            <a href="tel:+46841400147">+46 8 414 001 47</a>
-          </p>
-        </div>
-        <div className="col-start-2 col-end-5">
-          <h3>New business</h3>
-          <p>
-            Tilda Ragnartz
-            <br />
-            <a href="mailto:tilda@asso.gd">tilda@asso.gd</a>
-          </p>
-        </div>
-        <div className="col-start-5 col-end-8">
-          <h3>Applications</h3>
-          <p>
-            Mathias Dag Lindahl
-            <br />
-            <a href="mailto:mathias@asso.gd">mathias@asso.gd</a>
-          </p>
-        </div>
-        <div className="col-start-3 col-end-6">
-          <h3>Occasional updates</h3>
-          <p>
-            <a
-              href="https://www.instagram.com/asso4077/"
-              target="_blank"
-              rel="noopener noreferrer"
+      {!content.announcement_hidden &&
+        content.sections
+          .filter((section) => section.title === 'Announcement')
+          .map((section) => (
+            <section key={section.title} className="grid grid-cols-12 gap-x-2 px-4">
+              <h2 className="col-start-2 col-end-12">
+                <AlternatingCharactersColorBlink text={section.title} />
+              </h2>
+              {renderMarkdownInGrid(section.content, 'col-start-1 col-end-12')}
+            </section>
+          ))}
+      {addressEntries && (
+        <section className="grid grid-cols-1 gap-y-3 px-4 sm:grid-cols-12 sm:gap-x-2">
+          <h2 className="col-span-1 sm:col-start-2 sm:col-end-12">
+            {addressSection.title}
+          </h2>
+          {addressEntries.map((entry, index) => (
+            <div
+              key={entry.title}
+              className={`col-span-1 ${addressGridClasses[index] || ''}`}
             >
-              Instagram
-            </a>
-          </p>
-        </div>
-      </section>
+              <h3>{entry.title}</h3>
+              {renderMarkdown(entry.content)}
+            </div>
+          ))}
+        </section>
+      )}
+      {content.sections
+        .filter((section) => section.title === 'Credits')
+        .map((section) => (
+          <section key={section.title} className="grid grid-cols-12 gap-y-0 px-4 pt-24">
+            <h2 className="col-start-2 col-end-12">{section.title}</h2>
+            {renderMarkdownInGrid(section.content, 'col-start-1 col-end-12')}
+          </section>
+        ))}
     </main>
   )
 }

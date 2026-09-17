@@ -104,6 +104,9 @@ a:hover {
 .arena-image-tile {
   grid-column: 1 / -1;
   max-width: none !important;
+}
+
+.arena-image-tile-near {
   transform: translate3d(
     0,
     calc(var(--arena-scroll-lag, 0px) * var(--arena-lag-factor, 1)),

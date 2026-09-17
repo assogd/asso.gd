@@ -1,4 +1,5 @@
 'use client'
+import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import Link from 'next/link'
@@ -6,6 +7,12 @@ import Link from 'next/link'
 export default function Header() {
   const pathname = usePathname()
   const isHome = pathname === '/'
+
+  useEffect(() => {
+    if (pathname === '/about') {
+      window.scrollTo({ top: 0, left: 0 })
+    }
+  }, [pathname])
 
   return (
     <>
