@@ -1,53 +1,46 @@
 import { notFound } from 'next/navigation'
-import { SinglePageSeo } from '@/queries/pages'
-import { fetchGraphQL } from '@/lib/graphql'
+import siteContent from '@/content/site.json'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
-import { transformArenaBlocksForCarousel } from '@/lib/arena-carousel'
-import { ArenaCarousel } from '@/components/ui/carousel/arena-carousel'
+import { transformArenaBlocksForImageWall } from '@/lib/arena-image-wall'
+import { ArenaImageWall } from '@/components/arena-image-wall'
+import { PublishButton } from '@/components/publish-button'
+
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
-  const pageData = await fetchGraphQL(SinglePageSeo, { slug: 'home' })
-  const page = pageData?.page
-
-  const { title, description, image } = page?.seo ?? []
+  const { title, description } = siteContent.seo.home
 
   return {
-    title: title ?? 'Asso',
-    description: description,
-    openGraph: {
-      description: description,
-      images: [
-        {
-          url: image?.url
-        }
-      ]
-    }
+    title,
+    description,
+    openGraph: { description }
   }
 }
 
 export default async function Home() {
   // Fetch the adddgd channel data
-  let carouselItems = []
+  let imageItems = []
 
   try {
-    const channel = await fetchArenaChannelWithBlocks('adddgd')
+    const channel = await fetchArenaChannelWithBlocks('adddgd', {
+      fresh: process.env.PREVIEW_MODE === 'true'
+    })
     if (channel?.contents) {
-      carouselItems = transformArenaBlocksForCarousel(
-        channel.contents
-      ).reverse()
+      imageItems = transformArenaBlocksForImageWall(channel.contents).reverse()
     }
   } catch (error) {
     console.error('Failed to fetch Arena channel:', error)
   }
 
   // Show not found page if no data available
-  if (!carouselItems || carouselItems.length === 0) {
+  if (imageItems.length === 0) {
     notFound()
   }
 
   return (
-    <main className="fixed inset-0">
-      <ArenaCarousel items={carouselItems} />
+    <main className="pt-24">
+      <ArenaImageWall items={imageItems} />
+      {process.env.PREVIEW_MODE === 'true' && <PublishButton />}
     </main>
   )
 }

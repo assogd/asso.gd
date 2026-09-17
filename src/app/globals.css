@@ -15,27 +15,12 @@ html {
 
 html,
 body {
+  background: hsl(0, 0%, 5%);
+  color: hsl(0, 0%, 95%);
+  color-scheme: dark;
   transition: background 0ms;
   -webkit-font-smoothing: antialiased; /* Lighter appearance */
   -moz-osx-font-smoothing: grayscale; /* Similar effect */
-}
-
-[data-theme='light'],
-[data-theme='light'] body {
-  background: rgba(255, 255, 255, 1);
-  color: rgb(1, 14, 0);
-}
-
-[data-theme='dark'],
-[data-theme='dark'] body {
-  background: hsl(0, 0%, 5%);
-  color: hsl(0, 0%, 95%);
-}
-
-[data-theme='vibrant'],
-[data-theme='vibrant'] body {
-  background: rgba(255, 255, 255, 1);
-  color: #de0000;
 }
 
 .bg-black {
@@ -108,4 +93,33 @@ a:hover {
 
 .blinking-path {
   animation: blink 2s steps(1, start) infinite;
+}
+
+.arena-image-tile {
+  grid-column: var(--arena-mobile-column-start) / span 8;
+}
+
+.arena-caption-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.75rem 1rem 1rem;
+  pointer-events: none;
+}
+
+.arena-caption {
+  margin: 0;
+  opacity: 0;
+  text-align: center;
+  transition: opacity 900ms ease;
+}
+
+.arena-caption.is-visible {
+  opacity: 1;
+}
+
+@media screen and (min-width: 768px) {
+  .arena-image-tile {
+    grid-column: var(--arena-desktop-column-start) / span 6;
+  }
 }

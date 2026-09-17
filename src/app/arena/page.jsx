@@ -9,7 +9,7 @@ export default async function ArenaPage() {
   ])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black text-white">
 
 
       {/* Content */}
@@ -20,7 +20,7 @@ export default async function ArenaPage() {
           <section>
             <h2 className="text-xl font-semibold mb-4">adddgd-about</h2>
             {aboutChannel.status === 'fulfilled' && aboutChannel.value ? (
-              <div className="bg-gray-50 p-6 rounded-lg">
+              <div className="bg-neutral-900 p-6 rounded-lg">
                 <div className="mb-4">
                   <h3 className="font-semibold text-lg">{aboutChannel.value.title}</h3>
                   {aboutChannel.value.description && (
@@ -34,7 +34,7 @@ export default async function ArenaPage() {
                 {aboutChannel.value.contents && aboutChannel.value.contents.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {aboutChannel.value.contents.slice(0, 6).map((block, index) => (
-                      <div key={block.id || index} className="bg-white p-4 rounded border">
+                      <div key={block.id || index} className="bg-neutral-800 p-4 rounded border border-neutral-700">
                         <div className="text-sm text-gray-500 mb-2">
                           {block.class || 'Block'} • {block.created_at ? new Date(block.created_at).toLocaleDateString() : 'No date'}
                         </div>
@@ -71,8 +71,8 @@ export default async function ArenaPage() {
                 )}
               </div>
             ) : (
-              <div className="bg-red-50 p-6 rounded-lg">
-                <p className="text-red-600">Failed to load adddgd-about channel</p>
+              <div className="bg-red-950 p-6 rounded-lg">
+                <p className="text-red-200">Failed to load adddgd-about channel</p>
                 {aboutChannel.status === 'rejected' && (
                   <p className="text-sm text-red-500 mt-2">{aboutChannel.reason?.message}</p>
                 )}
@@ -84,7 +84,7 @@ export default async function ArenaPage() {
           <section>
             <h2 className="text-xl font-semibold mb-4">adddgd</h2>
             {mainChannel.status === 'fulfilled' && mainChannel.value ? (
-              <div className="bg-gray-50 p-6 rounded-lg">
+              <div className="bg-neutral-900 p-6 rounded-lg">
                 <div className="mb-4">
                   <h3 className="font-semibold text-lg">{mainChannel.value.title}</h3>
                   {mainChannel.value.description && (
@@ -98,7 +98,7 @@ export default async function ArenaPage() {
                 {mainChannel.value.contents && mainChannel.value.contents.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {mainChannel.value.contents.slice(0, 6).map((block, index) => (
-                      <div key={block.id || index} className="bg-white p-4 rounded border">
+                      <div key={block.id || index} className="bg-neutral-800 p-4 rounded border border-neutral-700">
                         <div className="text-sm text-gray-500 mb-2">
                           {block.class || 'Block'} • {block.created_at ? new Date(block.created_at).toLocaleDateString() : 'No date'}
                         </div>
@@ -135,8 +135,8 @@ export default async function ArenaPage() {
                 )}
               </div>
             ) : (
-              <div className="bg-red-50 p-6 rounded-lg">
-                <p className="text-red-600">Failed to load adddgd channel</p>
+              <div className="bg-red-950 p-6 rounded-lg">
+                <p className="text-red-200">Failed to load adddgd channel</p>
                 {mainChannel.status === 'rejected' && (
                   <p className="text-sm text-red-500 mt-2">{mainChannel.reason?.message}</p>
                 )}

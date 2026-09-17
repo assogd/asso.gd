@@ -1,27 +1,16 @@
-import { fetchGraphQL } from '@/lib/graphql'
-import { SinglePageSeo } from '@/queries/pages'
+import siteContent from '@/content/site.json'
 import {
   OpacityBlink,
   AlternatingCharactersColorBlink
 } from '@/components/ui/animations'
 
 export async function generateMetadata() {
-  const pageData = await fetchGraphQL(SinglePageSeo, { slug: 'about' })
-  const page = pageData?.page
-
-  const { title, description, image } = page?.seo ?? []
+  const { title, description } = siteContent.seo.about
 
   return {
-    title: title ?? 'Asso',
-    description: description,
-    openGraph: {
-      description: description,
-      images: [
-        {
-          url: image?.url
-        }
-      ]
-    }
+    title,
+    description,
+    openGraph: { description }
   }
 }
 

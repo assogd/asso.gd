@@ -2,7 +2,6 @@ import './globals.css'
 import localFont from 'next/font/local'
 import clsx from 'clsx'
 import PlausibleProvider from 'next-plausible'
-import { ThemeProvider } from 'next-themes'
 import { MegaCoverProvider } from '@/components/mega-cover-context'
 import { FirstImageLoadedProvider } from '@/hooks/use-first-image-loaded'
 import Header from '@/components/header'
@@ -40,26 +39,17 @@ export default async function Layout({ children, params }) {
     <html
       lang="en"
       className={clsx(`${serif.variable} font-serif overscroll-none`)}
-      suppressHydrationWarning
     >
       <head>
         <PlausibleProvider domain="asso.gd" />
       </head>
       <body>
-        <ThemeProvider
-          defaultTheme="system"
-          enableColorScheme
-          enableSystem={true}
-          themes={['light', 'vibrant', 'dark']}
-          attribute="data-theme"
-        >
-          <MegaCoverProvider>
-            <FirstImageLoadedProvider>
-              <Header />
-              {children}
-            </FirstImageLoadedProvider>
-          </MegaCoverProvider>
-        </ThemeProvider>
+        <MegaCoverProvider>
+          <FirstImageLoadedProvider>
+            <Header />
+            {children}
+          </FirstImageLoadedProvider>
+        </MegaCoverProvider>
       </body>
     </html>
   )

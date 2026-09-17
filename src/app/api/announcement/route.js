@@ -1,25 +1,18 @@
-import { fetchGraphQL } from '@/lib/graphql'
-import { LatestAnnouncement } from '@/queries/settings'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
 export async function GET(request) {
   try {
-    const result = await fetchGraphQL(LatestAnnouncement)
-    const settings = result?.settingss?.[0]
+    const markdown = await fs.readFile(
+      path.join(process.cwd(), 'src/content/announcement.md'),
+      'utf8'
+    )
 
-    if (settings && settings.announcement) {
-      return new Response(JSON.stringify({ message: settings.announcement }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      })
-    } else {
-      return new Response(JSON.stringify({ error: 'No announcement found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      })
-    }
+    return Response.json({ message: { markdown } })
   } catch (error) {
+    console.error('Failed to read repository announcement:', error)
     return new Response(
-      JSON.stringify({ error: 'Failed to fetch announcement' }),
+      JSON.stringify({ error: 'Failed to read announcement' }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' }

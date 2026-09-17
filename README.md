@@ -25,7 +25,7 @@ This is the first stable release of ADDD, featuring a sophisticated carousel-bas
 - **Next.js 14**: Built with the latest Next.js App Router
 - **Tailwind CSS**: Modern, utility-first styling
 - **Framer Motion**: Smooth animations and transitions
-- **GraphQL Integration**: Content management with Hygraph
+- **Repository Content**: SEO and announcement content are stored in `src/content`
 - **Performance Optimized**: Image optimization and lazy loading
 
 ## 🛠️ Quick Start
@@ -36,11 +36,24 @@ npm install
 ```
 
 2. **Set up environment variables**
-Create a `.env.local` file with your Hygraph credentials:
-```env
-HYGRAPH_ENDPOINT="your-hygraph-endpoint"
-HYGRAPH_TOKEN="your-hygraph-token"
+No CMS credentials are required. Are.na content is cached indefinitely and can be
+manually refreshed through `/api/revalidate-arena`.
+
+### Netlify preview
+
+Create a second Netlify site for the preview branch and point `preview.asso.gd`
+to that site's domain. Configure these variables on the preview site:
+
+```shell
+PREVIEW_MODE=true
+PUBLISH_TOKEN=<a-long-random-secret>
+PRODUCTION_REVALIDATE_URL=https://asso.gd/api/revalidate-arena
 ```
+
+Configure the same secret on the production site as `REVALIDATE_TOKEN`. The
+preview site then fetches Are.na with `no-store` on every page load. Its
+**Publish** button calls the production revalidation endpoint and refreshes the
+cached Are.na data and homepage.
 
 3. **Start development server**
 ```shell
@@ -62,7 +75,7 @@ npm start
 - **Resume**: Release to resume automatic progression
 
 ### Content Management
-Content is managed through Hygraph CMS, allowing for easy updates to:
+Repository-hosted content can be updated directly in:
 - Images and videos
 - Slide durations
 - Captions and metadata

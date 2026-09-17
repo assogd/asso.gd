@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { RichText } from '@graphcms/rich-text-react-renderer'
+import ReactMarkdown from 'react-markdown'
 
 const Announcement = () => {
   const [announcement, setAnnouncement] = useState(null)
@@ -19,7 +19,7 @@ const Announcement = () => {
 
   return (
     <div className="max-w-2xl">
-      <RichText content={announcement.message.raw} />
+      <ReactMarkdown>{announcement.message.markdown}</ReactMarkdown>
     </div>
   )
 }

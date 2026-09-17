@@ -1,12 +1,24 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
-import { clearDevCache } from '@/lib/arena'
 
 // Simple in-memory store for revalidation history
 // In production, you might want to use a database or external storage
 let revalidationHistory = []
 
+function isAuthorized(request) {
+  const expectedToken = process.env.REVALIDATE_TOKEN
+  if (!expectedToken) {
+    return process.env.NODE_ENV !== 'production'
+  }
+
+  return request.headers.get('authorization') === `Bearer ${expectedToken}`
+}
+
 export async function POST(request) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const { path, tag } = await request.json()
     
@@ -28,12 +40,9 @@ export async function POST(request) {
 
     // Revalidate by tag if provided
     if (tag) {
-      revalidateTag(tag)
+      revalidateTag(tag, 'max')
       results.push({ type: 'tag', value: tag })
     }
-
-    // Clear development cache
-    clearDevCache()
 
     // Store revalidation history
     const historyEntry = {
@@ -65,6 +74,10 @@ export async function POST(request) {
 
 // Also support GET for easy testing
 export async function GET(request) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const { searchParams } = new URL(request.url)
   const path = searchParams.get('path') || '/arena'
   const tag = searchParams.get('tag')
@@ -79,12 +92,9 @@ export async function GET(request) {
 
     // Revalidate by tag if provided
     if (tag) {
-      revalidateTag(tag)
+      revalidateTag(tag, 'max')
       results.push({ type: 'tag', value: tag })
     }
-
-    // Clear development cache
-    clearDevCache()
 
     // Store revalidation history
     const historyEntry = {

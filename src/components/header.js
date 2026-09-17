@@ -8,7 +8,9 @@ export default function Header() {
   const isHome = pathname === '/'
 
   return (
-    <header className="flex w-screen p-4 pb-0 relative z-10">
+    <>
+    {isHome && <><div className="fixed inset-x-0 top-0 h-24 z-10 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" /><div className="fixed inset-x-0 bottom-0 h-24 z-10 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" /></>}
+    <header className={clsx(isHome ? "fixed inset-x-0 top-0" : "pb-0", "flex w-screen p-4 z-10")}>
       <p
         className={clsx(
           '',
@@ -46,5 +48,6 @@ export default function Header() {
         )}
       </nav>
     </header>
+</>
   )
 }

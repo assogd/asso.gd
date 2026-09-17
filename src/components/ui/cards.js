@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { Preview } from '@/components/ui/players'
 import Link from 'next/link'
 import { RegularImage } from '@/components/ui/images'
-import { RichText } from '@graphcms/rich-text-react-renderer'
+import ReactMarkdown from 'react-markdown'
 import {
   CFHILL,
   Forma,
@@ -78,7 +78,7 @@ export const PortraitClientCard = ({
 
         <div className="text-center grid gap-4">
           <div className="px-3 py-3">
-            <RichText content={description.raw} />
+            <ReactMarkdown>{description.raw}</ReactMarkdown>
           </div>
 
           <div className="relative flex justify-center overflow-hidden pb-4">
@@ -208,7 +208,7 @@ export const LandscapeClientCard = ({
           />
           {description?.raw && (
             <div className="bg-white p-2 hidden">
-              <RichText content={description.raw} />
+              <ReactMarkdown>{description.raw}</ReactMarkdown>
             </div>
           )}
         </div>
