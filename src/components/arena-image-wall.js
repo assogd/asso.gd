@@ -17,16 +17,47 @@ function getStableColumnStart(id, columnCount, previousStart) {
   return (start % columnCount) + 1
 }
 
+const PASS_COUNT = 3
+const MIDDLE_PASS = 1
+
 export function ArenaImageWall({ items = [] }) {
   const wallRef = useRef(null)
   const firstTileRef = useRef(null)
+  // tileKey -> { element, item }
   const tileRefs = useRef(new Map())
-  const captionTimer = useRef(null)
-  const eligibleIdsRef = useRef([])
-  const [eligibleIds, setEligibleIds] = useState([])
-  const [activeId, setActiveId] = useState(null)
-  const [captionVisible, setCaptionVisible] = useState(false)
-  eligibleIdsRef.current = eligibleIds
+  const eligibleTileKeysRef = useRef(new Set())
+  const [activeTileKey, setActiveTileKey] = useState(null)
+
+  const pickActiveTileKey = () => {
+    const eligible = Array.from(eligibleTileKeysRef.current)
+
+    if (eligible.length === 0) {
+      return null
+    }
+
+    if (eligible.length === 1) {
+      return eligible[0]
+    }
+
+    const viewportCenter = window.innerHeight / 2
+    let closestKey = eligible[0]
+    let closestDistance = Infinity
+
+    eligible.forEach((key) => {
+      const entry = tileRefs.current.get(key)
+      if (!entry) return
+
+      const { top, height } = entry.element.getBoundingClientRect()
+      const distance = Math.abs(top + height / 2 - viewportCenter)
+
+      if (distance < closestDistance) {
+        closestDistance = distance
+        closestKey = key
+      }
+    })
+
+    return closestKey
+  }
 
   useEffect(() => {
     const wall = wallRef.current
@@ -40,6 +71,11 @@ export function ArenaImageWall({ items = [] }) {
       window.scrollTo({
         top: window.scrollY + top + height / 2 - window.innerHeight / 2
       })
+
+      // Show a caption immediately instead of waiting for the next scroll event.
+      window.requestAnimationFrame(() => {
+        setActiveTileKey(pickActiveTileKey())
+      })
     })
 
     return () => window.cancelAnimationFrame(frame)
@@ -49,7 +85,7 @@ export function ArenaImageWall({ items = [] }) {
     const wall = wallRef.current
     if (!wall) return
 
-    let animationFrame
+    let animationFrame = null
     let recenterFrame = null
     let currentLag = 0
     let targetLag = 0
@@ -57,40 +93,55 @@ export function ArenaImageWall({ items = [] }) {
 
     const settle = () => {
       currentLag += (targetLag - currentLag) * 0.08
-      wall.style.setProperty('--arena-scroll-lag', `${currentLag}px`)
       targetLag *= 0.9
-      animationFrame = window.requestAnimationFrame(settle)
+      wall.style.setProperty('--arena-scroll-lag', `${currentLag}px`)
+
+      if (Math.abs(currentLag) > 0.05 || Math.abs(targetLag) > 0.05) {
+        animationFrame = window.requestAnimationFrame(settle)
+      } else {
+        currentLag = 0
+        targetLag = 0
+        wall.style.setProperty('--arena-scroll-lag', '0px')
+        animationFrame = null
+      }
     }
 
     const handleScroll = () => {
       const scrollY = window.scrollY
-      const loopHeight = wall.scrollHeight / 5
+      const loopHeight = wall.scrollHeight / PASS_COUNT
       const relativeScroll = scrollY - wall.offsetTop
 
-      if (!recenterFrame && relativeScroll < loopHeight * 1.25) {
+      if (!recenterFrame && relativeScroll < loopHeight * 0.5) {
         recenterFrame = window.requestAnimationFrame(() => {
-          window.scrollTo(0, window.scrollY + loopHeight * 2)
-          lastScrollY += loopHeight * 2
+          window.scrollTo(0, window.scrollY + loopHeight)
+          lastScrollY += loopHeight
           recenterFrame = null
         })
-      } else if (!recenterFrame && relativeScroll > loopHeight * 3.75) {
+      } else if (!recenterFrame && relativeScroll > loopHeight * 1.5) {
         recenterFrame = window.requestAnimationFrame(() => {
-          window.scrollTo(0, window.scrollY - loopHeight * 2)
-          lastScrollY -= loopHeight * 2
+          window.scrollTo(0, window.scrollY - loopHeight)
+          lastScrollY -= loopHeight
           recenterFrame = null
         })
       }
 
       targetLag = Math.max(-32, Math.min(32, scrollY - lastScrollY))
       lastScrollY = scrollY
+
+      // Only run the settle loop while there is meaningful lag to animate,
+      // instead of continuously on every frame.
+      if (!animationFrame) {
+        animationFrame = window.requestAnimationFrame(settle)
+      }
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    animationFrame = window.requestAnimationFrame(settle)
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      window.cancelAnimationFrame(animationFrame)
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame)
+      }
       if (recenterFrame) {
         window.cancelAnimationFrame(recenterFrame)
       }
@@ -98,19 +149,19 @@ export function ArenaImageWall({ items = [] }) {
   }, [])
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    const captionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach(({ isIntersecting, target }) => {
-          const id = target.dataset.arenaImageId
+          const key = target.dataset.arenaTileKey
 
-          setEligibleIds((current) =>
-            isIntersecting
-              ? current.includes(id)
-                ? current
-                : [...current, id]
-              : current.filter((currentId) => currentId !== id)
-          )
+          if (isIntersecting) {
+            eligibleTileKeysRef.current.add(key)
+          } else {
+            eligibleTileKeysRef.current.delete(key)
+          }
         })
+
+        setActiveTileKey(pickActiveTileKey())
       },
       { threshold: 0.8 }
     )
@@ -123,57 +174,16 @@ export function ArenaImageWall({ items = [] }) {
       { rootMargin: '200% 0px' }
     )
 
-    tileRefs.current.forEach((tile) => {
-      observer.observe(tile)
-      nearViewportObserver.observe(tile)
+    tileRefs.current.forEach(({ element }) => {
+      captionObserver.observe(element)
+      nearViewportObserver.observe(element)
     })
 
     return () => {
-      observer.disconnect()
+      captionObserver.disconnect()
       nearViewportObserver.disconnect()
     }
   }, [items])
-
-  useEffect(() => {
-    return () => {
-      if (captionTimer.current) {
-        clearTimeout(captionTimer.current)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (activeId && eligibleIds.includes(activeId)) {
-      if (captionTimer.current) {
-        clearTimeout(captionTimer.current)
-        captionTimer.current = null
-      }
-      setCaptionVisible(true)
-      return
-    }
-
-    if (captionTimer.current) {
-      return
-    }
-
-    if (activeId) {
-      setCaptionVisible(false)
-      captionTimer.current = setTimeout(() => {
-        const nextId =
-          eligibleIdsRef.current.find((id) => id !== activeId) || null
-        setActiveId(nextId)
-        setCaptionVisible(Boolean(nextId))
-        captionTimer.current = null
-      }, 900)
-      return
-    }
-
-    const nextId = eligibleIds[0] || null
-    if (nextId) {
-      setActiveId(nextId)
-      setCaptionVisible(true)
-    }
-  }, [activeId, eligibleIds])
 
   if (items.length === 0) {
     return (
@@ -190,7 +200,7 @@ export function ArenaImageWall({ items = [] }) {
       aria-label="Images from the Asso archive"
       className="grid grid-cols-12 gap-y-32 p-4"
     >
-      {Array.from({ length: 5 }, (_, pass) =>
+      {Array.from({ length: PASS_COUNT }, (_, pass) =>
         items.reduce(
         (rows, item, index) => {
           const previous = rows.at(-1)
@@ -219,24 +229,26 @@ export function ArenaImageWall({ items = [] }) {
           desktopStart,
           pass
         }))
-      ).flat().map(({ item, index, mobileStart, desktopStart, pass }) => (
+      ).flat().map(({ item, index, mobileStart, desktopStart, pass }) => {
+        const tileKey = `${pass}-${item.id}`
+
+        return (
         <figure
-          key={`${pass}-${item.id}`}
+          key={tileKey}
           className="col-span-full grid grid-cols-12 grid-rows-[auto_auto]"
         >
           <div
             ref={(tile) => {
-              const tileKey = `${pass}-${item.id}`
-              if (pass === 2 && index === items.length * 2) {
+              if (pass === MIDDLE_PASS && index === items.length * MIDDLE_PASS) {
                 firstTileRef.current = tile
               }
               if (tile) {
-                tileRefs.current.set(tileKey, tile)
+                tileRefs.current.set(tileKey, { element: tile, item })
               } else {
                 tileRefs.current.delete(tileKey)
               }
             }}
-            data-arena-image-id={item.id}
+            data-arena-tile-key={tileKey}
             className="arena-image-tile relative aspect-square w-full max-w-[30rem] justify-self-center sm:aspect-[4/3]"
             style={{
               '--arena-mobile-column-start': mobileStart,
@@ -249,26 +261,22 @@ export function ArenaImageWall({ items = [] }) {
               alt={item.image.alt || item.title || 'Asso archive image'}
               fill
               className="object-contain"
-              sizes="(max-width: 640px) 66.666vw, 50vw"
+              sizes="(min-width: 640px) 30rem, 100vw"
               priority={index < 2}
             />
           </div>
         </figure>
-      ))}
+        )
+      })}
     </section>
     <div
       aria-live="polite"
       aria-label="Visible image captions"
       className="fixed inset-x-0 bottom-0 z-10 pointer-events-none flex flex-col gap-[0.15rem] px-2 sm:px-4 pt-2 pb-4"
     >
-      {activeId && (
-        <figcaption
-          className={`m-0 text-center transition-opacity duration-[200ms] ease-in-out ${
-            captionVisible ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          {items.find((item) => String(item.id) === activeId)?.title ||
-            'Untitled'}
+      {activeTileKey && tileRefs.current.get(activeTileKey) && (
+        <figcaption className="m-0 text-center transition-opacity duration-75">
+          {tileRefs.current.get(activeTileKey).item.title || 'Untitled'}
         </figcaption>
       )}
     </div>
