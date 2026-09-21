@@ -57,7 +57,7 @@ export default async function About() {
       <h1 className="sr-only">
         About Asso, a design studio based in Stockholm, Sweden
       </h1>
-      <section className="grid grid-cols-12 gap-x-2 px-2 sm:px-4">
+      <section className="grid grid-cols-12 gap-x-2 px-2 sm:px-4 mt-4 sm:mt-0">
         {renderMarkdownInGrid(content.intro, 'col-start-1 col-end-12')}
       </section>
       {!content.announcement_hidden &&
@@ -72,7 +72,7 @@ export default async function About() {
             </section>
           ))}
       {addressEntries && (
-        <section className="grid grid-cols-1 gap-y-3 px-4 sm:grid-cols-12 sm:gap-x-2">
+        <section className="grid grid-cols-1 gap-y-3 px-2 sm:px-4 sm:grid-cols-12 sm:gap-x-2">
           <h2 className="col-span-1 sm:col-start-2 sm:col-end-12">
             {addressSection.title}
           </h2>
@@ -90,7 +90,7 @@ export default async function About() {
       {content.sections
         .filter((section) => section.title === 'Credits')
         .map((section) => (
-          <section key={section.title} className="grid grid-cols-12 gap-y-0 px-4 pt-24">
+          <section key={section.title} className="grid grid-cols-12 gap-y-0 px-4 pt-32 sm:pt-24">
             <h2 className="col-start-2 col-end-12">{section.title}</h2>
             {renderMarkdownInGrid(section.content, 'col-start-1 col-end-12')}
           </section>
