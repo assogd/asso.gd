@@ -1,34 +1,30 @@
-# ADDD - Creative Portfolio
+# Asso
 
-> A modern, interactive portfolio application built with Next.js, featuring an immersive carousel experience for showcasing creative work.
+The site for Asso, a Stockholm-based design studio: a full-screen, looping
+Are.na-powered image wall on the homepage, and a Markdown-driven About page.
 
-## 🚀 Version 1.0.0
+## Features
 
-This is the first stable release of ADDD, featuring a sophisticated carousel-based portfolio interface with advanced interaction patterns.
+- **Are.na image wall**: the homepage streams images from an Are.na channel
+  into a continuously scrolling wall with drag/scroll navigation and
+  animated captions.
+- **About page**: content is authored in `src/content/about.md` and rendered
+  with `react-markdown`.
+- **Manual revalidation**: Are.na data is cached indefinitely and only
+  refreshed on demand via `/api/revalidate-arena`, with a companion
+  `/api/publish` endpoint for triggering that revalidation on a separate
+  production deployment (see "Preview & publish" below).
 
-## ✨ Features
+## Tech stack
 
-### Core Functionality
-- **Interactive Carousel**: Full-screen carousel with smooth transitions and gesture support
-- **Multi-media Support**: Seamless integration of images and videos
-- **Responsive Design**: Optimized for both desktop and mobile experiences
-- **Theme Integration**: Dynamic theme switching based on content
+- Next.js 16 (App Router, Turbopack)
+- React 19
+- Tailwind CSS
+- Framer Motion
+- `are.na` API client
+- `react-markdown`
 
-### Advanced Interactions
-- **Gesture Navigation**: Touch and mouse gesture support for intuitive navigation
-- **Smart Cursor**: Dynamic cursor behavior with resize indicators
-- **Pause/Resume**: Hold to pause functionality with visual feedback
-- **Progress Tracking**: Visual progress bars for each slide
-- **Asset Preloading**: Intelligent preloading of adjacent content
-
-### Technical Features
-- **Next.js 14**: Built with the latest Next.js App Router
-- **Tailwind CSS**: Modern, utility-first styling
-- **Framer Motion**: Smooth animations and transitions
-- **Repository Content**: SEO and announcement content are stored in `src/content`
-- **Performance Optimized**: Image optimization and lazy loading
-
-## 🛠️ Quick Start
+## Quick start
 
 1. **Install dependencies**
 ```shell
@@ -36,26 +32,17 @@ npm install
 ```
 
 2. **Set up environment variables**
-No CMS credentials are required. Are.na content is cached indefinitely and can be
-manually refreshed through `/api/revalidate-arena`.
 
-### Netlify preview
-
-Create a second Netlify site for the preview branch and point `preview.asso.gd`
-to that site's domain. Configure these variables on the preview site:
-
+Create a `.env.local` with:
 ```shell
-PREVIEW_MODE=true
-PUBLISH_TOKEN=<a-long-random-secret>
-PRODUCTION_REVALIDATE_URL=https://asso.gd/api/revalidate-arena
+ARENA_ACCESS_TOKEN=<your-are.na-personal-access-token>
 ```
 
-Configure the same secret on the production site as `REVALIDATE_TOKEN`. The
-preview site then fetches Are.na with `no-store` on every page load. Its
-**Publish** button calls the production revalidation endpoint and refreshes the
-cached Are.na data and homepage.
+No CMS credentials are required beyond the Are.na token. Are.na content is
+cached indefinitely and can be manually refreshed through
+`/api/revalidate-arena`.
 
-3. **Start development server**
+3. **Start the development server**
 ```shell
 npm run dev
 ```
@@ -66,43 +53,27 @@ npm run build
 npm start
 ```
 
-## 📱 Usage
+## Preview & publish
 
-### Navigation
-- **Desktop**: Click left/right sides of screen or use mouse gestures
-- **Mobile**: Tap left/right sides or swipe gestures
-- **Pause**: Hold anywhere on screen to pause the carousel
-- **Resume**: Release to resume automatic progression
+Create a second deployment (e.g. on Netlify) for a preview branch and point
+a preview subdomain to it. Configure these variables on the preview
+deployment:
 
-### Content Management
-Repository-hosted content can be updated directly in:
-- Images and videos
-- Slide durations
-- Captions and metadata
-- Theme settings
+```shell
+PREVIEW_MODE=true
+PUBLISH_TOKEN=<a-long-random-secret>
+PRODUCTION_REVALIDATE_URL=https://asso.gd/api/revalidate-arena
+```
 
-## 🎨 Customization
+Configure the same secret on the production deployment as
+`REVALIDATE_TOKEN`. The preview deployment then fetches Are.na with
+`no-store` on every page load, so editors always see the latest channel
+content. Its **Publish** button (`/api/publish`) calls the production
+`/api/revalidate-arena` endpoint to refresh the cached Are.na data and
+homepage once changes are ready to go live.
 
-The application is built with modularity in mind:
-- Customizable carousel timing and behavior
-- Flexible content layouts
-- Theme-aware styling
-- Responsive breakpoints
+## Content
 
-## 📦 Dependencies
-
-- Next.js 14.2.7
-- React 18.3.1
-- Tailwind CSS 3.4.10
-- Framer Motion 11.3.31
-- GraphQL integration
-- And more...
-
-## 🔄 Changelog
-
-### v1.0.0 (Current Release)
-- Initial stable release
-- Advanced carousel interactions
-- Multi-media content support
-- Responsive design implementation
-- Performance optimizations
+- `src/content/about.md` — About page copy (Markdown).
+- `src/content/site.json` — site-wide metadata (SEO titles/descriptions,
+  address entries, etc.) consumed by `src/lib/about.js`.
