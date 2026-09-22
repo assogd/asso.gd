@@ -11,17 +11,19 @@ export function transformArenaBlocksForImageWall(blocks) {
   return blocks
     .filter((block) => {
       // Only include blocks with images
-      return block.image && (block.image.display?.url || block.image.thumb?.url)
+      return block.image && (block.image.large?.url || block.image.display?.url || block.image.thumb?.url)
     })
     .map((block) => ({
       id: block.id,
       title: block.title || '',
       description: block.description || '',
       image: {
-        url: block.image.display?.url || block.image.thumb?.url,
+        // Prefer the larger rendition so text-heavy images (book covers,
+        // posters) stay sharp on high-DPI screens.
+        url: block.image.large?.url || block.image.display?.url || block.image.thumb?.url,
         alt: block.image.alt || '',
-        width: block.image.display?.width || block.image.thumb?.width,
-        height: block.image.display?.height || block.image.thumb?.height
+        width: block.image.large?.width || block.image.display?.width || block.image.thumb?.width,
+        height: block.image.large?.height || block.image.display?.height || block.image.thumb?.height
       },
       source: block.source?.url || null,
       created_at: block.created_at

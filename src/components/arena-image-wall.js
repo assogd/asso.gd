@@ -263,6 +263,7 @@ export function ArenaImageWall({ items = [] }) {
               fill
               className="object-contain"
               sizes="(min-width: 640px) 30rem, 100vw"
+              quality={90}
               priority={index < 2}
             />
           </div>
