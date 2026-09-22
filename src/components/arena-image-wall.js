@@ -68,8 +68,9 @@ export function ArenaImageWall({ items = [] }) {
       if (!firstTile) return
 
       const { top, height } = firstTile.getBoundingClientRect()
+      const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize)
       window.scrollTo({
-        top: window.scrollY + top + height / 2 - window.innerHeight / 2
+        top: window.scrollY + top + height / 2 - window.innerHeight / 2 + remInPx
       })
 
       // Show a caption immediately instead of waiting for the next scroll event.

@@ -53,7 +53,7 @@ export default async function About() {
     })
 
   return (
-    <main className="grid gap-y-12 pt-0 pb-4">
+    <main className="grid gap-y-10 pt-0 pb-4">
       <h1 className="sr-only">
         About Asso, a design studio based in Stockholm, Sweden
       </h1>
