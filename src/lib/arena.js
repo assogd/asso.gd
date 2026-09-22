@@ -23,27 +23,45 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
     // (e.g. Netlify's fetch cache) by making every request unique.
     const cacheBuster = options.fresh ? `&_=${Date.now()}` : ''
 
-    // Use Next.js fetch with caching for server-side rendering
-    const response = await fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100${cacheBuster}`, {
-      headers: {
-        'Authorization': `Bearer ${process.env.ARENA_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      ...fetchOptions
-    })
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch channel: ${response.status}`)
+    const headers = {
+      'Authorization': `Bearer ${process.env.ARENA_ACCESS_TOKEN}`,
+      'Content-Type': 'application/json'
     }
-    
-    const channel = await response.json()
-    
+
+    // Are.na's combined "channel + contents" endpoint is cached much more
+    // aggressively on their side than the dedicated contents endpoint, and
+    // editing an existing block (e.g. its title) doesn't bust that cache -
+    // it can keep serving a stale block for minutes. Fetch channel metadata
+    // and contents separately, using the contents endpoint for fresh blocks.
+    const [channelResponse, contentsResponse] = await Promise.all([
+      fetch(`https://api.are.na/v2/channels/${channelSlug}?per=1${cacheBuster}`, {
+        headers,
+        ...fetchOptions
+      }),
+      fetch(`https://api.are.na/v2/channels/${channelSlug}/contents?per=100${cacheBuster}`, {
+        headers,
+        ...fetchOptions
+      })
+    ])
+
+    if (!channelResponse.ok) {
+      throw new Error(`Failed to fetch channel: ${channelResponse.status}`)
+    }
+
+    if (!contentsResponse.ok) {
+      throw new Error(`Failed to fetch channel contents: ${contentsResponse.status}`)
+    }
+
+    const channel = await channelResponse.json()
+    const { contents } = await contentsResponse.json()
+
     // Add timestamp to track when data was fetched
     const result = {
       ...channel,
+      contents,
       _fetchedAt: new Date().toISOString()
     }
-    
+
     return result
   } catch (error) {
     console.error(`Error fetching Are.na channel ${channelSlug}:`, error)
