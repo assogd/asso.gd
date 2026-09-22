@@ -19,8 +19,12 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
       ? { cache: 'no-store' }
       : CACHE_CONFIG
 
+    // In "fresh" (preview) mode, bust any caching layer keyed only by URL
+    // (e.g. Netlify's fetch cache) by making every request unique.
+    const cacheBuster = options.fresh ? `&_=${Date.now()}` : ''
+
     // Use Next.js fetch with caching for server-side rendering
-    const response = await fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, {
+    const response = await fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100${cacheBuster}`, {
       headers: {
         'Authorization': `Bearer ${process.env.ARENA_ACCESS_TOKEN}`,
         'Content-Type': 'application/json'
