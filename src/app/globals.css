@@ -85,6 +85,11 @@ a:hover {
   text-decoration: none;
 }
 
+.hyphens-auto {
+  -webkit-hyphenate-limit-lines: 1;
+  hyphenate-limit-lines: 1;
+}
+
 @keyframes blink {
   0% {
     opacity: 1;

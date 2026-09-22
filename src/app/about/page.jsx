@@ -53,7 +53,7 @@ export default async function About() {
     })
 
   return (
-    <main className="grid gap-y-6 pt-0 pb-4">
+    <main className="grid gap-y-12 pt-0 pb-4">
       <h1 className="sr-only">
         About Asso, a design studio based in Stockholm, Sweden
       </h1>
@@ -72,7 +72,7 @@ export default async function About() {
             </section>
           ))}
       {addressEntries && (
-        <section className="grid grid-cols-1 gap-y-3 px-2 sm:px-4 sm:grid-cols-12 sm:gap-x-2">
+        <section className="grid grid-cols-1 gap-y-4 px-2 sm:px-4 sm:grid-cols-12 sm:gap-x-2">
           <h2 className="col-span-1 sm:col-start-2 sm:col-end-12">
             {addressSection.title}
           </h2>

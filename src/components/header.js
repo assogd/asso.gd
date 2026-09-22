@@ -20,10 +20,17 @@ export default function Header() {
     <header className={clsx(isHome ? "fixed inset-x-0 top-0" : "pb-0", "flex w-screen p-2 sm:p-4 z-10")}>
       <p
         className={clsx(
-          '',
-          isHome ? 'truncate whitespace-nowrap select-none' : ''
+          isHome ? 'truncate whitespace-nowrap select-none' : 'hyphens-auto'
         )}
       >
+        {!isHome && (
+          <Link
+            href="/"
+            className="button-style whitespace-nowrap float-right mb-4 ml-4"
+          >
+            Images
+          </Link>
+        )}
         Asso is a design studio committed to creating well-reasoned visual
         concepts for institutions, artists, and commercial clients. We seek
         partnerships with those daring to challenge conventions and those
@@ -32,28 +39,13 @@ export default function Header() {
         has taken shape in various forms, including books, visual identities,
         installations, magazines, websites, videos, posters, and more.
       </p>
-      <nav className="basis-32">
-        {isHome ? (
+      {isHome && (
+        <nav className="basis-32">
           <Link href="/about" className="button-style whitespace-nowrap">
             Texts
           </Link>
-        ) : (
-          <>
-            <span
-              aria-hidden="true"
-              className="button-style whitespace-nowrap opacity-0"
-            >
-              Images
-            </span>
-            <Link
-              href="/"
-              className="fixed top-2 sm:top-4 right-2 sm:right-4 button-style whitespace-nowrap"
-            >
-              Images
-            </Link>
-          </>
-        )}
-      </nav>
+        </nav>
+      )}
     </header>
 </>
   )
