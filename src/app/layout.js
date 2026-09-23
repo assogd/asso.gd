@@ -34,7 +34,7 @@ export const metadata = {
   }
 }
 
-export default async function Layout({ children, modal, params }) {
+export default async function Layout({ children, params }) {
   return (
     <html
       lang="en"
@@ -48,7 +48,6 @@ export default async function Layout({ children, modal, params }) {
           <FirstImageLoadedProvider>
             <Header />
             {children}
-            {modal}
           </FirstImageLoadedProvider>
         </MegaCoverProvider>
       </body>
