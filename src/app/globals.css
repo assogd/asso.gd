@@ -30,7 +30,7 @@ body::-webkit-scrollbar {
 }
 
 .bg-black {
-  background: hsl(0, 0%, 5%);
+  background: hsl(0, 0%, 0%);
 }
 
 mux-player {
