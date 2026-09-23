@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import siteContent from '@/content/site.json'
-import { fetchArenaChannelWithBlocks } from '@/lib/arena'
+import { fetchArenaChannelWithBlocks, attachConnectedProjects } from '@/lib/arena'
 import { transformArenaBlocksForImageWall } from '@/lib/arena-image-wall'
-import { ArenaImageWall } from '@/components/arena-image-wall'
+import { HomeFeed } from '@/components/home-feed'
 import { PublishButton } from '@/components/publish-button'
 
 export const dynamic = 'force-dynamic'
@@ -30,7 +30,8 @@ export default async function Home() {
       fresh: process.env.PREVIEW_MODE === 'true'
     })
     if (channel?.contents) {
-      imageItems = transformArenaBlocksForImageWall(channel.contents).reverse()
+      const blocksWithProjects = await attachConnectedProjects(channel.contents)
+      imageItems = transformArenaBlocksForImageWall(blocksWithProjects).reverse()
     }
   } catch (error) {
     console.error('Failed to fetch Arena channel:', error)
@@ -43,7 +44,7 @@ export default async function Home() {
 
   return (
     <main className="pt-24">
-      <ArenaImageWall items={imageItems} />
+      <HomeFeed items={imageItems} />
       {(process.env.PREVIEW_MODE === 'true' || isLocalhost) && (
         <PublishButton isLocalhost={isLocalhost} />
       )}
