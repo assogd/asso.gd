@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 function getStableColumnStart(id, columnCount, previousStart) {
@@ -20,13 +21,18 @@ function getStableColumnStart(id, columnCount, previousStart) {
 const PASS_COUNT = 3
 const MIDDLE_PASS = 1
 
-export function ArenaImageWall({ items = [] }) {
+export function ArenaImageWall({ items = [], onTileClick, loop = true }) {
   const wallRef = useRef(null)
   const firstTileRef = useRef(null)
   // tileKey -> { element, item }
   const tileRefs = useRef(new Map())
   const eligibleTileKeysRef = useRef(new Set())
   const [activeTileKey, setActiveTileKey] = useState(null)
+
+  // Non-looping walls (project pages/modals) render a single pass and skip
+  // the infinite-scroll recentring logic built for the endless home feed.
+  const passCount = loop ? PASS_COUNT : 1
+  const middlePass = loop ? MIDDLE_PASS : 0
 
   const pickActiveTileKey = () => {
     const eligible = Array.from(eligibleTileKeysRef.current)
@@ -109,21 +115,24 @@ export function ArenaImageWall({ items = [] }) {
 
     const handleScroll = () => {
       const scrollY = window.scrollY
-      const loopHeight = wall.scrollHeight / PASS_COUNT
-      const relativeScroll = scrollY - wall.offsetTop
 
-      if (!recenterFrame && relativeScroll < loopHeight * 0.5) {
-        recenterFrame = window.requestAnimationFrame(() => {
-          window.scrollTo(0, window.scrollY + loopHeight)
-          lastScrollY += loopHeight
-          recenterFrame = null
-        })
-      } else if (!recenterFrame && relativeScroll > loopHeight * 1.5) {
-        recenterFrame = window.requestAnimationFrame(() => {
-          window.scrollTo(0, window.scrollY - loopHeight)
-          lastScrollY -= loopHeight
-          recenterFrame = null
-        })
+      if (loop) {
+        const loopHeight = wall.scrollHeight / passCount
+        const relativeScroll = scrollY - wall.offsetTop
+
+        if (!recenterFrame && relativeScroll < loopHeight * 0.5) {
+          recenterFrame = window.requestAnimationFrame(() => {
+            window.scrollTo(0, window.scrollY + loopHeight)
+            lastScrollY += loopHeight
+            recenterFrame = null
+          })
+        } else if (!recenterFrame && relativeScroll > loopHeight * 1.5) {
+          recenterFrame = window.requestAnimationFrame(() => {
+            window.scrollTo(0, window.scrollY - loopHeight)
+            lastScrollY -= loopHeight
+            recenterFrame = null
+          })
+        }
       }
 
       targetLag = Math.max(-32, Math.min(32, scrollY - lastScrollY))
@@ -147,7 +156,7 @@ export function ArenaImageWall({ items = [] }) {
         window.cancelAnimationFrame(recenterFrame)
       }
     }
-  }, [])
+  }, [loop, passCount])
 
   useEffect(() => {
     const captionObserver = new IntersectionObserver(
@@ -201,7 +210,7 @@ export function ArenaImageWall({ items = [] }) {
       aria-label="Images from the Asso archive"
       className="grid grid-cols-12 gap-y-32 p-4"
     >
-      {Array.from({ length: PASS_COUNT }, (_, pass) =>
+      {Array.from({ length: passCount }, (_, pass) =>
         items.reduce(
         (rows, item, index) => {
           const previous = rows.at(-1)
@@ -240,7 +249,7 @@ export function ArenaImageWall({ items = [] }) {
         >
           <div
             ref={(tile) => {
-              if (pass === MIDDLE_PASS && index === items.length * MIDDLE_PASS) {
+              if (pass === middlePass && index === items.length * middlePass) {
                 firstTileRef.current = tile
               }
               if (tile) {
@@ -257,15 +266,41 @@ export function ArenaImageWall({ items = [] }) {
               '--arena-lag-factor': 0.7 + (index % 3) * 0.15
             }}
           >
-            <Image
-              src={item.image.url}
-              alt={item.image.alt || item.title || 'Asso archive image'}
-              fill
-              className="object-contain"
-              sizes="(min-width: 640px) 30rem, 100vw"
-              quality={90}
-              priority={index < 2}
-            />
+            {item.project ? (
+              <Link
+                href={`/project/${item.project.slug}`}
+                scroll={false}
+                className="absolute inset-0 block"
+                aria-label={`View project: ${item.project.title}`}
+              >
+                <Image
+                  src={item.image.url}
+                  alt={item.image.alt || item.title || 'Asso archive image'}
+                  fill
+                  className="object-contain"
+                  sizes="(min-width: 640px) 30rem, 100vw"
+                  quality={90}
+                  priority={index < 2}
+                />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => onTileClick?.(item)}
+                className="absolute inset-0 block w-full cursor-pointer"
+                aria-label={`View larger: ${item.title || 'image'}`}
+              >
+                <Image
+                  src={item.image.url}
+                  alt={item.image.alt || item.title || 'Asso archive image'}
+                  fill
+                  className="object-contain"
+                  sizes="(min-width: 640px) 30rem, 100vw"
+                  quality={90}
+                  priority={index < 2}
+                />
+              </button>
+            )}
           </div>
         </figure>
         )

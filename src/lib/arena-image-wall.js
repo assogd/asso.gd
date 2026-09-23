@@ -26,6 +26,11 @@ export function transformArenaBlocksForImageWall(blocks) {
         height: block.image.large?.height || block.image.display?.height || block.image.thumb?.height
       },
       source: block.source?.url || null,
-      created_at: block.created_at
+      created_at: block.created_at,
+      // Set by `attachConnectedProjects` - the other Are.na channel this
+      // block belongs to, if any, used to link the tile to a project page.
+      project: block.connectedProject
+        ? { slug: block.connectedProject.slug, title: block.connectedProject.title }
+        : null
     }))
 }
