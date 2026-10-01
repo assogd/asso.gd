@@ -7,6 +7,7 @@ import Link from 'next/link'
 export default function Header() {
   const pathname = usePathname()
   const isHome = pathname === '/'
+  const isAbout = pathname === '/about'
 
   useEffect(() => {
     if (pathname === '/about') {
@@ -16,14 +17,14 @@ export default function Header() {
 
   return (
     <>
-    {isHome && <><div className="fixed inset-x-0 top-0 h-24 z-10 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" /><div className="fixed inset-x-0 bottom-0 h-24 z-10 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" /></>}
-    <header className={clsx(isHome ? "fixed inset-x-0 top-0" : "pb-0", "flex w-screen p-2 sm:p-4 z-10")}>
+    {!isAbout && <><div className="fixed inset-x-0 top-0 h-24 z-10 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" /><div className="fixed inset-x-0 bottom-0 h-24 z-10 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" /></>}
+    <header className={clsx(!isAbout ? "fixed inset-x-0 top-0" : "pb-0", "flex w-screen p-2 sm:p-4 z-10")}>
       <p
         className={clsx(
-          isHome ? 'truncate whitespace-nowrap select-none' : 'hyphens-auto'
+          !isAbout ? 'truncate whitespace-nowrap select-none' : 'hyphens-auto'
         )}
       >
-        {!isHome && (
+        {isAbout && (
           <Link
             href="/"
             className="button-style whitespace-nowrap float-right mb-4 ml-4"
@@ -39,7 +40,7 @@ export default function Header() {
         has taken shape in various forms, including books, visual identities,
         installations, magazines, websites, videos, posters, and more.
       </p>
-      {isHome && (
+      {!isAbout && (
         <nav className="basis-32">
           <Link href="/about" className="button-style whitespace-nowrap">
             Texts

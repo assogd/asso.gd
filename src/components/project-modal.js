@@ -2,7 +2,10 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArenaImageWall } from './arena-image-wall'
+import { ProjectContent } from './project-content'
+
+// Must match the key template.js checks for.
+const SKIP_COVER_KEY = 'asso:skip-mega-cover'
 
 /**
  * Overlay rendered by the intercepted (.)project/[slug] route: shows the
@@ -13,6 +16,9 @@ export function ProjectModal({ title, items }) {
   const router = useRouter()
 
   function close() {
+    // Closing this modal returns to the home feed - suppress the intro
+    // cover overlay from flashing again on that return.
+    window.sessionStorage.setItem(SKIP_COVER_KEY, '1')
     router.back()
   }
 
@@ -41,9 +47,8 @@ export function ProjectModal({ title, items }) {
       >
         Close
       </button>
-      <div onClick={(event) => event.stopPropagation()}>
-        <h1 className="p-4 pt-24 text-center">{title}</h1>
-        <ArenaImageWall items={items} loop={false} />
+      <div onClick={(event) => event.stopPropagation()} className="m-8 bg-red">
+        <ProjectContent items={items} />
       </div>
     </div>
   )

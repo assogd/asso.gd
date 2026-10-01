@@ -34,3 +34,75 @@ export function transformArenaBlocksForImageWall(blocks) {
         : null
     }))
 }
+
+/**
+ * Parse an Are.na "meta block" - a Text block whose author marked its
+ * description as "Meta block", used for a short list of key/value facts
+ * (Client, Segment, Type, etc.) that should render as a stat sheet rather
+ * than prose. Content looks like:
+ *   Rooted in culture
+ *   Client: Sibbjäns
+ *   Segment: Hospitality
+ * @param {string} content - Raw block content
+ * @returns {Array<{key: string, value: string}>} Parsed fields
+ */
+function parseMetaBlockFields(content) {
+  return content
+    .split('\n')
+    .slice(1) // first line duplicates the block title
+    .map((line) => {
+      // Are.na formats each field as a Markdown list item (e.g. "- Key: value");
+      // strip that list marker so it doesn't leak into the parsed key.
+      const unlisted = line.replace(/^\s*[-*+]\s+/, '')
+      const separatorIndex = unlisted.indexOf(':')
+      if (separatorIndex === -1) return null
+
+      const key = unlisted.slice(0, separatorIndex).trim()
+      const value = unlisted.slice(separatorIndex + 1).trim()
+      if (!key || !value) return null
+
+      return { key, value }
+    })
+    .filter(Boolean)
+}
+
+/**
+ * Transform image and text blocks from an Are.na project channel while
+ * preserving their channel order.
+ * @param {Array} blocks - Array of Are.na channel blocks
+ * @returns {Array} Transformed project content for the image wall
+ */
+export function transformArenaProjectContents(blocks) {
+  if (!Array.isArray(blocks)) {
+    return []
+  }
+
+  return blocks.flatMap((block) => {
+    const imageItem = transformArenaBlocksForImageWall([block])[0]
+
+    if (imageItem) {
+      return [imageItem]
+    }
+
+    if (block.class === 'Text' && block.description?.trim() === 'Meta block') {
+      return [{
+        id: block.id,
+        type: 'meta',
+        title: block.title || '',
+        fields: parseMetaBlockFields(block.content || '')
+      }]
+    }
+
+    if (block.class === 'Text' && (block.content || block.title || block.description)) {
+      return [{
+        id: block.id,
+        type: 'text',
+        title: block.title || '',
+        description: block.description || '',
+        content: block.content || ''
+      }]
+    }
+
+    return []
+  })
+}

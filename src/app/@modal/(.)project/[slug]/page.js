@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
-import { transformArenaBlocksForImageWall } from '@/lib/arena-image-wall'
+import { transformArenaProjectContents } from '@/lib/arena-image-wall'
 import { ProjectModal } from '@/components/project-modal'
 
 export default async function ProjectModalPage({ params }) {
@@ -17,7 +17,7 @@ export default async function ProjectModalPage({ params }) {
     notFound()
   }
 
-  const items = transformArenaBlocksForImageWall(channel?.contents || []).reverse()
+  const items = transformArenaProjectContents(channel?.contents || []).reverse()
 
   if (items.length === 0) {
     notFound()

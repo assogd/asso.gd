@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
-import { transformArenaBlocksForImageWall } from '@/lib/arena-image-wall'
-import { ArenaImageWall } from '@/components/arena-image-wall'
+import { transformArenaProjectContents } from '@/lib/arena-image-wall'
+import { ProjectContent } from '@/components/project-content'
 import { PublishButton } from '@/components/publish-button'
 
 export const dynamic = 'force-dynamic'
@@ -42,19 +42,22 @@ export default async function ProjectPage({ params }) {
     notFound()
   }
 
-  const items = transformArenaBlocksForImageWall(channel?.contents || []).reverse()
+  const items = transformArenaProjectContents(channel?.contents || []).reverse()
 
   if (items.length === 0) {
     notFound()
   }
 
   return (
-    <main className="pt-24">
-      <h1 className="p-4 text-center">{channel.title}</h1>
-      <ArenaImageWall items={items} loop={false} />
+    <main className="">
+      <h1 className="sr-only">{channel.title}</h1>
+      <ProjectContent items={items} />
       {(process.env.PREVIEW_MODE === 'true' || isLocalhost) && (
         <PublishButton isLocalhost={isLocalhost} />
       )}
+      <footer className="px-4 py-20 text-center">
+        End
+      </footer>
     </main>
   )
 }
