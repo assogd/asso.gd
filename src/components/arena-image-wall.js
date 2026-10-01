@@ -349,7 +349,7 @@ export function ArenaImageWall({
     >
       {activeItem && (
         <figcaption
-          className="pointer-events-auto m-0 w-full text-center transition-opacity duration-75"
+          className="pointer-events-auto m-0 w-full text-center transition-opacity duration-75 grid gap-y-1/2 gap-x-4 md:inline-flex"
           style={{ height: '100%' }}
         >
           {activeItem.project ? (
