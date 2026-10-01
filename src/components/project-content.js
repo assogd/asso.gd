@@ -151,7 +151,7 @@ export function ProjectContent({ items = [] }) {
   }
 
   return (
-    <section aria-label="Project contents" className="flex flex-col items-center gap-8 p-4 pt-[17.5vh]">
+    <section aria-label="Project contents" className="flex flex-col items-center gap-8 p-4 pt-16">
       {items.map((item) => {
         if (item.type === 'meta') {
           return (

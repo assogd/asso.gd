@@ -120,6 +120,14 @@ a:hover {
   will-change: transform;
 }
 
+.home-image-preview,
+.home-image-preview img {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 .meta-title {
   font-size: clamp(1.2rem, 5.8vw, 3rem);
   line-height: 1em;

@@ -21,7 +21,12 @@ function getStableColumnStart(id, columnCount, previousStart) {
 const PASS_COUNT = 3
 const MIDDLE_PASS = 1
 
-export function ArenaImageWall({ items = [], onTileClick, loop = true }) {
+export function ArenaImageWall({
+  items = [],
+  onTilePointerDown,
+  previewActive = false,
+  loop = true
+}) {
   const wallRef = useRef(null)
   const firstTileRef = useRef(null)
   // tileKey -> { element, item }
@@ -203,6 +208,10 @@ export function ArenaImageWall({ items = [], onTileClick, loop = true }) {
     )
   }
 
+  const activeItem = activeTileKey
+    ? tileRefs.current.get(activeTileKey)?.item
+    : null
+
   return (
     <>
     <section
@@ -259,7 +268,7 @@ export function ArenaImageWall({ items = [], onTileClick, loop = true }) {
               }
             }}
             data-arena-tile-key={tileKey}
-            className="arena-image-tile relative aspect-square w-full max-w-[30rem] justify-self-center sm:aspect-[4/3]"
+            className="arena-image-tile relative aspect-square w-full max-w-[46rem] justify-self-center sm:aspect-[4/3]"
             style={{
               '--arena-mobile-column-start': mobileStart,
               '--arena-desktop-column-start': desktopStart,
@@ -267,28 +276,53 @@ export function ArenaImageWall({ items = [], onTileClick, loop = true }) {
             }}
           >
             {item.project ? (
-              <Link
-                href={`/project/${item.project.slug}`}
-                scroll={false}
-                className="absolute inset-0 block"
-                aria-label={`View project: ${item.project.title}`}
-              >
-                <Image
-                  src={item.image.url}
-                  alt={item.image.alt || item.title || 'Asso archive image'}
-                  fill
-                  className="object-contain"
-                  sizes="(min-width: 640px) 30rem, 100vw"
-                  quality={90}
-                  priority={index < 2}
-                />
-              </Link>
+              <>
+                <Link
+                  href={`/project/${item.project.slug}`}
+                  scroll={false}
+                  className="absolute inset-0 block"
+                  aria-label={`View project: ${item.project.title}`}
+                >
+                  <Image
+                    src={item.image.url}
+                    alt={item.image.alt || item.title || 'Asso archive image'}
+                    fill
+                    className="object-contain"
+                    sizes="(min-width: 640px) 30rem, 100vw"
+                    quality={90}
+                    priority={index < 2}
+                  />
+                </Link>
+              </>
             ) : (
               <button
                 type="button"
-                onClick={() => onTileClick?.(item)}
-                className="absolute inset-0 block w-full cursor-pointer"
+                onPointerDown={(event) => {
+                  if (!event.isPrimary || event.button !== 0) return
+                  event.preventDefault()
+                  onTilePointerDown?.(item, event.pointerId)
+                }}
+                onPointerUp={(event) => event.preventDefault()}
+                onPointerCancel={(event) =>
+                  onTilePointerDown?.(null, event.pointerId)
+                }
+                onContextMenu={(event) => event.preventDefault()}
+                onDragStart={(event) => event.preventDefault()}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    onTilePointerDown?.(item)
+                  }
+                }}
+                className="home-image-preview absolute inset-0 block w-full cursor-zoom-in select-none"
                 aria-label={`View larger: ${item.title || 'image'}`}
+                style={{
+                  touchAction: 'none',
+                  WebkitTouchCallout: 'none',
+                  WebkitUserSelect: 'none',
+                  userSelect: 'none',
+                  cursor: previewActive ? 'none' : 'zoom-in'
+                }}
               >
                 <Image
                   src={item.image.url}
@@ -298,6 +332,7 @@ export function ArenaImageWall({ items = [], onTileClick, loop = true }) {
                   sizes="(min-width: 640px) 30rem, 100vw"
                   quality={90}
                   priority={index < 2}
+                  draggable={false}
                 />
               </button>
             )}
@@ -309,11 +344,41 @@ export function ArenaImageWall({ items = [], onTileClick, loop = true }) {
     <div
       aria-live="polite"
       aria-label="Visible image captions"
-      className="fixed inset-x-0 bottom-0 z-10 pointer-events-none flex flex-col gap-[0.15rem] px-2 sm:px-4 pt-2 pb-4"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-50"
+      style={{ height: '4rem' }}
     >
-      {activeTileKey && tileRefs.current.get(activeTileKey) && (
-        <figcaption className="m-0 text-center transition-opacity duration-75">
-          {tileRefs.current.get(activeTileKey).item.title || 'Untitled'}
+      {activeItem && (
+        <figcaption
+          className="pointer-events-auto m-0 w-full text-center transition-opacity duration-75"
+          style={{ height: '100%' }}
+        >
+          {activeItem.project ? (
+            <Link
+              href={`/project/${activeItem.project.slug}`}
+              scroll={false}
+              className="flex w-full items-center justify-center gap-x-2 px-2"
+              aria-label={`Read article: ${activeItem.project.title}`}
+              style={{ height: '100%', textDecoration: 'none' }}
+            >
+              <span>{activeItem.title || 'Untitled'}</span>
+              <span
+                className="underline"
+                style={{
+                  textDecorationThickness: '1px',
+                  textUnderlineOffset: '3px'
+                }}
+              >
+                Read article
+              </span>
+            </Link>
+          ) : (
+            <div
+              className="flex w-full items-center justify-center px-2"
+              style={{ height: '100%' }}
+            >
+              {activeItem.title || 'Untitled'}
+            </div>
+          )}
         </figcaption>
       )}
     </div>
