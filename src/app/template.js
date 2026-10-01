@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
+import { usePathname } from 'next/navigation'
 
 // Set by ProjectModal right before it navigates back, so closing the modal
 // doesn't retrigger this intro overlay. Any other navigation (including
@@ -9,26 +10,43 @@ import clsx from 'clsx'
 const SKIP_COVER_KEY = 'asso:skip-mega-cover'
 
 export default function Template({ children }) {
-  const [showOverlay, setShowOverlay] = useState(true)
+  const pathname = usePathname()
+  const isProjectRoute = pathname?.startsWith('/project/')
+  const [showOverlay, setShowOverlay] = useState(false)
+  const skippedPathRef = useRef(null)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.sessionStorage.getItem(SKIP_COVER_KEY)) {
-      window.sessionStorage.removeItem(SKIP_COVER_KEY)
+  useLayoutEffect(() => {
+    if (isProjectRoute) {
+      skippedPathRef.current = null
       setShowOverlay(false)
       return
     }
 
+    const skipCover = window.sessionStorage.getItem(SKIP_COVER_KEY)
+    if (skipCover || skippedPathRef.current === pathname) {
+      if (skipCover) {
+        window.setTimeout(() => {
+          window.sessionStorage.removeItem(SKIP_COVER_KEY)
+        }, 0)
+      }
+      skippedPathRef.current = pathname
+      setShowOverlay(false)
+      return
+    }
+
+    skippedPathRef.current = null
+    setShowOverlay(true)
     const timer = setTimeout(() => {
       setShowOverlay(false)
     }, 1000)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [isProjectRoute, pathname])
 
   return (
     <>
       {children}
-      {showOverlay && (
+      {showOverlay && !isProjectRoute && (
         <div
           className={clsx(
             'fixed inset-0 z-20 bg-black',

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { Children, isValidElement } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 // Recursively flattens React children (strings, numbers, nested elements)
@@ -72,15 +73,29 @@ const markdownComponents = {
     const split = splitListItemAtColon(children)
     const keyText = split ? getText(split.key).trim() : ''
 
-    if (!split || !keyText) {
+    if (split && keyText) {
+      return (
+        <li className="px-2 py-5 border-b last:border-b-0 grid gap-1">
+          <span>{split.value}</span>
+          <span className="italic">{split.key}</span>
+        </li>
+      )
+    }
+
+    const nodes = Children.toArray(children)
+    const emphasisIndex = nodes.findIndex(
+      (node) => isValidElement(node) && node.type === 'em'
+    )
+
+    if (emphasisIndex === -1) {
       return <li className="px-2 py-5 border-b last:border-b-0">{children}</li>
     }
 
     return (
-      <li className="px-2 py-5 border-b last:border-b-0 grid gap-1">
-        <span className="">{split.value}</span>
-         <span className="italic">{split.key}</span>
-     </li>
+      <li className="grid px-2 py-5 border-b last:border-b-0">
+        <span>{nodes.slice(0, emphasisIndex)}</span>
+        <span>{nodes.slice(emphasisIndex)}</span>
+      </li>
     )
   },
   ol: ({ children }) => <ol className="mb-4 list-decimal pl-5 last:mb-0">{children}</ol>,

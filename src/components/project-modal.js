@@ -32,24 +32,76 @@ export function ProjectModal({ title, items }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    const scrollX = window.scrollX
+    const scrollY = window.scrollY
+    const bodyStyles = {
+      position: document.body.style.position,
+      top: document.body.style.top,
+      left: document.body.style.left,
+      width: document.body.style.width,
+      overflow: document.body.style.overflow
+    }
+    const htmlOverflow = document.documentElement.style.overflow
+
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.left = `-${scrollX}px`
+    document.body.style.width = '100%'
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      Object.assign(document.body.style, bodyStyles)
+      document.documentElement.style.overflow = htmlOverflow
+      window.scrollTo(scrollX, scrollY)
+    }
+  }, [])
+
   return (
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-30 overflow-y-auto bg-black"
-      onClick={close}
+      aria-label={title}
+      className="fixed inset-0 z-30 overflow-y-auto"
+      onScroll={(event) => {
+        const overlay = event.currentTarget
+        const peek =
+          parseFloat(getComputedStyle(document.documentElement).fontSize) * 3
+        const progress = Math.min(overlay.scrollTop / peek, 1)
+        const scale = 0.95 + progress * 0.05
+        overlay.style.setProperty('--modal-scale', String(scale))
+      }}
+      style={{
+        '--modal-scale': 0.95,
+        backgroundColor: 'rgb(0 0 0 / 80%)'
+      }}
     >
       <button
         type="button"
         onClick={close}
-        className="fixed right-4 top-4 z-10 button-style"
-        aria-label="Close"
+        className="block w-full cursor-default uppercase"
+        style={{ height: '3rem' }}
+        aria-label="Close project dialog"
+      >Close</button>
+      <div
+        className="project-modal-panel relative min-h-dvh border-t border-white bg-black"
       >
-        Close
-      </button>
-      <div onClick={(event) => event.stopPropagation()} className="m-8 bg-red">
-        <ProjectContent items={items} />
+        <div className="project-modal-enter">
+          <ProjectContent items={items} />
+          <div className="p-4 mt-16 grid gap-8 text-center">
+          <div className="italic">End of article.</div>
+                  <button
+        type="button"
+        onClick={close}
+        className="block w-full cursor-default uppercase border"
+        style={{ height: '8rem' }}
+        aria-label="Close project dialog"
+      >Close</button>
+          </div>
+        </div>
       </div>
+
     </div>
   )
 }

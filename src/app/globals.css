@@ -125,6 +125,41 @@ a:hover {
   line-height: 1em;
 }
 
+.project-modal-panel {
+  transform: scale(var(--modal-scale, 0.95));
+  transform-origin: top center;
+  box-shadow: 0 -12px 32px rgb(0 0 0 / 1);
+}
+
+.project-modal-enter {
+  --project-modal-enter-duration: 600ms;
+  --project-modal-enter-distance: 80px;
+  --project-modal-enter-opacity: 0.7;
+  --project-modal-enter-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation:
+    project-modal-rise-in
+    var(--project-modal-enter-duration)
+    var(--project-modal-enter-easing)
+    both;
+}
+
+@keyframes project-modal-rise-in {
+  from {
+    opacity: var(--project-modal-enter-opacity);
+    transform: translate3d(0, var(--project-modal-enter-distance), 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-modal-enter {
+    animation: none;
+  }
+}
+
 @media screen and (min-width: 768px) {
   .arena-image-tile {
     grid-column: var(--arena-desktop-column-start) / span 7;
