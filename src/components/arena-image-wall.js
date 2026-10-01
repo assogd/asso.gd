@@ -344,7 +344,7 @@ export function ArenaImageWall({
     <div
       aria-live="polite"
       aria-label="Visible image captions"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-50"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-10"
       style={{ height: '4rem' }}
     >
       {activeItem && (
