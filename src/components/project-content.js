@@ -66,8 +66,21 @@ const markdownComponents = {
   h1: ({ children }) => <h2 className="mb-4">{children}</h2>,
   h2: ({ children }) => <h2 className="mb-6">{children}</h2>,
   h3: ({ children }) => <h3 className="mb-3 mt-8">{children}</h3>,
-  h4: ({ children }) => <h4 className="mb-3 mt-8 uppercase text-[0.7em] !tracking-[1.2em]">{children}</h4>,
-  p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
+  h4: ({ children }) => <h4 className="mb-3 mt-10 uppercase text-[0.7em] !tracking-[1.2em]">{children}</h4>,
+  p: ({ children }) => {
+    if (typeof children === 'string' && children.trimStart().startsWith('>')) {
+      return (
+        <blockquote className="mx-auto max-w-[48rem] meta-title">
+          {children.trimStart().slice(1).trimStart()}
+        </blockquote>
+      )
+    }
+
+    return <p className="mb-4 last:mb-0">{children}</p>
+  },
+  blockquote: ({ children }) => (
+    <blockquote className="mx-auto mb-4 max-w-[48rem] meta-title">{children}</blockquote>
+  ),
   ul: ({ children }) => <ul className="mb-4 list-none border max-w-md mx-auto last:mb-0">{children}</ul>,
   li: ({ children }) => {
     const split = splitListItemAtColon(children)
@@ -138,11 +151,11 @@ export function ProjectContent({ items = [] }) {
   }
 
   return (
-    <section aria-label="Project contents" className="flex flex-col items-center gap-16 p-4 pt-[17.5vh]">
+    <section aria-label="Project contents" className="flex flex-col items-center gap-8 p-4 pt-[17.5vh]">
       {items.map((item) => {
         if (item.type === 'meta') {
           return (
-            <article key={item.id} className="w-full text-center py-8 meta-title">
+            <article key={item.id} className="w-full text-center pt-8 pb-12 meta-title">
               {item.title && <h2 className="">{item.title}</h2>}
               {item.fields.map(({ key, value }) => (
                 <p key={key} className="">

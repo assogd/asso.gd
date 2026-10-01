@@ -4,6 +4,7 @@ import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { transformArenaProjectContents } from '@/lib/arena-image-wall'
 import { ProjectContent } from '@/components/project-content'
 import { PublishButton } from '@/components/publish-button'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,8 +56,11 @@ export default async function ProjectPage({ params }) {
       {(process.env.PREVIEW_MODE === 'true' || isLocalhost) && (
         <PublishButton isLocalhost={isLocalhost} />
       )}
-      <footer className="px-4 py-20 text-center">
-        End
+      <footer className="px-4 pt-20 pb-28 text-center grid gap-8">
+        <div className="italic">End of article.</div>
+        <div>
+        Would you like to <Link href="/">browse images at the homepage</Link> or <Link href="/about">read texts about the studio</Link>?
+        </div>
       </footer>
     </main>
   )
