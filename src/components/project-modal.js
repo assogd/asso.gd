@@ -45,6 +45,7 @@ export function ProjectModal({ title, items }) {
     const htmlOverflow = document.documentElement.style.overflow
 
     document.documentElement.style.overflow = 'hidden'
+    document.documentElement.setAttribute('data-scroll-locked', '')
     document.body.style.position = 'fixed'
     document.body.style.top = `-${scrollY}px`
     document.body.style.left = `-${scrollX}px`
@@ -54,6 +55,7 @@ export function ProjectModal({ title, items }) {
     return () => {
       Object.assign(document.body.style, bodyStyles)
       document.documentElement.style.overflow = htmlOverflow
+      document.documentElement.removeAttribute('data-scroll-locked')
       window.scrollTo(scrollX, scrollY)
     }
   }, [])

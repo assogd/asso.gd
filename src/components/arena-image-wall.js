@@ -102,6 +102,7 @@ export function ArenaImageWall({
     let currentLag = 0
     let targetLag = 0
     let lastScrollY = window.scrollY
+    let wasLocked = false
 
     const settle = () => {
       currentLag += (targetLag - currentLag) * 0.08
@@ -120,6 +121,18 @@ export function ArenaImageWall({
 
     const handleScroll = () => {
       const scrollY = window.scrollY
+
+      // A modal freezes the page by fixing <body>, which makes scrollY jump
+      // to 0 and back. Ignore that so the wall doesn't recentre or lag.
+      if (document.documentElement.hasAttribute('data-scroll-locked')) {
+        wasLocked = true
+        return
+      }
+      if (wasLocked) {
+        wasLocked = false
+        lastScrollY = scrollY
+        return
+      }
 
       if (loop) {
         const loopHeight = wall.scrollHeight / passCount
@@ -297,31 +310,16 @@ export function ArenaImageWall({
             ) : (
               <button
                 type="button"
-                onPointerDown={(event) => {
-                  if (!event.isPrimary || event.button !== 0) return
-                  event.preventDefault()
-                  onTilePointerDown?.(item, event.pointerId)
-                }}
-                onPointerUp={(event) => event.preventDefault()}
-                onPointerCancel={(event) =>
-                  onTilePointerDown?.(null, event.pointerId)
-                }
+                onClick={() => onTilePointerDown?.(item)}
                 onContextMenu={(event) => event.preventDefault()}
                 onDragStart={(event) => event.preventDefault()}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault()
-                    onTilePointerDown?.(item)
-                  }
-                }}
                 className="home-image-preview absolute inset-0 block w-full cursor-zoom-in select-none"
                 aria-label={`View larger: ${item.title || 'image'}`}
                 style={{
-                  touchAction: 'none',
                   WebkitTouchCallout: 'none',
                   WebkitUserSelect: 'none',
                   userSelect: 'none',
-                  cursor: previewActive ? 'none' : 'zoom-in'
+                  cursor: previewActive ? 'default' : 'zoom-in'
                 }}
               >
                 <Image

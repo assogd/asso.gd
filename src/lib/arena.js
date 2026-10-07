@@ -6,6 +6,9 @@ const CACHE_CONFIG = {
   },
   cache: 'force-cache' // Force cache usage even in development
 }
+// Are.na collection whose channels are the site's project pages.
+const PROJECTS_CHANNEL_SLUG = 'projects-p6rlwzfff3a'
+
 /**
  * Build the default Are.na API request headers.
  * @returns {object} Headers for Are.na API requests
@@ -95,56 +98,14 @@ export async function fetchArenaChannelWithBlocks(channelSlug, options = {}) {
 }
 
 /**
- * Fetch the channels a given block belongs to.
- * Always fetched with hard caching (never "fresh"), even in preview mode,
- * since this is an extra request per block and Are.na's rate limits are
- * strict - one block ~= one API call, and a feed can have 20+ blocks.
- * @param {string|number} blockId - Are.na block id
- * @returns {Promise<Array>} Channels the block belongs to
+ * Fetch the project channels listed in the Projects collection.
+ * @param {object} options - Fetch options (`fresh` bypasses the cache)
+ * @returns {Promise<Array<{slug: string, title: string}>>} Projects
  */
-export async function fetchBlockChannels(blockId) {
-  const headers = getArenaHeaders()
+export async function fetchArenaProjects(options = {}) {
+  const channel = await fetchArenaChannel(PROJECTS_CHANNEL_SLUG, options)
 
-  const response = await fetch(`https://api.are.na/v2/blocks/${blockId}/channels`, {
-    headers,
-    ...CACHE_CONFIG
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch channels for block ${blockId}: ${response.status}`)
-  }
-
-  const { channels } = await response.json()
-  return channels || []
-}
-
-/**
- * Enrich blocks with the (single, first) other channel they're connected to,
- * besides the feed channel itself. Used to power project links from the
- * home feed.
- * @param {Array} blocks - Blocks from the feed channel
- * @param {string} excludeSlug - Slug of the feed channel to ignore
- * @returns {Promise<Array>} Blocks with a `connectedProject` field
- */
-export async function attachConnectedProjects(blocks, excludeSlug = 'adddgd') {
-  if (!blocks || !Array.isArray(blocks)) {
-    return []
-  }
-
-  return Promise.all(
-    blocks.map(async (block) => {
-      try {
-        const channels = await fetchBlockChannels(block.id)
-        const project = channels.find((channel) => channel.slug !== excludeSlug)
-
-        return {
-          ...block,
-          connectedProject: project ? { slug: project.slug, title: project.title } : null
-        }
-      } catch (error) {
-        console.error(`Error fetching connected channels for block ${block.id}:`, error)
-        return { ...block, connectedProject: null }
-      }
-    })
-  )
+  return (channel.contents || [])
+    .filter((block) => block.class === 'Channel' && block.slug)
+    .map((block) => ({ slug: block.slug, title: block.title || block.slug }))
 }

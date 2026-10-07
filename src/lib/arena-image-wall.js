@@ -1,9 +1,31 @@
 /**
+ * Find the project a block links to. Projects are linked manually by adding
+ * a Markdown link to the block's description whose last path segment is a
+ * project slug, e.g. `[Read more](/project/sibbjans)`.
+ * @param {string} description - Block description
+ * @param {Map<string, {slug: string, title: string}>} projectsBySlug
+ * @returns {{slug: string, title: string}|null} Linked project, if any
+ */
+function findLinkedProject(description, projectsBySlug) {
+  for (const [, href] of (description || '').matchAll(/\[[^\]]*\]\(([^)\s]+)[^)]*\)/g)) {
+    const segments = href.split(/[?#]/)[0].split('/').filter(Boolean)
+    const project = projectsBySlug.get(segments[segments.length - 1])
+    if (project) return project
+  }
+
+  return null
+}
+
+/**
  * Transform Arena channel blocks into image-wall-ready format
  * @param {Array} blocks - Array of Arena blocks
+ * @param {Array<{slug: string, title: string}>} projects - Projects from the
+ *   Projects collection, used to resolve links in block descriptions
  * @returns {Array} Transformed blocks for the image wall
  */
-export function transformArenaBlocksForImageWall(blocks) {
+export function transformArenaBlocksForImageWall(blocks, projects = []) {
+  const projectsBySlug = new Map(projects.map((project) => [project.slug, project]))
+
   if (!blocks || !Array.isArray(blocks)) {
     return []
   }
@@ -27,11 +49,7 @@ export function transformArenaBlocksForImageWall(blocks) {
       },
       source: block.source?.url || null,
       created_at: block.created_at,
-      // Set by `attachConnectedProjects` - the other Are.na channel this
-      // block belongs to, if any, used to link the tile to a project page.
-      project: block.connectedProject
-        ? { slug: block.connectedProject.slug, title: block.connectedProject.title }
-        : null
+      project: findLinkedProject(block.description, projectsBySlug)
     }))
 }
 
