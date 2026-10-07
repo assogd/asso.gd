@@ -1,31 +1,26 @@
 /**
- * Find the project a block links to. Projects are linked manually by adding
- * a Markdown link to the block's description whose last path segment is a
- * project slug, e.g. `[Read more](/project/sibbjans)`.
- * @param {string} description - Block description
- * @param {Map<string, {slug: string, title: string}>} projectsBySlug
- * @returns {{slug: string, title: string}|null} Linked project, if any
+ * Caption Markdown for a block: the first paragraph of its description, with
+ * inline links and soft line breaks kept, or the title when there's none.
+ * @param {object} block - Arena block
+ * @returns {string} Caption Markdown
  */
-function findLinkedProject(description, projectsBySlug) {
-  for (const [, href] of (description || '').matchAll(/\[[^\]]*\]\(([^)\s]+)[^)]*\)/g)) {
-    const segments = href.split(/[?#]/)[0].split('/').filter(Boolean)
-    const project = projectsBySlug.get(segments[segments.length - 1])
-    if (project) return project
-  }
+function buildCaption(block) {
+  const firstParagraph = (block.description || '').trim().split(/\n\s*\n/)[0]
+  const caption = firstParagraph
+    .split('\n')
+    .map((line) => line.replace(/\s+/g, ' ').trim())
+    .join('\n')
+    .trim()
 
-  return null
+  return caption || block.title || ''
 }
 
 /**
  * Transform Arena channel blocks into image-wall-ready format
  * @param {Array} blocks - Array of Arena blocks
- * @param {Array<{slug: string, title: string}>} projects - Projects from the
- *   Projects collection, used to resolve links in block descriptions
  * @returns {Array} Transformed blocks for the image wall
  */
-export function transformArenaBlocksForImageWall(blocks, projects = []) {
-  const projectsBySlug = new Map(projects.map((project) => [project.slug, project]))
-
+export function transformArenaBlocksForImageWall(blocks) {
   if (!blocks || !Array.isArray(blocks)) {
     return []
   }
@@ -39,6 +34,7 @@ export function transformArenaBlocksForImageWall(blocks, projects = []) {
       id: block.id,
       title: block.title || '',
       description: block.description || '',
+      caption: buildCaption(block),
       image: {
         // Prefer the larger rendition so text-heavy images (book covers,
         // posters) stay sharp on high-DPI screens.
@@ -49,7 +45,6 @@ export function transformArenaBlocksForImageWall(blocks, projects = []) {
       },
       source: block.source?.url || null,
       created_at: block.created_at,
-      project: findLinkedProject(block.description, projectsBySlug)
     }))
 }
 

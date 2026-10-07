@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import siteContent from '@/content/site.json'
-import { fetchArenaChannelWithBlocks, fetchArenaProjects } from '@/lib/arena'
+import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { transformArenaBlocksForImageWall } from '@/lib/arena-image-wall'
 import { HomeFeed } from '@/components/home-feed'
 import { PublishButton } from '@/components/publish-button'
@@ -26,16 +26,11 @@ export default async function Home() {
   let imageItems = []
 
   try {
-    const options = { fresh: process.env.PREVIEW_MODE === 'true' }
-    const [channel, projects] = await Promise.all([
-      fetchArenaChannelWithBlocks('adddgd', options),
-      fetchArenaProjects(options).catch((error) => {
-        console.error('Failed to fetch Arena projects:', error)
-        return []
-      })
-    ])
+    const channel = await fetchArenaChannelWithBlocks('adddgd', {
+      fresh: process.env.PREVIEW_MODE === 'true'
+    })
     if (channel?.contents) {
-      imageItems = transformArenaBlocksForImageWall(channel.contents, projects).reverse()
+      imageItems = transformArenaBlocksForImageWall(channel.contents).reverse()
     }
   } catch (error) {
     console.error('Failed to fetch Arena channel:', error)

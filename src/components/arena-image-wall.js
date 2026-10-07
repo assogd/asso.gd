@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+import { Caption } from './caption'
 
 function getStableColumnStart(id, columnCount, previousStart) {
   const value = String(id)
@@ -288,52 +288,31 @@ export function ArenaImageWall({
               '--arena-lag-factor': 0.7 + (index % 3) * 0.15
             }}
           >
-            {item.project ? (
-              <>
-                <Link
-                  href={`/project/${item.project.slug}`}
-                  scroll={false}
-                  className="absolute inset-0 block"
-                  aria-label={`View project: ${item.project.title}`}
-                >
-                  <Image
-                    src={item.image.url}
-                    alt={item.image.alt || item.title || 'Asso archive image'}
-                    fill
-                    className="object-contain"
-                    sizes="(min-width: 640px) 30rem, 100vw"
-                    quality={90}
-                    priority={index < 2}
-                  />
-                </Link>
-              </>
-            ) : (
-              <button
-                type="button"
-                onClick={() => onTilePointerDown?.(item)}
-                onContextMenu={(event) => event.preventDefault()}
-                onDragStart={(event) => event.preventDefault()}
-                className="home-image-preview absolute inset-0 block w-full cursor-zoom-in select-none"
-                aria-label={`View larger: ${item.title || 'image'}`}
-                style={{
-                  WebkitTouchCallout: 'none',
-                  WebkitUserSelect: 'none',
-                  userSelect: 'none',
-                  cursor: previewActive ? 'default' : 'zoom-in'
-                }}
-              >
-                <Image
-                  src={item.image.url}
-                  alt={item.image.alt || item.title || 'Asso archive image'}
-                  fill
-                  className="object-contain"
-                  sizes="(min-width: 640px) 30rem, 100vw"
-                  quality={90}
-                  priority={index < 2}
-                  draggable={false}
-                />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => onTilePointerDown?.(item)}
+              onContextMenu={(event) => event.preventDefault()}
+              onDragStart={(event) => event.preventDefault()}
+              className="home-image-preview absolute inset-0 block w-full cursor-zoom-in select-none"
+              aria-label={`View larger: ${item.title || 'image'}`}
+              style={{
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                userSelect: 'none',
+                cursor: previewActive ? 'default' : 'zoom-in'
+              }}
+            >
+              <Image
+                src={item.image.url}
+                alt={item.image.alt || item.title || 'Asso archive image'}
+                fill
+                className="object-contain"
+                sizes="(min-width: 640px) 30rem, 100vw"
+                quality={90}
+                priority={index < 2}
+                draggable={false}
+              />
+            </button>
           </div>
         </figure>
         )
@@ -342,41 +321,17 @@ export function ArenaImageWall({
     <div
       aria-live="polite"
       aria-label="Visible image captions"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-10"
-      style={{ height: '4rem' }}
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-10 pb-4"
     >
       {activeItem && (
         <figcaption
           className="pointer-events-auto m-0 w-full text-center transition-opacity duration-75 grid gap-y-1/2 gap-x-4 md:inline-flex"
-          style={{ height: '100%' }}
         >
-          {activeItem.project ? (
-            <Link
-              href={`/project/${activeItem.project.slug}`}
-              scroll={false}
-              className="flex w-full items-center justify-center gap-x-2 px-2"
-              aria-label={`Read article: ${activeItem.project.title}`}
-              style={{ height: '100%', textDecoration: 'none' }}
-            >
-              <span>{activeItem.title || 'Untitled'}</span>
-              <span
-                className="underline"
-                style={{
-                  textDecorationThickness: '1px',
-                  textUnderlineOffset: '3px'
-                }}
-              >
-                Read article
-              </span>
-            </Link>
-          ) : (
-            <div
-              className="flex w-full items-center justify-center px-2"
-              style={{ height: '100%' }}
-            >
-              {activeItem.title || 'Untitled'}
-            </div>
-          )}
+          <div className="flex w-full items-end justify-center px-2">
+            <span>
+              <Caption>{activeItem.caption}</Caption>
+            </span>
+          </div>
         </figcaption>
       )}
     </div>

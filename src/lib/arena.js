@@ -6,9 +6,6 @@ const CACHE_CONFIG = {
   },
   cache: 'force-cache' // Force cache usage even in development
 }
-// Are.na collection whose channels are the site's project pages.
-const PROJECTS_CHANNEL_SLUG = 'projects-p6rlwzfff3a'
-
 /**
  * Build the default Are.na API request headers.
  * @returns {object} Headers for Are.na API requests
@@ -95,17 +92,4 @@ export async function fetchArenaChannelWithBlocks(channelSlug, options = {}) {
     console.error(`Error fetching Are.na channel with blocks:`, error)
     throw error
   }
-}
-
-/**
- * Fetch the project channels listed in the Projects collection.
- * @param {object} options - Fetch options (`fresh` bypasses the cache)
- * @returns {Promise<Array<{slug: string, title: string}>>} Projects
- */
-export async function fetchArenaProjects(options = {}) {
-  const channel = await fetchArenaChannel(PROJECTS_CHANNEL_SLUG, options)
-
-  return (channel.contents || [])
-    .filter((block) => block.class === 'Channel' && block.slug)
-    .map((block) => ({ slug: block.slug, title: block.title || block.slug }))
 }

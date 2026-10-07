@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { Caption } from './caption'
 import { useEffect, useRef, useState } from 'react'
 
 const EXIT_MS = 300
@@ -77,45 +78,44 @@ export function StandaloneImageOverlay({ item, onClose }) {
     return null
   }
 
+  const slideStyle = {
+    transform:
+      exitDirection === 'up'
+        ? 'translateY(-100%)'
+        : exitDirection === 'down'
+          ? 'translateY(100%)'
+          : 'none',
+    transition: `transform ${EXIT_MS}ms ease-in`
+  }
+
   return (
-    <>
-      <div
-        role="dialog"
-        aria-label="Enlarged image. Click anywhere or scroll to close."
-        onClick={onClose}
-        style={{
-          transform:
-            exitDirection === 'up'
-              ? 'translateY(-100%)'
-              : exitDirection === 'down'
-                ? 'translateY(100%)'
-                : 'none',
-          transition: `transform ${EXIT_MS}ms ease-in`
-        }}
-        className="fixed inset-0 touch-none overscroll-contain z-30 flex cursor-zoom-out select-none items-center justify-center bg-black/95"
-        onContextMenu={(event) => event.preventDefault()}
-        onDragStart={(event) => event.preventDefault()}
-      >
+    <div
+      role="dialog"
+      aria-label="Enlarged image. Click anywhere or scroll to close."
+      onClick={onClose}
+      className="fixed inset-0 z-30 flex touch-none cursor-zoom-out select-none flex-col overscroll-contain"
+      onContextMenu={(event) => event.preventDefault()}
+      onDragStart={(event) => event.preventDefault()}
+    >
+      <div className="absolute inset-0 bg-black/95" style={slideStyle} />
+      <div className="relative flex-1" style={slideStyle}>
         <Image
           src={item.image.url}
           alt=""
           fill
           draggable={false}
-          className="select-none object-contain p-4 pb-16"
+          className="select-none object-contain p-4"
           sizes="90vw"
           quality={90}
         />
       </div>
-      {/* Sits outside the sliding overlay so it stays put until it is hidden. */}
+      {/* Stays put while the backdrop and image slide away. */}
       <div
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex items-center justify-center px-2 text-center"
-        style={{
-          height: '4rem',
-          visibility: captionHidden ? 'hidden' : 'visible'
-        }}
+        className="relative px-2 pb-4 text-center"
+        style={{ visibility: captionHidden ? 'hidden' : 'visible' }}
       >
-        {item.title || 'Untitled'}
+        <Caption onLinkClick={onClose}>{item.caption}</Caption>
       </div>
-    </>
+    </div>
   )
 }
