@@ -83,7 +83,7 @@ export function ProjectModal({ title, items }) {
       <button
         type="button"
         onClick={close}
-        className="block w-full cursor-default uppercase"
+        className="link-underline block w-full cursor-default uppercase"
         style={{ height: '3rem' }}
         aria-label="Close project dialog"
       >Close</button>

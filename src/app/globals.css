@@ -133,7 +133,13 @@ a:hover,
 
 .meta-title {
   font-size: clamp(1rem, 5.8vw, 3rem);
-  line-height: 1em;
+  line-height: 1.1em;
+}
+
+@media screen and (min-width: 670px) {
+.meta-title {
+  line-height: 1.05em;
+}
 }
 
 .project-meta-pair {
