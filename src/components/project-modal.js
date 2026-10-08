@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ProjectContent } from './project-content'
+import Link from 'next/link'
 
 // Must match the key template.js checks for.
 const SKIP_COVER_KEY = 'asso:skip-mega-cover'
@@ -91,19 +92,22 @@ export function ProjectModal({ title, items }) {
       >
         <div className="project-modal-enter">
           <ProjectContent items={items} />
-          <div className="p-4 mt-16 grid gap-8 text-center">
-          <div className="italic">End of article.</div>
-                  <button
-        type="button"
-        onClick={close}
-        className="block w-full cursor-default uppercase border"
-        style={{ height: '8rem' }}
-        aria-label="Close project dialog"
-      >Close</button>
-          </div>
+          <footer className="px-4 pt-28 pb-16 text-center grid gap-4">
+          <div className="italic">End of page.</div>
+        <div>
+        Would you like to <button
+            type="button"
+            onClick={close}
+            className="underline decoration-1 underline-offset-[3px] hover:no-underline"
+          >
+            continue browsing images at the homepage
+          </button> or <Link href="/about">read texts about the studio</Link>?
+        </div>
+      </footer>
         </div>
       </div>
 
     </div>
   )
 }
+

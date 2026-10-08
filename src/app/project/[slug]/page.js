@@ -56,8 +56,8 @@ export default async function ProjectPage({ params }) {
       {(process.env.PREVIEW_MODE === 'true' || isLocalhost) && (
         <PublishButton isLocalhost={isLocalhost} />
       )}
-      <footer className="px-4 pt-20 pb-28 text-center grid gap-8">
-        <div className="italic">End of article.</div>
+      <footer className="px-4 pt-28 pb-16 text-center grid gap-4">
+        <div className="italic">End of page.</div>
         <div>
         Would you like to <Link href="/">browse images at the homepage</Link> or <Link href="/about">read texts about the studio</Link>?
         </div>

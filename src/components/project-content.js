@@ -71,13 +71,13 @@ const markdownComponents = {
   p: ({ children }) => {
     if (typeof children === 'string' && children.trimStart().startsWith('>')) {
       return (
-        <blockquote className="mx-auto max-w-[48rem] meta-title">
+        <blockquote className="mx-auto max-w-[48rem] whitespace-pre-line meta-title">
           {children.trimStart().slice(1).trimStart()}
         </blockquote>
       )
     }
 
-    return <p className="mb-4 last:mb-0">{children}</p>
+    return <p className="mb-4 whitespace-pre-line last:mb-0">{children}</p>
   },
   blockquote: ({ children }) => (
     <blockquote className="mx-auto mb-4 max-w-[48rem] meta-title">{children}</blockquote>
