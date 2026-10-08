@@ -91,14 +91,14 @@ export function ProjectModal({ title, items }) {
         className="project-modal-panel relative min-h-dvh bg-black"
       >
         <div className="project-modal-enter">
-          <ProjectContent items={items} />
+          <ProjectContent items={items} inModal />
           <footer className="px-4 pt-28 pb-16 text-center grid gap-4">
           <div className="italic">End of page.</div>
         <div>
         Would you like to <button
             type="button"
             onClick={close}
-            className="link-underline"
+            className="inline link-underline"
           >
             continue browsing images at the homepage
           </button> or <Link href="/about">read texts about the studio</Link>?

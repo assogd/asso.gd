@@ -135,10 +135,10 @@ const inlineMarkdownComponents = {
   )
 }
 
-function ProjectMeta({ item, overlay = false }) {
+function ProjectMeta({ item, overlay = false, inModal = false }) {
   return (
     <article
-      className={`w-full text-center pt-36 pb-12 meta-title${
+      className={`w-full text-center ${inModal ? 'pt-24' : 'pt-64 sm:pt-36'} pb-12 meta-title${
         overlay ? ' project-meta-pair-meta' : ''
       }`}
     >
@@ -188,7 +188,7 @@ function ProjectImage({ item, overlay = false }) {
  * centered column. An image immediately followed by a meta block sticks over
  * that block while scrolling.
  */
-export function ProjectContent({ items = [] }) {
+export function ProjectContent({ items = [], inModal = false }) {
   if (items.length === 0) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -202,7 +202,7 @@ export function ProjectContent({ items = [] }) {
       {items.map((item, index) => {
         if (item.type === 'meta') {
           return items[index - 1]?.image ? null : (
-            <ProjectMeta key={item.id} item={item} />
+            <ProjectMeta key={item.id} item={item} inModal={inModal} />
           )
         }
 
@@ -227,8 +227,15 @@ export function ProjectContent({ items = [] }) {
           return (
             <ProjectMetaPair
               key={item.id}
+              inModal={inModal}
               image={<ProjectImage item={item} overlay />}
-              meta={<ProjectMeta item={items[index + 1]} overlay />}
+              meta={
+                <ProjectMeta
+                  item={items[index + 1]}
+                  overlay
+                  inModal={inModal}
+                />
+              }
             />
           )
         }

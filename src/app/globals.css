@@ -186,6 +186,11 @@ a:hover,
     padding-top: var(--project-pair-inset);
   }
 
+  /* Full page (not modal): push the pair further down */
+  .project-meta-pair-page {
+    --project-pair-inset: 6rem;
+  }
+
   .project-meta-pair-meta {
     display: flex;
     flex-direction: column;

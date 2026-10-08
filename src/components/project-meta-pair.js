@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef } from 'react'
 
-export function ProjectMetaPair({ image, meta }) {
+export function ProjectMetaPair({ image, meta, inModal = false }) {
   const pairRef = useRef(null)
 
   useLayoutEffect(() => {
@@ -50,7 +50,9 @@ export function ProjectMetaPair({ image, meta }) {
   }, [])
 
   return (
-    <div ref={pairRef} className="project-meta-pair flex w-full flex-col items-center">
+    <div ref={pairRef} className={`project-meta-pair flex w-full flex-col items-center${
+        inModal ? '' : ' project-meta-pair-page'
+      }`}>
       {image}
       {meta}
       <div className="project-meta-pair-spacer" aria-hidden="true" />
