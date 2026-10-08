@@ -77,7 +77,7 @@ export function ProjectModal({ title, items }) {
       }}
       style={{
         '--modal-scale': 0.95,
-        backgroundColor: 'rgb(0 0 0 / 80%)'
+        backgroundColor: 'rgb(0 0 0 / 100%)'
       }}
     >
       <button
@@ -88,7 +88,7 @@ export function ProjectModal({ title, items }) {
         aria-label="Close project dialog"
       >Close</button>
       <div
-        className="project-modal-panel relative min-h-dvh border-t border-white bg-black"
+        className="project-modal-panel relative min-h-dvh bg-black"
       >
         <div className="project-modal-enter">
           <ProjectContent items={items} />
@@ -98,7 +98,7 @@ export function ProjectModal({ title, items }) {
         Would you like to <button
             type="button"
             onClick={close}
-            className="underline decoration-1 underline-offset-[3px] hover:no-underline"
+            className="link-underline"
           >
             continue browsing images at the homepage
           </button> or <Link href="/about">read texts about the studio</Link>?

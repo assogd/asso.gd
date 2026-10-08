@@ -114,7 +114,7 @@ const markdownComponents = {
   },
   ol: ({ children }) => <ol className="mb-4 list-decimal pl-5 last:mb-0">{children}</ol>,
   a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="underline">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="link-underline">
       {children}
     </a>
   )
@@ -129,7 +129,7 @@ const inlineMarkdownComponents = {
   ol: ({ children }) => <ol className="list-none pl-0">{children}</ol>,
   li: ({ children }) => <li>{children}</li>,
   a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="underline">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="link-underline">
       {children}
     </a>
   )

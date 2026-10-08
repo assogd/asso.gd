@@ -30,7 +30,7 @@ function buildComponents(onLinkClick) {
         <Link
           href={internalHref}
           scroll={false}
-          className="underline"
+          className="link-underline"
           style={linkStyle}
           onClick={onLinkClick}
         >
@@ -39,7 +39,7 @@ function buildComponents(onLinkClick) {
       ) : (
         <a
           href={href}
-          className="underline"
+          className="link-underline"
           style={linkStyle}
           onClick={onLinkClick}
         >
