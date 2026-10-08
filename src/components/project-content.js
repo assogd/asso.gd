@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { Children, isValidElement } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { ProjectMetaPair } from './project-meta-pair'
 
 // Recursively flattens React children (strings, numbers, nested elements)
 // into their plain-text content, e.g. for locating a colon inside a
@@ -134,12 +135,57 @@ const inlineMarkdownComponents = {
   )
 }
 
+function ProjectMeta({ item, overlay = false }) {
+  return (
+    <article
+      className={`w-full text-center pt-36 pb-12 meta-title${
+        overlay ? ' project-meta-pair-meta' : ''
+      }`}
+    >
+      <div className={overlay ? 'project-meta-pair-content' : ''}>
+        {item.title && <h2>{item.title}</h2>}
+        {item.fields.map(({ key, value }) => (
+          <p key={key}>
+            <span className="italic">{key}</span> …{' '}
+            <span className="uppercase">
+              <ReactMarkdown components={inlineMarkdownComponents}>
+                {value}
+              </ReactMarkdown>
+            </span>
+          </p>
+        ))}
+      </div>
+    </article>
+  )
+}
+
+function ProjectImage({ item, overlay = false }) {
+  return (
+    <figure
+      className={`flex w-full max-w-[20rem] sm:max-w-[26rem] flex-col items-center${
+        overlay ? ' relative z-10 project-meta-pair-image' : ''
+      }`}
+    >
+      <div className="relative aspect-[6/5] w-full">
+        <Image
+          src={item.image.url}
+          alt={item.image.alt || item.title || 'Asso archive image'}
+          fill
+          className="object-contain"
+          sizes="(min-width: 640px) 30rem, 100vw"
+          quality={90}
+        />
+      </div>
+    </figure>
+  )
+}
+
 /**
  * Simple, non-interactive rendering of a project's images and text blocks
  * for /project/[slug] and its intercepted modal. Unlike the home feed's
  * ArenaImageWall, tiles here are not clickable and are laid out as a single
- * centered column, one after another, with captions directly underneath
- * each image.
+ * centered column. An image immediately followed by a meta block sticks over
+ * that block while scrolling.
  */
 export function ProjectContent({ items = [] }) {
   if (items.length === 0) {
@@ -151,21 +197,11 @@ export function ProjectContent({ items = [] }) {
   }
 
   return (
-    <section aria-label="Project contents" className="flex flex-col items-center gap-8 p-4 pt-16">
-      {items.map((item) => {
+    <section aria-label="Project contents" className="flex flex-col items-center gap-8 p-4 mt-0">
+      {items.map((item, index) => {
         if (item.type === 'meta') {
-          return (
-            <article key={item.id} className="w-full text-center pt-8 pb-12 meta-title">
-              {item.title && <h2 className="">{item.title}</h2>}
-              {item.fields.map(({ key, value }) => (
-                <p key={key} className="">
-                  <span className="italic">{key}</span> …{' '}
-                  <span className="uppercase">
-                    <ReactMarkdown components={inlineMarkdownComponents}>{value}</ReactMarkdown>
-                  </span>
-                </p>
-              ))}
-            </article>
+          return items[index - 1]?.image ? null : (
+            <ProjectMeta key={item.id} item={item} />
           )
         }
 
@@ -184,20 +220,19 @@ export function ProjectContent({ items = [] }) {
           )
         }
 
-        return (
-          <figure key={item.id} className="flex w-full max-w-[30rem] flex-col items-center">
-            <div className="relative aspect-square w-full sm:aspect-[4/3]">
-              <Image
-                src={item.image.url}
-                alt={item.image.alt || item.title || 'Asso archive image'}
-                fill
-                className="object-contain"
-                sizes="(min-width: 640px) 30rem, 100vw"
-                quality={90}
-              />
-            </div>
-          </figure>
-        )
+        const followsWithMeta = items[index + 1]?.type === 'meta'
+
+        if (followsWithMeta) {
+          return (
+            <ProjectMetaPair
+              key={item.id}
+              image={<ProjectImage item={item} overlay />}
+              meta={<ProjectMeta item={items[index + 1]} overlay />}
+            />
+          )
+        }
+
+        return <ProjectImage key={item.id} item={item} />
       })}
     </section>
   )
