@@ -44,6 +44,7 @@ export function ProjectMetaPair({ image, meta }) {
     observer.observe(contentElement)
     observer.observe(pair)
     updateDimensions()
+    pair.dataset.ready = ''
 
     return () => observer.disconnect()
   }, [])

@@ -129,13 +129,21 @@ a:hover {
 }
 
 .meta-title {
-  font-size: clamp(1.2rem, 5.8vw, 3rem);
+  font-size: clamp(1rem, 5.8vw, 3rem);
   line-height: 1em;
 }
 
 .project-meta-pair {
   container-type: inline-size;
   --project-image-height: min(100cqw, 16rem);
+}
+
+/* Hidden until the first measurement so the server-rendered fallback
+   positions never flash before the measured layout is applied. */
+@media (scripting: enabled) {
+  .project-meta-pair:not([data-ready]) {
+    opacity: 0;
+  }
 }
 
 /* Pixels the image sits above the exact center of the meta text. */
@@ -161,21 +169,20 @@ a:hover {
   margin-top: calc(-1 * var(--project-image-height));
 }
 
-/* On small screens the pinned meta fills the viewport (minus a peek of the
-   next content) and centers its text vertically. */
+/* On small screens the pinned meta is a compact block that centers its text
+   (and, via the measured offset, the image) vertically. */
 @media screen and (max-width: 669px) {
-  /* Pull the next item up over the empty space below the centered text. */
   .project-meta-pair {
     --project-pair-inset: 3rem; /* pushes image and meta down */
     padding-top: var(--project-pair-inset);
-    margin-bottom: calc(-1 * var(--project-meta-slack, 0px));
   }
 
   .project-meta-pair-meta {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: calc(100svh - 12rem);
+    /* Text and image share a center, with room around the image */
+    min-height: calc(var(--project-image-height) + 4rem);
     padding-top: 0;
     padding-bottom: 0;
   }
@@ -186,6 +193,12 @@ a:hover {
     var(--project-image-exit-distance, var(--project-image-height)) + 2rem +
       var(--project-pair-inset, 0px)
   );
+}
+
+@media screen and (max-width: 669px) {
+  .project-meta-pair-spacer {
+    flex-basis: var(--project-image-exit-distance, var(--project-image-height));
+  }
 }
 
 .project-modal-panel {
