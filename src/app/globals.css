@@ -142,9 +142,43 @@ a:hover,
 }
 }
 
+/*
+ * Image + meta pair: a frame (100vh on desktop, 70vh on mobile, or taller if
+ * the content needs it) with the meta text centered in it. The meta is sticky
+ * and stays put while the image, which scrolls normally, travels up and
+ * clears it. The pin lasts as long as the frame's empty space below the text,
+ * so the next block follows at the regular gap with nothing left over.
+ */
 .project-meta-pair {
   container-type: inline-size;
   --project-image-height: min(100cqw, 16rem);
+  /* Pixels the image sits above the exact center of the meta text. */
+  --project-image-lift: 0px;
+  /* --project-pair-top / --project-pair-bleed (set by the modal) say where the
+     frame starts in the scrollport and how much space it leaves free. */
+  --project-pair-base-height: 70svh;
+  /* Tall enough for the pin to last until the image has cleared the text. */
+  --project-pair-height: max(
+    var(--project-pair-base-height),
+    calc(
+      2 * var(--project-meta-height, 0px) + var(--project-image-height) - 2 *
+        var(--project-image-lift) + 2rem
+    )
+  );
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: var(--project-pair-height);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (min-width: 670px) {
+  .project-meta-pair {
+    --project-image-lift: 80px;
+    --project-pair-base-height: calc(100svh - var(--project-pair-bleed, 2rem));
+  }
 }
 
 /* Hidden until the first measurement so the server-rendered fallback
@@ -155,64 +189,25 @@ a:hover,
   }
 }
 
-/* Pixels the image sits above the exact center of the meta text. */
-.project-meta-pair {
-  --project-image-lift: 0px;
-}
-
-@media screen and (min-width: 670px) {
-  .project-meta-pair {
-    --project-image-lift: 80px;
-  }
-}
-
 .project-meta-pair-image {
-  top: var(--project-image-offset, 8rem);
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  top: calc(
+    50% - var(--project-image-height) / 2 - var(--project-image-lift)
+  );
 }
 
 .project-meta-pair-meta {
   position: sticky;
   z-index: 0;
-  /* 1rem matches the section's p-4 so it doesn't shift before sticking */
-  top: calc(1rem + var(--project-pair-inset, 0px));
-  margin-top: calc(-1 * var(--project-image-height));
-}
-
-/* On small screens the pinned meta is a compact block that centers its text
-   (and, via the measured offset, the image) vertically. */
-@media screen and (max-width: 669px) {
-  .project-meta-pair {
-    --project-pair-inset: 3rem; /* pushes image and meta down */
-    padding-top: var(--project-pair-inset);
-  }
-
-  /* Full page (not modal): push the pair further down */
-  .project-meta-pair-page {
-    --project-pair-inset: 6rem;
-  }
-
-  .project-meta-pair-meta {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* Text and image share a center, with room around the image */
-    min-height: calc(var(--project-image-height) + 4rem);
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-}
-
-.project-meta-pair-spacer {
-  flex: 0 0 calc(
-    var(--project-image-exit-distance, var(--project-image-height)) + 2rem +
-      var(--project-pair-inset, 0px)
+  padding: 0;
+  /* Same spot the centered text starts at, so it doesn't shift before pinning */
+  top: calc(
+    var(--project-pair-top, 1rem) +
+      (var(--project-pair-height) - var(--project-meta-height, 0px)) / 2
   );
-}
-
-@media screen and (max-width: 669px) {
-  .project-meta-pair-spacer {
-    flex-basis: var(--project-image-exit-distance, var(--project-image-height));
-  }
 }
 
 .project-modal-panel {

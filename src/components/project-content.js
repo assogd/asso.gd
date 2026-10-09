@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import clsx from 'clsx'
 import { Children, isValidElement } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ProjectMetaPair } from './project-meta-pair'
@@ -138,8 +139,12 @@ const inlineMarkdownComponents = {
 function ProjectMeta({ item, overlay = false, inModal = false }) {
   return (
     <article
-      className={`w-full text-center ${inModal ? 'pt-24' : 'pt-64 sm:pt-36'} pb-12 meta-title${
-        overlay ? ' project-meta-pair-meta' : ''
+      className={`w-full text-center meta-title ${
+        overlay
+          ? 'project-meta-pair-meta'
+          : inModal
+            ? 'pt-24 pb-12'
+            : 'pt-64 pb-12 sm:pt-36'
       }`}
     >
       <div className={overlay ? 'project-meta-pair-content' : ''}>
@@ -198,7 +203,7 @@ export function ProjectContent({ items = [], inModal = false }) {
   }
 
   return (
-    <section aria-label="Project contents" className="flex flex-col items-center gap-8 p-4 mt-0">
+    <section aria-label="Project contents" className={clsx("flex flex-col items-center gap-8 mt-0", inModal ? 'px-4' : 'p-4')}>
       {items.map((item, index) => {
         if (item.type === 'meta') {
           return items[index - 1]?.image ? null : (
@@ -227,15 +232,8 @@ export function ProjectContent({ items = [], inModal = false }) {
           return (
             <ProjectMetaPair
               key={item.id}
-              inModal={inModal}
               image={<ProjectImage item={item} overlay />}
-              meta={
-                <ProjectMeta
-                  item={items[index + 1]}
-                  overlay
-                  inModal={inModal}
-                />
-              }
+              meta={<ProjectMeta item={items[index + 1]} overlay />}
             />
           )
         }

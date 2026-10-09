@@ -77,6 +77,8 @@ export function ProjectModal({ title, items }) {
       }}
       style={{
         '--modal-scale': 0.95,
+        '--project-pair-top': '3rem',
+        '--project-pair-bleed': '3rem',
         backgroundColor: 'rgb(0 0 0 / 100%)'
       }}
     >
