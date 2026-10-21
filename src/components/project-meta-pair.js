@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef } from 'react'
 
-export function ProjectMetaPair({ image, meta }) {
+export function ProjectMetaPair({ image, meta, children }) {
   const pairRef = useRef(null)
 
   useLayoutEffect(() => {
@@ -13,10 +13,6 @@ export function ProjectMetaPair({ image, meta }) {
     if (!pair || !imageElement || !metaElement) return
 
     function updateDimensions() {
-      pair.style.setProperty(
-        '--project-pair-page-top',
-        `${pair.getBoundingClientRect().top + window.scrollY}px`
-      )
       pair.style.setProperty(
         '--project-image-height',
         `${imageElement.getBoundingClientRect().height}px`
@@ -30,20 +26,19 @@ export function ProjectMetaPair({ image, meta }) {
     const observer = new ResizeObserver(updateDimensions)
     observer.observe(imageElement)
     observer.observe(metaElement)
-    window.addEventListener('resize', updateDimensions)
     updateDimensions()
     pair.dataset.ready = ''
 
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('resize', updateDimensions)
-    }
+    return () => observer.disconnect()
   }, [])
 
   return (
     <div ref={pairRef} className="project-meta-pair">
       {image}
-      {meta}
+      <div className="project-meta-pair-rest">
+        {meta}
+        {children}
+      </div>
     </div>
   )
 }

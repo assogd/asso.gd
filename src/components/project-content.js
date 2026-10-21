@@ -191,8 +191,9 @@ function ProjectImage({ item, overlay = false, priority = false }) {
  * Simple, non-interactive rendering of a project's images and text blocks
  * for /project/[slug] and its intercepted modal. Unlike the home feed's
  * ArenaImageWall, tiles here are not clickable and are laid out as a single
- * centered column. An image immediately followed by a meta block sticks over
- * that block while scrolling.
+ * centered column. An image immediately followed by a meta block scrolls over
+ * that block while the meta and everything after it stay put; the page only
+ * starts scrolling once the image has left the viewport.
  */
 export function ProjectContent({ items = [], inModal = false }) {
   if (items.length === 0) {
@@ -205,44 +206,59 @@ export function ProjectContent({ items = [], inModal = false }) {
 
   const firstImageIndex = items.findIndex((item) => item.image)
 
+  function renderFrom(start) {
+    const nodes = []
+
+    for (let index = start; index < items.length; index += 1) {
+      const item = items[index]
+
+      if (item.type === 'meta') {
+        nodes.push(<ProjectMeta key={item.id} item={item} inModal={inModal} />)
+        continue
+      }
+
+      if (item.type === 'text') {
+        nodes.push(
+          <article key={item.id} className="py-8 w-full max-w-[48rem] text-center">
+            {item.content ? (
+              <ReactMarkdown components={markdownComponents}>{item.content}</ReactMarkdown>
+            ) : (
+              <>
+                {item.title && <h2 className="mb-4">{item.title}</h2>}
+                {item.description && <p>{item.description}</p>}
+              </>
+            )}
+          </article>
+        )
+        continue
+      }
+
+      if (items[index + 1]?.type === 'meta') {
+        // The pair holds every block after it, so they all stay put until
+        // the image has scrolled out of view.
+        nodes.push(
+          <ProjectMetaPair
+            key={item.id}
+            image={<ProjectImage item={item} overlay priority={index === firstImageIndex} />}
+            meta={<ProjectMeta item={items[index + 1]} overlay />}
+          >
+            {renderFrom(index + 2)}
+          </ProjectMetaPair>
+        )
+        break
+      }
+
+      nodes.push(
+        <ProjectImage key={item.id} item={item} priority={index === firstImageIndex} />
+      )
+    }
+
+    return nodes
+  }
+
   return (
     <section aria-label="Project contents" className={clsx("flex flex-col items-center gap-8 mt-0", inModal ? 'px-4' : 'p-4')}>
-      {items.map((item, index) => {
-        if (item.type === 'meta') {
-          return items[index - 1]?.image ? null : (
-            <ProjectMeta key={item.id} item={item} inModal={inModal} />
-          )
-        }
-
-        if (item.type === 'text') {
-          return (
-            <article key={item.id} className="py-8 w-full max-w-[48rem] text-center">
-              {item.content ? (
-                <ReactMarkdown components={markdownComponents}>{item.content}</ReactMarkdown>
-              ) : (
-                <>
-                  {item.title && <h2 className="mb-4">{item.title}</h2>}
-                  {item.description && <p>{item.description}</p>}
-                </>
-              )}
-            </article>
-          )
-        }
-
-        const followsWithMeta = items[index + 1]?.type === 'meta'
-
-        if (followsWithMeta) {
-          return (
-            <ProjectMetaPair
-              key={item.id}
-              image={<ProjectImage item={item} overlay priority={index === firstImageIndex} />}
-              meta={<ProjectMeta item={items[index + 1]} overlay />}
-            />
-          )
-        }
-
-        return <ProjectImage key={item.id} item={item} priority={index === firstImageIndex} />
-      })}
+      {renderFrom(0)}
     </section>
   )
 }

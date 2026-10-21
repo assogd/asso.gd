@@ -143,11 +143,12 @@ a:hover,
 }
 
 /*
- * Image + meta pair: a frame (100vh on desktop, 70vh on mobile, or taller if
- * the content needs it) with the meta text centered in it. The meta is sticky
- * and stays put while the image, which scrolls normally, travels up and
- * clears it. The pin lasts as long as the frame's empty space below the text,
- * so the next block follows at the regular gap with nothing left over.
+ * Image + meta pair: the image scrolls normally while the meta text and every
+ * block after it (the "rest") are held in place by position: sticky. The hold
+ * lasts exactly until the image has left the viewport (the ::after spacer
+ * below), after which the whole page scrolls on. The frame is 100vh on
+ * desktop with the meta centered in it; on mobile it ends early so a glimpse
+ * of the next block shows above the fold.
  */
 .project-meta-pair {
   container-type: inline-size;
@@ -155,17 +156,21 @@ a:hover,
   /* Pixels the image sits above the exact center of the meta text. */
   --project-image-lift: 0px;
   --project-pair-offset: 0px;
-  /* Extra scroll the meta stays pinned after the image has fully left. */
-  --project-pin-extra: 4rem;
+  /* Extra scroll the rest stays held after the image has fully left. */
+  --project-pin-extra: 0px;
+  --project-next-glimpse: 6rem;
   /* --project-pair-top / --project-pair-bleed (set by the modal) say where the
      frame starts in the scrollport and how much space it leaves free. */
-  --project-pair-base-height: 70svh;
+  --project-pair-base-height: calc(
+    100svh - var(--project-pair-top, 1rem) - var(--project-next-glimpse)
+  );
   /* Distance from the frame top to the meta text: centered when the content
      is shorter than the frame, otherwise flush with the top. */
   --project-meta-start: max(
     0px,
     calc((var(--project-pair-base-height) - var(--project-meta-height, 0px)) / 2)
   );
+  --project-rest-top: calc(var(--project-meta-start) + var(--project-pair-offset));
   --project-image-top: calc(
     max(
       0px,
@@ -175,48 +180,23 @@ a:hover,
       )
     ) + var(--project-pair-offset)
   );
-  /* The meta stays pinned until the image's bottom edge has scrolled past the
-     top of the scrollport, plus the extra above. */
-  --project-pair-height-full: max(
-    var(--project-pair-base-height),
-    calc(
-      var(--project-pair-top, 1rem) + var(--project-meta-start) +
-        var(--project-pair-offset) + var(--project-meta-height, 0px) +
-        var(--project-image-top) + var(--project-image-height) +
-        var(--project-pin-extra)
-    )
+  /* Scroll distance until the image's bottom edge passes the viewport top. */
+  --project-lock-distance: calc(
+    var(--project-pair-top, 1rem) + var(--project-image-top) +
+      var(--project-image-height) + var(--project-pin-extra)
   );
-  --project-pair-height: var(--project-pair-height-full);
   position: relative;
   display: flex;
   width: 100%;
-  height: var(--project-pair-height);
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
 }
 
-/* On small screens the frame is capped so a glimpse of the next block shows
-   above the fold, but never shorter than what the image needs to clear the
-   pinned text. */
-@media screen and (max-width: 669px) {
-  .project-meta-pair {
-    /* Includes the 2rem gap before the next block. */
-    --project-next-glimpse: 6rem;
-    --project-pair-height: max(
-      calc(
-        var(--project-meta-start) + var(--project-meta-height, 0px) * 1.5 +
-          var(--project-image-height) / 2 - var(--project-image-lift) + 1rem
-      ),
-      min(
-        var(--project-pair-height-full),
-        calc(
-          100svh - var(--project-pair-page-top, 0px) -
-            var(--project-next-glimpse)
-        )
-      )
-    );
-  }
+.project-meta-pair::after {
+  content: '';
+  display: block;
+  flex: none;
+  height: var(--project-lock-distance);
 }
 
 @media screen and (min-width: 670px) {
@@ -243,15 +223,28 @@ a:hover,
   top: var(--project-image-top);
 }
 
-.project-meta-pair-meta {
+.project-meta-pair-rest {
   position: sticky;
   z-index: 0;
-  padding: 0;
-  margin-top: calc(var(--project-meta-start) + var(--project-pair-offset));
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: var(--project-rest-top);
   /* Same spot the centered text starts at, so it doesn't shift before pinning */
-  top: calc(
-    var(--project-pair-top, 1rem) + var(--project-meta-start) +
-      var(--project-pair-offset)
+  top: calc(var(--project-pair-top, 1rem) + var(--project-rest-top));
+}
+
+.project-meta-pair-meta {
+  padding: 0;
+  /* Fills the rest of the frame so the next block starts below it. */
+  margin-bottom: max(
+    0px,
+    calc(
+      var(--project-pair-base-height) - var(--project-rest-top) -
+        var(--project-meta-height, 0px)
+    )
   );
 }
 
