@@ -137,9 +137,9 @@ a:hover,
 }
 
 @media screen and (min-width: 670px) {
-.meta-title {
-  line-height: 1.05em;
-}
+  .meta-title {
+    line-height: 1.05em;
+  }
 }
 
 /*
@@ -155,10 +155,11 @@ a:hover,
   --project-image-height: min(100cqw, 16rem);
   /* Pixels the image sits above the exact center of the meta text. */
   --project-image-lift: 0px;
-  --project-pair-offset: 0px;
+  --project-pair-min-offset: 0px;
+  --project-header-height: 3rem;
   /* Extra scroll the rest stays held after the image has fully left. */
   --project-pin-extra: 0px;
-  --project-next-glimpse: 6rem;
+  --project-next-glimpse: 8rem;
   /* --project-pair-top / --project-pair-bleed (set by the modal) say where the
      frame starts in the scrollport and how much space it leaves free. */
   --project-pair-base-height: calc(
@@ -168,17 +169,42 @@ a:hover,
      is shorter than the frame, otherwise flush with the top. */
   --project-meta-start: max(
     0px,
-    calc((var(--project-pair-base-height) - var(--project-meta-height, 0px)) / 2)
+    calc(
+      (var(--project-pair-base-height) - var(--project-meta-height, 0px)) / 2
+    )
+  );
+  /* Image top relative to the frame, before any offset is applied. */
+  --project-image-top-base: max(
+    0px,
+    calc(
+      var(--project-meta-start) + var(--project-meta-height, 0px) / 2 -
+        var(--project-image-height) / 2 - var(--project-image-lift)
+    )
+  );
+  /* Vertical center of image + meta together, relative to the frame. */
+  --project-content-center: calc(
+    (
+        min(var(--project-image-top-base), var(--project-meta-start)) +
+          max(
+            var(--project-meta-start) + var(--project-meta-height, 0px),
+            var(--project-image-top-base) + var(--project-image-height)
+          )
+      ) / 2
+  );
+  /* Moves the content down so the whitespace above it (below the header) and
+     below it (above the next block's glimpse) is balanced, but never less
+     than --project-pair-min-offset. */
+  --project-pair-offset: max(
+    var(--project-pair-min-offset),
+    calc(
+      (
+          var(--project-header-height) + 100svh - var(--project-next-glimpse)
+        ) / 2 - var(--project-pair-top, 1rem) - var(--project-content-center)
+    )
   );
   --project-rest-top: calc(var(--project-meta-start) + var(--project-pair-offset));
   --project-image-top: calc(
-    max(
-      0px,
-      calc(
-        var(--project-meta-start) + var(--project-meta-height, 0px) / 2 -
-          var(--project-image-height) / 2 - var(--project-image-lift)
-      )
-    ) + var(--project-pair-offset)
+    var(--project-image-top-base) + var(--project-pair-offset)
   );
   /* Scroll distance until the image's bottom edge passes the viewport top. */
   --project-lock-distance: calc(
@@ -202,7 +228,8 @@ a:hover,
 @media screen and (min-width: 670px) {
   .project-meta-pair {
     --project-image-lift: 80px;
-    --project-pair-offset: 6rem;
+    --project-pair-min-offset: 6rem;
+    --project-next-glimpse: 0px;
     --project-pair-base-height: calc(100svh - var(--project-pair-bleed, 2rem));
   }
 }
@@ -259,11 +286,8 @@ a:hover,
   --project-modal-enter-distance: 80px;
   --project-modal-enter-opacity: 0.7;
   --project-modal-enter-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
-  animation:
-    project-modal-rise-in
-    var(--project-modal-enter-duration)
-    var(--project-modal-enter-easing)
-    both;
+  animation: project-modal-rise-in var(--project-modal-enter-duration)
+    var(--project-modal-enter-easing) both;
 }
 
 @keyframes project-modal-rise-in {
