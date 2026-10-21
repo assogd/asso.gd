@@ -44,7 +44,9 @@ export default async function Home() {
   return (
     <main className="pt-24">
       <HomeFeed items={imageItems} />
-      {(process.env.PREVIEW_MODE === 'true' || isLocalhost) && (
+      {((process.env.PREVIEW_MODE === 'true' &&
+        process.env.HIDE_PUBLISH_BUTTON !== 'true') ||
+        isLocalhost) && (
         <PublishButton isLocalhost={isLocalhost} />
       )}
     </main>

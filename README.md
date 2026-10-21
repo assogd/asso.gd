@@ -72,6 +72,9 @@ content. Its **Publish** button (`/api/publish`) calls the production
 `/api/revalidate-arena` endpoint to refresh the cached Are.na data and
 homepage once changes are ready to go live.
 
+A deployment that should fetch fresh data but never show the button (e.g.
+`dev.asso.gd`) sets `PREVIEW_MODE=true` and `HIDE_PUBLISH_BUTTON=true`.
+
 ## Content
 
 - `src/content/about.md` — About page copy (Markdown).

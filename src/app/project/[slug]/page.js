@@ -53,7 +53,9 @@ export default async function ProjectPage({ params }) {
     <main className="">
       <h1 className="sr-only">{channel.title}</h1>
       <ProjectContent items={items} />
-      {(process.env.PREVIEW_MODE === 'true' || isLocalhost) && (
+      {((process.env.PREVIEW_MODE === 'true' &&
+        process.env.HIDE_PUBLISH_BUTTON !== 'true') ||
+        isLocalhost) && (
         <PublishButton isLocalhost={isLocalhost} />
       )}
       <footer className="px-4 pt-28 pb-16 text-center grid gap-4">
