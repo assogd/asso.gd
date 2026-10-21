@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
 
 export async function POST(request) {
+  if (process.env.HIDE_PUBLISH_BUTTON === 'true') {
+    return NextResponse.json({ error: 'Publishing is disabled' }, { status: 403 })
+  }
+
   const revalidateUrl = process.env.PRODUCTION_REVALIDATE_URL
   const publishToken = process.env.PUBLISH_TOKEN
 

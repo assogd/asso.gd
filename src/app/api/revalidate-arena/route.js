@@ -6,6 +6,10 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 let revalidationHistory = []
 
 function isAuthorized(request) {
+  if (process.env.HIDE_PUBLISH_BUTTON === 'true') {
+    return false
+  }
+
   const expectedToken = process.env.REVALIDATE_TOKEN
   if (!expectedToken) {
     return process.env.NODE_ENV !== 'production'

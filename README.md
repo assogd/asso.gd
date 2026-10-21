@@ -73,7 +73,8 @@ content. Its **Publish** button (`/api/publish`) calls the production
 homepage once changes are ready to go live.
 
 A deployment that should fetch fresh data but never show the button (e.g.
-`dev.asso.gd`) sets `PREVIEW_MODE=true` and `HIDE_PUBLISH_BUTTON=true`.
+`dev.asso.gd`) sets `PREVIEW_MODE=true` and `HIDE_PUBLISH_BUTTON=true`. This
+also disables `/api/publish` and `/api/revalidate-arena` on that deployment.
 
 ## Content
 
