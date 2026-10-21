@@ -11,7 +11,8 @@ function getText(node) {
   if (node == null || typeof node === 'boolean') return ''
   if (typeof node === 'string' || typeof node === 'number') return String(node)
   if (Array.isArray(node)) return node.map(getText).join('')
-  if (node.props && node.props.children != null) return getText(node.props.children)
+  if (node.props && node.props.children != null)
+    return getText(node.props.children)
   return ''
 }
 
@@ -65,10 +66,12 @@ function splitListItemAtColon(children) {
 }
 
 const markdownComponents = {
-  h1: ({ children }) => <h2 className="mb-4">{children}</h2>,
+  h1: ({ children }) => <h2 className="mb-6">{children}</h2>,
   h2: ({ children }) => <h2 className="mb-6">{children}</h2>,
-  h3: ({ children }) => <h3 className="mb-3 mt-8">{children}</h3>,
-  h4: ({ children }) => <h4 className="mb-3 mt-10 uppercase text-[0.7em] !tracking-[1.2em]">{children}</h4>,
+  h3: ({ children }) => <h3 className="mb-4 mt-8">{children}</h3>,
+  h4: ({ children }) => (
+    <h4 className="mb-4 mt-8 text-sm uppercase">{children}</h4>
+  ),
   p: ({ children }) => {
     if (typeof children === 'string' && children.trimStart().startsWith('>')) {
       return (
@@ -81,16 +84,22 @@ const markdownComponents = {
     return <p className="mb-4 whitespace-pre-line last:mb-0">{children}</p>
   },
   blockquote: ({ children }) => (
-    <blockquote className="mx-auto mb-4 max-w-[48rem] meta-title">{children}</blockquote>
+    <blockquote className="mx-auto mb-4 max-w-[48rem] meta-title">
+      {children}
+    </blockquote>
   ),
-  ul: ({ children }) => <ul className="mb-4 list-none border max-w-md mx-auto last:mb-0">{children}</ul>,
+  ul: ({ children }) => (
+    <ul className="mb-4 list-none border max-w-md mx-auto last:mb-0 text-sm leading-[1.2em]">
+      {children}
+    </ul>
+  ),
   li: ({ children }) => {
     const split = splitListItemAtColon(children)
     const keyText = split ? getText(split.key).trim() : ''
 
     if (split && keyText) {
       return (
-        <li className="px-2 py-5 border-b last:border-b-0 grid gap-1">
+        <li className="px-4 py-5 border-b last:border-b-0 grid gap-1">
           <span>{split.value}</span>
           <span className="italic">{split.key}</span>
         </li>
@@ -103,19 +112,26 @@ const markdownComponents = {
     )
 
     if (emphasisIndex === -1) {
-      return <li className="px-2 py-5 border-b last:border-b-0">{children}</li>
+      return <li className="px-4 py-5 border-b last:border-b-0">{children}</li>
     }
 
     return (
-      <li className="grid px-2 py-5 border-b last:border-b-0">
+      <li className="grid gap-y-2 sm:gap-y-0 px-4 py-5 border-b last:border-b-0">
         <span>{nodes.slice(0, emphasisIndex)}</span>
         <span>{nodes.slice(emphasisIndex)}</span>
       </li>
     )
   },
-  ol: ({ children }) => <ol className="mb-4 list-decimal pl-5 last:mb-0">{children}</ol>,
+  ol: ({ children }) => (
+    <ol className="mb-4 list-decimal pl-5 last:mb-0">{children}</ol>
+  ),
   a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="link-underline">
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="link-underline"
+    >
       {children}
     </a>
   )
@@ -130,7 +146,12 @@ const inlineMarkdownComponents = {
   ol: ({ children }) => <ol className="list-none pl-0">{children}</ol>,
   li: ({ children }) => <li>{children}</li>,
   a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="link-underline">
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="link-underline"
+    >
       {children}
     </a>
   )
@@ -219,9 +240,14 @@ export function ProjectContent({ items = [], inModal = false }) {
 
       if (item.type === 'text') {
         nodes.push(
-          <article key={item.id} className="py-8 w-full max-w-[48rem] text-center">
+          <article
+            key={item.id}
+            className="py-8 w-full max-w-[48rem] text-center"
+          >
             {item.content ? (
-              <ReactMarkdown components={markdownComponents}>{item.content}</ReactMarkdown>
+              <ReactMarkdown components={markdownComponents}>
+                {item.content}
+              </ReactMarkdown>
             ) : (
               <>
                 {item.title && <h2 className="mb-4">{item.title}</h2>}
@@ -239,7 +265,13 @@ export function ProjectContent({ items = [], inModal = false }) {
         nodes.push(
           <ProjectMetaPair
             key={item.id}
-            image={<ProjectImage item={item} overlay priority={index === firstImageIndex} />}
+            image={
+              <ProjectImage
+                item={item}
+                overlay
+                priority={index === firstImageIndex}
+              />
+            }
             meta={<ProjectMeta item={items[index + 1]} overlay />}
           >
             {renderFrom(index + 2)}
@@ -249,7 +281,11 @@ export function ProjectContent({ items = [], inModal = false }) {
       }
 
       nodes.push(
-        <ProjectImage key={item.id} item={item} priority={index === firstImageIndex} />
+        <ProjectImage
+          key={item.id}
+          item={item}
+          priority={index === firstImageIndex}
+        />
       )
     }
 
@@ -257,7 +293,13 @@ export function ProjectContent({ items = [], inModal = false }) {
   }
 
   return (
-    <section aria-label="Project contents" className={clsx("flex flex-col items-center gap-8 mt-0", inModal ? 'px-4' : 'p-4')}>
+    <section
+      aria-label="Project contents"
+      className={clsx(
+        'flex flex-col items-center gap-8 mt-0',
+        inModal ? 'px-4' : 'p-4'
+      )}
+    >
       {renderFrom(0)}
     </section>
   )
