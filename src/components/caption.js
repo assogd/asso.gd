@@ -1,28 +1,42 @@
 'use client'
 
-import { createContext, useContext } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { Blink } from './blink'
 
-// Links inside ==highlight== markup (e.g. ==[text](url)==) blink.
-const HighlightedContext = createContext(false)
-
-function Highlighted({ children }) {
-  return (
-    <HighlightedContext.Provider value={true}>
-      {children}
-    </HighlightedContext.Provider>
-  )
-}
-
-function MaybeBlink({ children }) {
-  const highlighted = useContext(HighlightedContext)
-
-  return highlighted ? <Blink>{children}</Blink> : children
-}
-
 const linkStyle = { textDecorationThickness: '1px', textUnderlineOffset: '3px' }
+
+function remarkHighlightedLinks() {
+  return (tree) => {
+    function visit(node) {
+      if (node.type === 'link') {
+        const textNodes = []
+        function collectText(current) {
+          if (current.type === 'text') textNodes.push(current)
+          current.children?.forEach(collectText)
+        }
+        node.children.forEach(collectText)
+
+        const first = textNodes[0]
+        const last = textNodes[textNodes.length - 1]
+        if (first?.value.startsWith('==') && last?.value.endsWith('==')) {
+          first.value = first.value.slice(2)
+          last.value = last.value.slice(0, -2)
+          node.data = {
+            ...node.data,
+            hProperties: {
+              ...node.data?.hProperties,
+              'data-highlighted': 'true'
+            }
+          }
+        }
+      }
+      node.children?.forEach(visit)
+    }
+
+    visit(tree)
+  }
+}
 
 // Links to asso.gd (or its subdomains) are treated as internal, so they
 // navigate client-side instead of reloading the page.
@@ -44,56 +58,44 @@ function toInternalHref(href) {
 function buildComponents(onLinkClick) {
   return {
     p: ({ children }) => <>{children}</>,
-    a: ({ href, children }) => {
+    a: ({ href, children, ...props }) => {
       const internalHref = toInternalHref(href)
-
-      return (
-        <MaybeBlink>
-          {internalHref ? (
-            <Link
-              href={internalHref}
-              scroll={false}
-              className="link-underline"
-              style={linkStyle}
-              onClick={onLinkClick}
-            >
-              {children}
-            </Link>
-          ) : (
-            <a
-              href={href}
-              className="link-underline"
-              style={linkStyle}
-              onClick={onLinkClick}
-            >
-              {children}
-            </a>
-          )}
-        </MaybeBlink>
+      const link = internalHref ? (
+        <Link
+          href={internalHref}
+          scroll={false}
+          className="link-underline"
+          style={linkStyle}
+          onClick={onLinkClick}
+        >
+          {children}
+        </Link>
+      ) : (
+        <a
+          href={href}
+          className="link-underline"
+          style={linkStyle}
+          onClick={onLinkClick}
+        >
+          {children}
+        </a>
       )
+
+      return props['data-highlighted'] === 'true' ? <Blink>{link}</Blink> : link
     }
   }
 }
 
 export function Caption({ children, onLinkClick }) {
   const components = buildComponents(onLinkClick)
-  // Odd segments sit between a pair of == markers.
-  const segments = (children || 'Untitled').split(/==(.+?)==/gs)
-
   return (
     <span style={{ whiteSpace: 'pre-line' }}>
-      {segments.map((segment, index) => {
-        if (!segment) return null
-        const markdown = (
-          <ReactMarkdown components={components}>{segment}</ReactMarkdown>
-        )
-
-        return index % 2 ? (
-          <Highlighted key={index}>{markdown}</Highlighted>
-        ) : (
-          <span key={index}>{markdown}</span>
-        )
-      })}
+      <ReactMarkdown
+        components={components}
+        remarkPlugins={[remarkHighlightedLinks]}
+      >
+        {children || 'Untitled'}
+      </ReactMarkdown>
     </span>
   )
 }

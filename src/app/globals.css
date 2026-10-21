@@ -275,12 +275,13 @@ a:hover,
 
 .project-meta-pair-meta {
   padding: 0;
-  /* Fills the rest of the frame so the next block starts below it. */
+  /* Pushes the next block below the image, so the gap to it is the same fixed
+     gap as between all other blocks. */
   margin-bottom: max(
     0px,
     calc(
-      var(--project-pair-base-height) - var(--project-rest-top) -
-        var(--project-meta-height, 0px)
+      var(--project-image-top) + var(--project-image-height) -
+        var(--project-rest-top) - var(--project-meta-height, 0px)
     )
   );
 }

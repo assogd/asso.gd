@@ -76,30 +76,28 @@ export function ProjectModal({ title, items }) {
       <button
         type="button"
         onClick={close}
-        className="link-underline block w-full cursor-default uppercase"
+        className="link-underline block w-full cursor-pointer uppercase"
         style={{ height: '3rem' }}
         aria-label="Close project dialog"
-      >Close</button>
-      <div
-        className="project-modal-panel relative min-h-dvh bg-black"
       >
+        Close
+      </button>
+      <div className="project-modal-panel relative min-h-dvh bg-black">
         <div className="project-modal-enter">
           <ProjectContent items={items} inModal />
-          <footer className="px-4 pt-28 pb-16 text-center grid gap-4">
-          <div className="italic">End of page.</div>
-        <div>
-        Would you like to <button
-            type="button"
-            onClick={close}
-            className="inline link-underline"
-          >
-            continue browsing images at the homepage
-          </button> or <Link href="/about">read texts about the studio</Link>?
-        </div>
-      </footer>
+          <footer className="px-4 pt-48 pb-20 text-center grid gap-16">
+            <div className="italic">End of page.</div>
+            <button
+              type="button"
+              onClick={close}
+              className="link-underline block w-full cursor-pointer uppercase"
+              aria-label="Close project dialog"
+            >
+              Close
+            </button>
+          </footer>
         </div>
       </div>
-
     </div>
   )
 }
