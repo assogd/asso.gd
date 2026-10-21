@@ -167,7 +167,7 @@ function ProjectMeta({ item, overlay = false, inModal = false }) {
 function ProjectImage({ item, overlay = false, priority = false }) {
   return (
     <figure
-      className={`flex w-full max-w-[20rem] sm:max-w-[26rem] flex-col items-center${
+      className={`project-image flex w-full max-w-[20rem] sm:max-w-[26rem] flex-col items-center${
         overlay ? ' relative z-10 project-meta-pair-image' : ''
       }`}
     >

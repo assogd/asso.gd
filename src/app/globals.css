@@ -13,6 +13,14 @@ html {
   }
 }
 
+/* Phones in landscape are wide but very short, so size things from the
+   height instead of the width. */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  html {
+    font-size: 18px;
+  }
+}
+
 html,
 body {
   background: hsl(0, 0%, 0%);
@@ -309,6 +317,27 @@ a:hover,
   .arena-image-tile {
     grid-column: var(--arena-desktop-column-start) / span 7;
     max-width: 30rem !important;
+  }
+}
+
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .arena-image-tile {
+    grid-column: var(--arena-desktop-column-start) / span 7;
+    aspect-ratio: 4 / 3;
+    max-width: min(30rem, 85svh * 4 / 3) !important;
+  }
+
+  .meta-title {
+    font-size: clamp(1rem, 8svh, 2rem);
+  }
+
+  .project-image {
+    max-width: min(26rem, 65svh * 6 / 5) !important;
+  }
+
+  .project-meta-pair {
+    --project-pair-min-offset: 2rem;
+    --project-image-lift: 40px;
   }
 }
 
