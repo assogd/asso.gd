@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import { FadeImage } from './fade-image'
 import { useEffect, useRef, useState } from 'react'
 import { Caption } from './caption'
 
@@ -302,7 +302,7 @@ export function ArenaImageWall({
                 cursor: previewActive ? 'default' : 'zoom-in'
               }}
             >
-              <Image
+              <FadeImage
                 src={item.image.url}
                 alt={item.image.alt || item.title || 'Asso archive image'}
                 fill

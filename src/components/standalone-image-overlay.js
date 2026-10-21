@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import { FadeImage } from './fade-image'
 import { Caption } from './caption'
 import { useEffect, useRef, useState } from 'react'
 
@@ -99,10 +99,11 @@ export function StandaloneImageOverlay({ item, onClose }) {
     >
       <div className="absolute inset-0 bg-black/95" style={slideStyle} />
       <div className="relative flex-1" style={slideStyle}>
-        <Image
+        <FadeImage
           src={item.image.url}
           alt=""
           fill
+          priority
           draggable={false}
           className="select-none object-contain p-4"
           sizes="90vw"

@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { FadeImage } from './fade-image'
 import clsx from 'clsx'
 import { Children, isValidElement } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -164,7 +164,7 @@ function ProjectMeta({ item, overlay = false, inModal = false }) {
   )
 }
 
-function ProjectImage({ item, overlay = false }) {
+function ProjectImage({ item, overlay = false, priority = false }) {
   return (
     <figure
       className={`flex w-full max-w-[20rem] sm:max-w-[26rem] flex-col items-center${
@@ -172,11 +172,11 @@ function ProjectImage({ item, overlay = false }) {
       }`}
     >
       <div className="relative aspect-[6/5] w-full">
-        <Image
+        <FadeImage
           src={item.image.url}
           alt={item.image.alt || item.title || 'Asso archive image'}
           fill
-          priority={overlay}
+          priority={priority}
           className="object-contain"
           sizes="(min-width: 640px) 30rem, 100vw"
           quality={90}
@@ -201,6 +201,8 @@ export function ProjectContent({ items = [], inModal = false }) {
       </div>
     )
   }
+
+  const firstImageIndex = items.findIndex((item) => item.image)
 
   return (
     <section aria-label="Project contents" className={clsx("flex flex-col items-center gap-8 mt-0", inModal ? 'px-4' : 'p-4')}>
@@ -232,13 +234,13 @@ export function ProjectContent({ items = [], inModal = false }) {
           return (
             <ProjectMetaPair
               key={item.id}
-              image={<ProjectImage item={item} overlay />}
+              image={<ProjectImage item={item} overlay priority={index === firstImageIndex} />}
               meta={<ProjectMeta item={items[index + 1]} overlay />}
             />
           )
         }
 
-        return <ProjectImage key={item.id} item={item} />
+        return <ProjectImage key={item.id} item={item} priority={index === firstImageIndex} />
       })}
     </section>
   )

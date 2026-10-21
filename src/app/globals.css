@@ -270,3 +270,22 @@ a:hover,
     max-width: 30rem !important;
   }
 }
+
+.fade-image {
+  opacity: 0;
+  transition: opacity 250ms ease-out;
+}
+
+.fade-image-loaded {
+  opacity: 1;
+}
+
+@media (scripting: none) {
+  .fade-image {
+    opacity: 1;
+  }
+
+  .fade-image-placeholder {
+    display: none;
+  }
+}
