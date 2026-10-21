@@ -155,6 +155,8 @@ a:hover,
   /* Pixels the image sits above the exact center of the meta text. */
   --project-image-lift: 0px;
   --project-pair-offset: 0px;
+  /* Extra scroll the meta stays pinned after the image has cleared it. */
+  --project-pin-extra: 25svh;
   /* --project-pair-top / --project-pair-bleed (set by the modal) say where the
      frame starts in the scrollport and how much space it leaves free. */
   --project-pair-base-height: 70svh;
@@ -167,7 +169,7 @@ a:hover,
   /* Pin travel needed for the image to clear the text. */
   --project-pin-distance: calc(
     var(--project-meta-height, 0px) / 2 + var(--project-image-height) / 2 -
-      var(--project-image-lift) + 1rem
+      var(--project-image-lift) + 1rem + var(--project-pin-extra)
   );
   --project-pair-height: max(
     var(--project-pair-base-height),

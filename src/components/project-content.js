@@ -177,6 +177,7 @@ function ProjectImage({ item, overlay = false, priority = false }) {
           alt={item.image.alt || item.title || 'Asso archive image'}
           fill
           priority={priority}
+          fade={!priority}
           className="object-contain"
           sizes="(min-width: 640px) 30rem, 100vw"
           quality={90}

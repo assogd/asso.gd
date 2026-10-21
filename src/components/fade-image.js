@@ -9,12 +9,19 @@ const PRELOAD_MARGIN = '250% 0px'
 
 /**
  * next/image that starts loading well before it scrolls into view and fades
- * in once loaded, showing a centered "..." until then. `priority` images load immediately.
+ * in once loaded, showing a centered "..." until then. `priority` images load immediately and
+ * `fade={false}` skips the placeholder and fade.
  */
-export function FadeImage({ priority = false, className, alt, ...props }) {
+export function FadeImage({
+  priority = false,
+  fade = true,
+  className,
+  alt,
+  ...props
+}) {
   const imageRef = useRef(null)
   const [near, setNear] = useState(priority)
-  const [loaded, setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(!fade)
 
   const setRef = useCallback((node) => {
     imageRef.current = node
@@ -56,7 +63,11 @@ export function FadeImage({ priority = false, className, alt, ...props }) {
         priority={priority}
         loading={near ? 'eager' : 'lazy'}
         onLoad={() => setLoaded(true)}
-        className={clsx(className, 'fade-image', loaded && 'fade-image-loaded')}
+        className={clsx(
+          className,
+          fade && 'fade-image',
+          fade && loaded && 'fade-image-loaded'
+        )}
       />
     </>
   )
