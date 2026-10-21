@@ -154,15 +154,26 @@ a:hover,
   --project-image-height: min(100cqw, 16rem);
   /* Pixels the image sits above the exact center of the meta text. */
   --project-image-lift: 0px;
+  --project-pair-offset: 0px;
   /* --project-pair-top / --project-pair-bleed (set by the modal) say where the
      frame starts in the scrollport and how much space it leaves free. */
   --project-pair-base-height: 70svh;
-  /* Tall enough for the pin to last until the image has cleared the text. */
+  /* Distance from the frame top to the meta text: centered when the content
+     is shorter than the frame, otherwise flush with the top. */
+  --project-meta-start: max(
+    0px,
+    calc((var(--project-pair-base-height) - var(--project-meta-height, 0px)) / 2)
+  );
+  /* Pin travel needed for the image to clear the text. */
+  --project-pin-distance: calc(
+    var(--project-meta-height, 0px) / 2 + var(--project-image-height) / 2 -
+      var(--project-image-lift) + 1rem
+  );
   --project-pair-height: max(
     var(--project-pair-base-height),
     calc(
-      2 * var(--project-meta-height, 0px) + var(--project-image-height) - 2 *
-        var(--project-image-lift) + 2rem
+      var(--project-meta-start) + var(--project-meta-height, 0px) +
+        var(--project-pin-distance) + var(--project-pair-offset)
     )
   );
   position: relative;
@@ -171,12 +182,13 @@ a:hover,
   height: var(--project-pair-height);
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 @media screen and (min-width: 670px) {
   .project-meta-pair {
     --project-image-lift: 80px;
+    --project-pair-offset: 6rem;
     --project-pair-base-height: calc(100svh - var(--project-pair-bleed, 2rem));
   }
 }
@@ -195,7 +207,13 @@ a:hover,
   right: 0;
   margin-inline: auto;
   top: calc(
-    50% - var(--project-image-height) / 2 - var(--project-image-lift)
+    max(
+      0px,
+      calc(
+        var(--project-meta-start) + var(--project-meta-height, 0px) / 2 -
+          var(--project-image-height) / 2 - var(--project-image-lift)
+      )
+    ) + var(--project-pair-offset)
   );
 }
 
@@ -203,10 +221,11 @@ a:hover,
   position: sticky;
   z-index: 0;
   padding: 0;
+  margin-top: calc(var(--project-meta-start) + var(--project-pair-offset));
   /* Same spot the centered text starts at, so it doesn't shift before pinning */
   top: calc(
-    var(--project-pair-top, 1rem) +
-      (var(--project-pair-height) - var(--project-meta-height, 0px)) / 2
+    var(--project-pair-top, 1rem) + var(--project-meta-start) +
+      var(--project-pair-offset)
   );
 }
 
