@@ -5,8 +5,7 @@ import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { Blink } from './blink'
 
-// Links wrapped in emphasis (*[text](url)* or **[text](url)**) are
-// "highlighted" and blink.
+// Links inside ==highlight== markup (e.g. ==[text](url)==) blink.
 const HighlightedContext = createContext(false)
 
 function Highlighted({ children }) {
@@ -45,16 +44,6 @@ function toInternalHref(href) {
 function buildComponents(onLinkClick) {
   return {
     p: ({ children }) => <>{children}</>,
-    em: ({ children }) => (
-      <em>
-        <Highlighted>{children}</Highlighted>
-      </em>
-    ),
-    strong: ({ children }) => (
-      <strong>
-        <Highlighted>{children}</Highlighted>
-      </strong>
-    ),
     a: ({ href, children }) => {
       const internalHref = toInternalHref(href)
 
@@ -87,11 +76,24 @@ function buildComponents(onLinkClick) {
 }
 
 export function Caption({ children, onLinkClick }) {
+  const components = buildComponents(onLinkClick)
+  // Odd segments sit between a pair of == markers.
+  const segments = (children || 'Untitled').split(/==(.+?)==/gs)
+
   return (
     <span style={{ whiteSpace: 'pre-line' }}>
-      <ReactMarkdown components={buildComponents(onLinkClick)}>
-        {children || 'Untitled'}
-      </ReactMarkdown>
+      {segments.map((segment, index) => {
+        if (!segment) return null
+        const markdown = (
+          <ReactMarkdown components={components}>{segment}</ReactMarkdown>
+        )
+
+        return index % 2 ? (
+          <Highlighted key={index}>{markdown}</Highlighted>
+        ) : (
+          <span key={index}>{markdown}</span>
+        )
+      })}
     </span>
   )
 }
