@@ -276,8 +276,6 @@ a:hover,
 }
 
 .project-modal-panel {
-  transform: scale(var(--modal-scale, 0.95));
-  transform-origin: top center;
   box-shadow: 0 -12px 32px rgb(0 0 0 / 1);
 }
 

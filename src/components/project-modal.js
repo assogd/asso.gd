@@ -67,16 +67,7 @@ export function ProjectModal({ title, items }) {
       aria-modal="true"
       aria-label={title}
       className="fixed inset-0 z-30 overflow-y-auto"
-      onScroll={(event) => {
-        const overlay = event.currentTarget
-        const peek =
-          parseFloat(getComputedStyle(document.documentElement).fontSize) * 3
-        const progress = Math.min(overlay.scrollTop / peek, 1)
-        const scale = 0.95 + progress * 0.05
-        overlay.style.setProperty('--modal-scale', String(scale))
-      }}
       style={{
-        '--modal-scale': 0.95,
         '--project-pair-top': '3rem',
         '--project-pair-bleed': '3rem',
         backgroundColor: 'rgb(0 0 0 / 100%)'
@@ -112,4 +103,3 @@ export function ProjectModal({ title, items }) {
     </div>
   )
 }
-
