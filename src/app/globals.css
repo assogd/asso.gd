@@ -17,7 +17,7 @@ html {
    height instead of the width. */
 @media screen and (orientation: landscape) and (max-height: 500px) {
   html {
-    font-size: 18px;
+    font-size: 22px;
   }
 }
 
@@ -197,7 +197,8 @@ a:hover,
             var(--project-meta-start) + var(--project-meta-height, 0px),
             var(--project-image-top-base) + var(--project-image-height)
           )
-      ) / 2
+      ) /
+      2
   );
   /* Moves the content down so the whitespace above it (below the header) and
      below it (above the next block's glimpse) is balanced, but never less
@@ -205,12 +206,13 @@ a:hover,
   --project-pair-offset: max(
     var(--project-pair-min-offset),
     calc(
-      (
-          var(--project-header-height) + 100svh - var(--project-next-glimpse)
-        ) / 2 - var(--project-pair-top, 1rem) - var(--project-content-center)
+      (var(--project-header-height) + 100svh - var(--project-next-glimpse)) /
+        2 - var(--project-pair-top, 1rem) - var(--project-content-center)
     )
   );
-  --project-rest-top: calc(var(--project-meta-start) + var(--project-pair-offset));
+  --project-rest-top: calc(
+    var(--project-meta-start) + var(--project-pair-offset)
+  );
   --project-image-top: calc(
     var(--project-image-top-base) + var(--project-pair-offset)
   );

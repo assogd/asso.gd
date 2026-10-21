@@ -1,5 +1,27 @@
+'use client'
+
+import { createContext, useContext } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
+import { Blink } from './blink'
+
+// Links wrapped in emphasis (*[text](url)* or **[text](url)**) are
+// "highlighted" and blink.
+const HighlightedContext = createContext(false)
+
+function Highlighted({ children }) {
+  return (
+    <HighlightedContext.Provider value={true}>
+      {children}
+    </HighlightedContext.Provider>
+  )
+}
+
+function MaybeBlink({ children }) {
+  const highlighted = useContext(HighlightedContext)
+
+  return highlighted ? <Blink>{children}</Blink> : children
+}
 
 const linkStyle = { textDecorationThickness: '1px', textUnderlineOffset: '3px' }
 
@@ -23,28 +45,42 @@ function toInternalHref(href) {
 function buildComponents(onLinkClick) {
   return {
     p: ({ children }) => <>{children}</>,
+    em: ({ children }) => (
+      <em>
+        <Highlighted>{children}</Highlighted>
+      </em>
+    ),
+    strong: ({ children }) => (
+      <strong>
+        <Highlighted>{children}</Highlighted>
+      </strong>
+    ),
     a: ({ href, children }) => {
       const internalHref = toInternalHref(href)
 
-      return internalHref ? (
-        <Link
-          href={internalHref}
-          scroll={false}
-          className="link-underline"
-          style={linkStyle}
-          onClick={onLinkClick}
-        >
-          {children}
-        </Link>
-      ) : (
-        <a
-          href={href}
-          className="link-underline"
-          style={linkStyle}
-          onClick={onLinkClick}
-        >
-          {children}
-        </a>
+      return (
+        <MaybeBlink>
+          {internalHref ? (
+            <Link
+              href={internalHref}
+              scroll={false}
+              className="link-underline"
+              style={linkStyle}
+              onClick={onLinkClick}
+            >
+              {children}
+            </Link>
+          ) : (
+            <a
+              href={href}
+              className="link-underline"
+              style={linkStyle}
+              onClick={onLinkClick}
+            >
+              {children}
+            </a>
+          )}
+        </MaybeBlink>
       )
     }
   }
