@@ -155,8 +155,8 @@ a:hover,
   /* Pixels the image sits above the exact center of the meta text. */
   --project-image-lift: 0px;
   --project-pair-offset: 0px;
-  /* Extra scroll the meta stays pinned after the image has cleared it. */
-  --project-pin-extra: 25svh;
+  /* Extra scroll the meta stays pinned after the image has fully left. */
+  --project-pin-extra: 4rem;
   /* --project-pair-top / --project-pair-bleed (set by the modal) say where the
      frame starts in the scrollport and how much space it leaves free. */
   --project-pair-base-height: 70svh;
@@ -166,16 +166,24 @@ a:hover,
     0px,
     calc((var(--project-pair-base-height) - var(--project-meta-height, 0px)) / 2)
   );
-  /* Pin travel needed for the image to clear the text. */
-  --project-pin-distance: calc(
-    var(--project-meta-height, 0px) / 2 + var(--project-image-height) / 2 -
-      var(--project-image-lift) + 1rem + var(--project-pin-extra)
+  --project-image-top: calc(
+    max(
+      0px,
+      calc(
+        var(--project-meta-start) + var(--project-meta-height, 0px) / 2 -
+          var(--project-image-height) / 2 - var(--project-image-lift)
+      )
+    ) + var(--project-pair-offset)
   );
+  /* The meta stays pinned until the image's bottom edge has scrolled past the
+     top of the scrollport, plus the extra above. */
   --project-pair-height: max(
     var(--project-pair-base-height),
     calc(
-      var(--project-meta-start) + var(--project-meta-height, 0px) +
-        var(--project-pin-distance) + var(--project-pair-offset)
+      var(--project-pair-top, 1rem) + var(--project-meta-start) +
+        var(--project-pair-offset) + var(--project-meta-height, 0px) +
+        var(--project-image-top) + var(--project-image-height) +
+        var(--project-pin-extra)
     )
   );
   position: relative;
@@ -208,15 +216,7 @@ a:hover,
   left: 0;
   right: 0;
   margin-inline: auto;
-  top: calc(
-    max(
-      0px,
-      calc(
-        var(--project-meta-start) + var(--project-meta-height, 0px) / 2 -
-          var(--project-image-height) / 2 - var(--project-image-lift)
-      )
-    ) + var(--project-pair-offset)
-  );
+  top: var(--project-image-top);
 }
 
 .project-meta-pair-meta {
