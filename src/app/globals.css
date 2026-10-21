@@ -177,7 +177,7 @@ a:hover,
   );
   /* The meta stays pinned until the image's bottom edge has scrolled past the
      top of the scrollport, plus the extra above. */
-  --project-pair-height: max(
+  --project-pair-height-full: max(
     var(--project-pair-base-height),
     calc(
       var(--project-pair-top, 1rem) + var(--project-meta-start) +
@@ -186,6 +186,7 @@ a:hover,
         var(--project-pin-extra)
     )
   );
+  --project-pair-height: var(--project-pair-height-full);
   position: relative;
   display: flex;
   width: 100%;
@@ -193,6 +194,29 @@ a:hover,
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+}
+
+/* On small screens the frame is capped so a glimpse of the next block shows
+   above the fold, but never shorter than what the image needs to clear the
+   pinned text. */
+@media screen and (max-width: 669px) {
+  .project-meta-pair {
+    /* Includes the 2rem gap before the next block. */
+    --project-next-glimpse: 6rem;
+    --project-pair-height: max(
+      calc(
+        var(--project-meta-start) + var(--project-meta-height, 0px) * 1.5 +
+          var(--project-image-height) / 2 - var(--project-image-lift) + 1rem
+      ),
+      min(
+        var(--project-pair-height-full),
+        calc(
+          100svh - var(--project-pair-page-top, 0px) -
+            var(--project-next-glimpse)
+        )
+      )
+    );
+  }
 }
 
 @media screen and (min-width: 670px) {
