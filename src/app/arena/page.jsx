@@ -2,10 +2,14 @@ import { DevRevalidateButton } from '@/components/dev-revalidate-button'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 
 export default async function ArenaPage() {
+  const fetchOptions = {
+    fresh: process.env.PREVIEW_MODE === 'true'
+  }
+
   // Fetch both channels server-side directly from Are.na
   const [aboutChannel, mainChannel] = await Promise.allSettled([
-    fetchArenaChannelWithBlocks('adddgd-about'),
-    fetchArenaChannelWithBlocks('adddgd')
+    fetchArenaChannelWithBlocks('adddgd-about', fetchOptions),
+    fetchArenaChannelWithBlocks('adddgd', fetchOptions)
   ])
 
   return (
