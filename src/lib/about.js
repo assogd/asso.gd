@@ -1,4 +1,4 @@
-import sharp from 'sharp'
+import { imageSize } from 'image-size'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 
 // Are.na doesn't return image dimensions, so read them from the file to
@@ -6,9 +6,9 @@ import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 async function getImageSize(url) {
   try {
     const response = await fetch(url, { cache: 'force-cache' })
-    const { width, height } = await sharp(
-      Buffer.from(await response.arrayBuffer())
-    ).metadata()
+    const { width, height } = imageSize(
+      new Uint8Array(await response.arrayBuffer())
+    )
     return { width, height }
   } catch {
     return {}

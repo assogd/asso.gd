@@ -17,6 +17,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.5.4",
     "framer-motion": "^11.3.31",
+    "image-size": "^2.0.4",
     "next": "^16.3.5",
     "next-plausible": "^3.12.2",
     "postcss": "^8.4.41",
