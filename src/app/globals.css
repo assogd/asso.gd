@@ -4,7 +4,7 @@
 
 html {
   font-size: 20px;
-  line-height: 1.15em;
+  line-height: 1.2em;
 }
 
 @media screen and (min-width: 670px) {
@@ -73,7 +73,7 @@ h3:after {
 }
 
 .marquee-track {
-  animation: marquee 240s linear infinite;
+  animation: marquee 300s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -254,7 +254,7 @@ a:hover,
 @media screen and (min-width: 670px) {
   .project-meta-pair {
     --project-image-lift: 80px;
-    --project-pair-min-offset: 6rem;
+    --project-pair-min-offset: 2rem;
     --project-next-glimpse: 0px;
     --project-pair-base-height: calc(100svh - var(--project-pair-bleed, 2rem));
   }

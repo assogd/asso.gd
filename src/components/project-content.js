@@ -116,7 +116,7 @@ const markdownComponents = {
     }
 
     return (
-      <li className="grid gap-y-2 sm:gap-y-0 px-4 py-5 border-b last:border-b-0">
+      <li className="grid gap-y-1 sm:gap-y-0 p-3 sm:p-4 sm:py-4 border-b last:border-b-0">
         <span>{nodes.slice(0, emphasisIndex)}</span>
         <span>{nodes.slice(emphasisIndex)}</span>
       </li>
@@ -188,11 +188,13 @@ function ProjectMeta({ item, overlay = false, inModal = false }) {
 function ProjectImage({ item, overlay = false, priority = false }) {
   return (
     <figure
-      className={`project-image flex w-full max-w-[20rem] sm:max-w-[26rem] flex-col items-center${
-        overlay ? ' relative z-10 project-meta-pair-image' : ''
+      className={`project-image flex w-full flex-col items-center${
+        overlay
+          ? ' max-w-[70vw] md:max-w-[24rem] relative z-10 project-meta-pair-image'
+          : ' max-w-xl'
       }`}
     >
-      <div className="relative aspect-[6/5] w-full">
+      <div className="relative aspect-[6/5] sm:aspect-auto w-full">
         <FadeImage
           src={item.image.url}
           alt={item.image.alt || item.title || 'Asso archive image'}
