@@ -28,7 +28,13 @@ export function transformArenaBlocksForImageWall(blocks) {
   return blocks
     .filter((block) => {
       // Only include blocks with images
-      return block.image && (block.image.large?.url || block.image.display?.url || block.image.thumb?.url)
+      return (
+        block.image &&
+        (block.image.original?.url ||
+          block.image.large?.url ||
+          block.image.display?.url ||
+          block.image.thumb?.url)
+      )
     })
     .map((block) => ({
       id: block.id,
@@ -36,12 +42,25 @@ export function transformArenaBlocksForImageWall(blocks) {
       description: block.description || '',
       caption: buildCaption(block),
       image: {
-        // Prefer the larger rendition so text-heavy images (book covers,
-        // posters) stay sharp on high-DPI screens.
-        url: block.image.large?.url || block.image.display?.url || block.image.thumb?.url,
+        // Are.na's generated renditions are JPEG/WebP quality 75. Use the
+        // original so Next can resize and compress it once at the requested
+        // display quality instead of re-encoding an already-lossy rendition.
+        url:
+          block.image.original?.url ||
+          block.image.large?.url ||
+          block.image.display?.url ||
+          block.image.thumb?.url,
         alt: block.image.alt || '',
-        width: block.image.large?.width || block.image.display?.width || block.image.thumb?.width,
-        height: block.image.large?.height || block.image.display?.height || block.image.thumb?.height
+        width:
+          block.image.original?.width ||
+          block.image.large?.width ||
+          block.image.display?.width ||
+          block.image.thumb?.width,
+        height:
+          block.image.original?.height ||
+          block.image.large?.height ||
+          block.image.display?.height ||
+          block.image.thumb?.height
       },
       source: block.source?.url || null,
       created_at: block.created_at,
