@@ -3,8 +3,12 @@ import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
 
-export default function Header() {
+const DEFAULT_INTRO =
+  'Asso is a design studio committed to creating well-reasoned visual concepts for institutions, artists, and commercial clients. We seek partnerships with those daring to challenge conventions and those committed to making a positive societal impact, whether in the cultural field or industries striving to innovate and improve society. Our work has taken shape in various forms, including books, visual identities, installations, magazines, websites, videos, posters, and more.'
+
+export default function Header({ intro }) {
   const pathname = usePathname()
   const isHome = pathname === '/'
   const isAbout = pathname === '/about'
@@ -32,7 +36,7 @@ export default function Header() {
           'flex w-screen p-2 sm:p-4 z-10'
         )}
       >
-        <p
+        <div
           className={clsx(
             !isAbout ? 'truncate whitespace-nowrap select-none' : 'hyphens-auto'
           )}
@@ -45,15 +49,24 @@ export default function Header() {
               Images
             </Link>
           )}
-          Asso is a design studio committed to creating well-reasoned visual
-          concepts for institutions, artists, and commercial clients. We seek
-          partnerships with those daring to challenge conventions and those
-          committed to making a positive societal impact, whether in the
-          cultural field or industries striving to innovate and improve society.
-          Our work has taken shape in various forms, including books, visual
-          identities, installations, magazines, websites, videos, posters, and
-          more.
-        </p>
+          <ReactMarkdown
+            allowedElements={['p', 'a', 'em', 'strong']}
+            unwrapDisallowed
+            components={{
+              p: ({ children }) =>
+                isAbout ? (
+                  <p className="mb-4 last:mb-0">{children}</p>
+                ) : (
+                  <span>{children} </span>
+                ),
+              a: ({ node, ...props }) => (
+                <a {...props} target="_blank" rel="noopener noreferrer" />
+              )
+            }}
+          >
+            {intro || DEFAULT_INTRO}
+          </ReactMarkdown>
+        </div>
         {!isAbout && (
           <nav className="basis-32">
             <Link href="/about" className="button-style whitespace-nowrap">

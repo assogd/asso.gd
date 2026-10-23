@@ -1,37 +1,70 @@
-import fs from 'node:fs'
-import path from 'node:path'
+import sharp from 'sharp'
+import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 
-function parseValue(value) {
-  if (value === 'true') return true
-  if (value === 'false') return false
-  return value.replace(/^["']|["']$/g, '')
+// Are.na doesn't return image dimensions, so read them from the file to
+// reserve the right space before the image loads.
+async function getImageSize(url) {
+  try {
+    const response = await fetch(url, { cache: 'force-cache' })
+    const { width, height } = await sharp(
+      Buffer.from(await response.arrayBuffer())
+    ).metadata()
+    return { width, height }
+  } catch {
+    return {}
+  }
 }
 
-export function getAboutContent() {
-  const filePath = path.join(process.cwd(), 'src/content/about.md')
-  const source = fs.readFileSync(filePath, 'utf8')
-  const frontmatterMatch = source.match(/^---\n([\s\S]*?)\n---\n?/)
-  const frontmatter = {}
+const ABOUT_CHANNEL = 'about-the-studio'
 
-  if (frontmatterMatch) {
-    frontmatterMatch[1].split('\n').forEach((line) => {
-      const match = line.match(/^([\w-]+):\s*(.+)$/)
-      if (match) {
-        frontmatter[match[1]] = parseValue(match[2])
-      }
+// Are.na returns newest blocks first; the channel is arranged top-down.
+// Single newlines become hard line breaks so addresses keep their layout.
+function withLineBreaks(text) {
+  return text.replace(/([^\n])\n(?=[^\n])/g, '$1  \n')
+}
+
+export async function getAboutContent() {
+  try {
+    const channel = await fetchArenaChannelWithBlocks(ABOUT_CHANNEL, {
+      fresh: process.env.PREVIEW_MODE === 'true'
     })
-  }
+    const blocks = [...(channel?.contents || [])].reverse()
+    const introIndex = blocks.findIndex(
+      (block) => block.class === 'Text' && block.title === 'Introduction'
+    )
+    const [introBlock] = introIndex >= 0 ? blocks.splice(introIndex, 1) : []
 
-  const body = source.replace(frontmatterMatch?.[0] || '', '').trim()
-  const sections = body.split(/^## /m)
-  const intro = sections.shift() || ''
-
-  return {
-    ...frontmatter,
-    intro: intro.trim(),
-    sections: sections.map((section) => {
-      const [title, ...content] = section.split('\n')
-      return { title: title.trim(), content: content.join('\n').trim() }
-    })
+    return {
+      intro: introBlock?.content?.trim() || null,
+      blocks: (
+        await Promise.all(
+          blocks.map(async (block) => {
+            if (block.class === 'Text' && block.content?.trim()) {
+              return {
+                id: block.id,
+                type: 'text',
+                content: withLineBreaks(block.content.trim())
+              }
+            }
+            const image = block.image
+            const src =
+              image?.original?.url || image?.large?.url || image?.display?.url
+            if (block.class === 'Image' && src) {
+              return {
+                id: block.id,
+                type: 'image',
+                src,
+                title: block.title || '',
+                ...(await getImageSize(src))
+              }
+            }
+            return null
+          })
+        )
+      ).filter(Boolean)
+    }
+  } catch (error) {
+    console.error('Failed to fetch about channel:', error)
+    return { intro: null, blocks: [] }
   }
 }

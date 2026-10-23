@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import PlausibleProvider from 'next-plausible'
 import { MegaCoverProvider } from '@/components/mega-cover-context'
 import { FirstImageLoadedProvider } from '@/hooks/use-first-image-loaded'
+import { getAboutContent } from '@/lib/about'
 import Header from '@/components/header'
 
 const serif = localFont({
@@ -35,6 +36,7 @@ export const metadata = {
 }
 
 export default async function Layout({ children, modal, params }) {
+  const { intro } = await getAboutContent()
   return (
     <html
       lang="en"
@@ -46,7 +48,7 @@ export default async function Layout({ children, modal, params }) {
       <body>
         <MegaCoverProvider>
           <FirstImageLoadedProvider>
-            <Header />
+            <Header intro={intro} />
             {children}
             {modal}
           </FirstImageLoadedProvider>

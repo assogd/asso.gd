@@ -66,6 +66,22 @@ h3:after {
   content: ':';
 }
 
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 240s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
 .extra-tracking {
   letter-spacing: 0.05em;
 }
