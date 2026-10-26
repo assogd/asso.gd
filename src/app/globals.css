@@ -90,8 +90,9 @@ h3:after {
 a:link:not(.button-style),
 .link-underline {
   text-decoration: underline;
-  text-decoration-thickness: clamp(1px, 0.03em, 1.5px);
+  text-decoration-thickness: 1px;
   text-underline-offset: clamp(2px, 0.1em, 5px);
+  text-decoration-color: hsl(0, 0%, 35%);
 }
 
 .button-style {
@@ -283,10 +284,17 @@ a:hover,
   width: 100%;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  /* Matches the gap between top-level blocks (gap-18 sm:gap-36). */
+  gap: 3rem;
   margin-top: var(--project-rest-top);
   /* Same spot the centered text starts at, so it doesn't shift before pinning */
   top: calc(var(--project-pair-top, 1rem) + var(--project-rest-top));
+}
+
+@media screen and (min-width: 640px) {
+  .project-meta-pair-rest {
+    gap: 6rem;
+  }
 }
 
 .project-meta-pair-meta {

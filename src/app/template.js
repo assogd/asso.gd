@@ -12,7 +12,7 @@ const SKIP_COVER_KEY = 'asso:skip-mega-cover'
 export default function Template({ children }) {
   const pathname = usePathname()
   const isProjectRoute = pathname?.startsWith('/project/')
-  const [showOverlay, setShowOverlay] = useState(false)
+  const [showOverlay, setShowOverlay] = useState(!isProjectRoute)
   const skippedPathRef = useRef(null)
 
   useLayoutEffect(() => {

@@ -32,8 +32,8 @@ export default function Header({ intro }) {
       )}
       <header
         className={clsx(
-          !isAbout ? 'fixed inset-x-0 top-0' : 'pb-0',
-          'flex w-screen p-2 sm:p-4 z-10'
+          'flex w-screen p-2 sm:p-4 z-10',
+          !isAbout ? 'fixed inset-x-0 top-0' : 'pb-4'
         )}
       >
         <div

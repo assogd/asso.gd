@@ -19,6 +19,35 @@ function getArenaHeaders() {
 
 
 /**
+ * Are.na's v2 API doesn't expose image dimensions, but v3 does. Returns a map
+ * of block id -> { width, height } for the channel's images, or an empty map
+ * if the request fails (images then fall back to a fixed-ratio box).
+ */
+async function fetchArenaImageDimensions(channelSlug, headers, fetchOptions, cacheBuster) {
+  const dimensions = new Map()
+  try {
+    const response = await fetch(
+      `https://api.are.na/v3/channels/${channelSlug}/contents?per=100${cacheBuster}`,
+      { headers, ...fetchOptions }
+    )
+    if (!response.ok) return dimensions
+
+    const { data } = await response.json()
+    for (const block of data || []) {
+      if (block.image?.width && block.image?.height) {
+        dimensions.set(String(block.id), {
+          width: block.image.width,
+          height: block.image.height
+        })
+      }
+    }
+  } catch (error) {
+    console.error(`Error fetching Are.na image dimensions for ${channelSlug}:`, error)
+  }
+  return dimensions
+}
+
+/**
  * Fetch a channel from Are.na with caching
  * @param {string} channelSlug - The slug of the channel to fetch
  * @param {object} options - Additional options for the request
@@ -41,7 +70,7 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
     // editing an existing block (e.g. its title) doesn't bust that cache -
     // it can keep serving a stale block for minutes. Fetch channel metadata
     // and contents separately, using the contents endpoint for fresh blocks.
-    const [channelResponse, contentsResponse] = await Promise.all([
+    const [channelResponse, contentsResponse, dimensions] = await Promise.all([
       fetch(`https://api.are.na/v2/channels/${channelSlug}?per=1${cacheBuster}`, {
         headers,
         ...fetchOptions
@@ -49,7 +78,8 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
       fetch(`https://api.are.na/v2/channels/${channelSlug}/contents?per=100${cacheBuster}`, {
         headers,
         ...fetchOptions
-      })
+      }),
+      fetchArenaImageDimensions(channelSlug, headers, fetchOptions, cacheBuster)
     ])
 
     if (!channelResponse.ok) {
@@ -61,7 +91,11 @@ export async function fetchArenaChannel(channelSlug, options = {}) {
     }
 
     const channel = await channelResponse.json()
-    const { contents } = await contentsResponse.json()
+    const { contents: v2Contents } = await contentsResponse.json()
+    const contents = v2Contents.map((block) => {
+      const size = block.image && dimensions.get(String(block.id))
+      return size ? { ...block, image: { ...block.image, ...size } } : block
+    })
 
     // Add timestamp to track when data was fetched
     const result = {

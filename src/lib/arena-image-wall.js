@@ -52,11 +52,13 @@ export function transformArenaBlocksForImageWall(blocks) {
           block.image.thumb?.url,
         alt: block.image.alt || '',
         width:
+          block.image.width ||
           block.image.original?.width ||
           block.image.large?.width ||
           block.image.display?.width ||
           block.image.thumb?.width,
         height:
+          block.image.height ||
           block.image.original?.height ||
           block.image.large?.height ||
           block.image.display?.height ||

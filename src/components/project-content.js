@@ -186,6 +186,17 @@ function ProjectMeta({ item, overlay = false, inModal = false }) {
 }
 
 function ProjectImage({ item, overlay = false, priority = false }) {
+  const { url, alt, width, height } = item.image
+  const hasSize = Boolean(width && height)
+  const imageProps = {
+    src: url,
+    alt: alt || item.title || 'Asso archive image',
+    priority,
+    fade: !priority,
+    sizes: '(min-width: 640px) 30rem, 100vw',
+    quality: 90
+  }
+
   return (
     <figure
       className={`project-image flex w-full flex-col items-center${
@@ -194,18 +205,32 @@ function ProjectImage({ item, overlay = false, priority = false }) {
           : ' max-w-xl'
       }`}
     >
-      <div className="relative aspect-[6/5] sm:aspect-auto w-full">
-        <FadeImage
-          src={item.image.url}
-          alt={item.image.alt || item.title || 'Asso archive image'}
-          fill
-          priority={priority}
-          fade={!priority}
-          className="object-contain"
-          sizes="(min-width: 640px) 30rem, 100vw"
-          quality={90}
-        />
-      </div>
+      {hasSize && overlay ? (
+        <div className="relative aspect-[6/5] w-full">
+          <FadeImage
+            {...imageProps}
+            width={width}
+            height={height}
+            className="absolute inset-0 h-full w-full object-contain"
+          />
+        </div>
+      ) : hasSize ? (
+        <div
+          className="relative w-full"
+          style={{ aspectRatio: `${width} / ${height}` }}
+        >
+          <FadeImage
+            {...imageProps}
+            width={width}
+            height={height}
+            className="h-auto w-full"
+          />
+        </div>
+      ) : (
+        <div className="relative aspect-[6/5] w-full">
+          <FadeImage {...imageProps} fill className="object-contain" />
+        </div>
+      )}
     </figure>
   )
 }
@@ -298,7 +323,7 @@ export function ProjectContent({ items = [], inModal = false }) {
     <section
       aria-label="Project contents"
       className={clsx(
-        'flex flex-col items-center gap-8 mt-0',
+        'flex flex-col items-center gap-16 sm:gap-24 mt-0',
         inModal ? 'px-4' : 'p-4'
       )}
     >
