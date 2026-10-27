@@ -92,7 +92,7 @@ a:link:not(.button-style),
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: clamp(2px, 0.1em, 5px);
-  text-decoration-color: hsl(0, 0%, 35%);
+  text-decoration-color: hsl(0, 0%, 100%);
 }
 
 .button-style {

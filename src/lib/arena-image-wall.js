@@ -1,3 +1,18 @@
+const LAYOUT_DIRECTIVE = /^[ \t]*layout:[ \t]*(\S+)[ \t]*$/im
+
+/**
+ * Art-direction hint set in a block's description as a "layout: full" line.
+ * @param {string} description - Raw block description
+ * @returns {string|null} Layout name, if any
+ */
+function parseLayout(description) {
+  return description?.match(LAYOUT_DIRECTIVE)?.[1].toLowerCase() || null
+}
+
+function stripLayoutDirective(description) {
+  return (description || '').replace(LAYOUT_DIRECTIVE, '')
+}
+
 /**
  * Caption Markdown for a block: the first paragraph of its description, with
  * inline links and soft line breaks kept, or the title when there's none.
@@ -5,7 +20,7 @@
  * @returns {string} Caption Markdown
  */
 function buildCaption(block) {
-  const firstParagraph = (block.description || '').trim().split(/\n\s*\n/)[0]
+  const firstParagraph = stripLayoutDirective(block.description).trim().split(/\n\s*\n/)[0]
   const caption = firstParagraph
     .split('\n')
     .map((line) => line.replace(/\s+/g, ' ').trim())
@@ -41,6 +56,7 @@ export function transformArenaBlocksForImageWall(blocks) {
       title: block.title || '',
       description: block.description || '',
       caption: buildCaption(block),
+      layout: parseLayout(block.description),
       image: {
         // Are.na's generated renditions are JPEG/WebP quality 75. Use the
         // original so Next can resize and compress it once at the requested

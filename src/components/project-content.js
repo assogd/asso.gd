@@ -193,16 +193,20 @@ function ProjectImage({ item, overlay = false, priority = false }) {
     alt: alt || item.title || 'Asso archive image',
     priority,
     fade: !priority,
-    sizes: '(min-width: 640px) 30rem, 100vw',
+    sizes: item.layout === 'full' ? '100vw' : '(min-width: 640px) 30rem, 100vw',
     quality: 90
   }
 
   return (
     <figure
-      className={`project-image flex w-full flex-col items-center${
+      className={`project-image flex flex-col items-center${
+        overlay || item.layout !== 'full' ? ' w-full' : ''
+      }${
         overlay
           ? ' max-w-[70vw] md:max-w-[24rem] relative z-10 project-meta-pair-image'
-          : ' max-w-xl'
+          : item.layout === 'full'
+            ? ' -mx-4 self-stretch lg:mx-0 lg:w-full lg:max-w-4xl lg:self-center'
+            : ' max-w-xl'
       }`}
     >
       {hasSize && overlay ? (
