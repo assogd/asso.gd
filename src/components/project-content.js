@@ -188,28 +188,33 @@ function ProjectMeta({ item, overlay = false, inModal = false }) {
 function ProjectImage({ item, overlay = false, priority = false }) {
   const { url, alt, width, height } = item.image
   const hasSize = Boolean(width && height)
+  // Portrait images sit in the same 6/5 box as the hero instead of growing tall.
+  const useFixedRatio =
+    overlay || (hasSize && height > width && item.layout !== 'full')
   const imageProps = {
     src: url,
     alt: alt || item.title || 'Asso archive image',
     priority,
     fade: !priority,
-    sizes: item.layout === 'full' ? '100vw' : '(min-width: 640px) 30rem, 100vw',
-    quality: 90
+    sizes: item.layout === 'full' ? '100vw' : '(min-width: 640px) 40rem, 100vw',
+    quality: 80
   }
 
   return (
     <figure
-      className={`project-image flex flex-col items-center${
-        overlay || item.layout !== 'full' ? ' w-full' : ''
-      }${
-        overlay
-          ? ' max-w-[70vw] md:max-w-[24rem] relative z-10 project-meta-pair-image'
-          : item.layout === 'full'
-            ? ' -mx-4 self-stretch lg:mx-0 lg:w-full lg:max-w-4xl lg:self-center'
-            : ' max-w-xl'
-      }`}
+      className={clsx(
+        'project-image flex flex-col items-center',
+        !overlay && 'py-8',
+        (overlay || item.layout !== 'full') && 'w-full',
+        overlay &&
+          'max-w-[70vw] md:max-w-[24rem] relative z-10 project-meta-pair-image',
+        !overlay &&
+          (item.layout === 'full'
+            ? '-mx-4 self-stretch lg:mx-0 lg:w-full lg:max-w-4xl lg:self-center'
+            : 'max-w-xl')
+      )}
     >
-      {hasSize && overlay ? (
+      {hasSize && useFixedRatio ? (
         <div className="relative aspect-[6/5] w-full">
           <FadeImage
             {...imageProps}
@@ -327,7 +332,7 @@ export function ProjectContent({ items = [], inModal = false }) {
     <section
       aria-label="Project contents"
       className={clsx(
-        'flex flex-col items-center gap-16 sm:gap-24 mt-0',
+        'project-blocks flex flex-col items-center mt-0',
         inModal ? 'px-4' : 'p-4'
       )}
     >

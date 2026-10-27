@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { transformArenaProjectContents } from '@/lib/arena-image-wall'
+import { generateProjectMetadata } from '@/lib/project-metadata'
 import { ProjectContent } from '@/components/project-content'
 import { PublishButton } from '@/components/publish-button'
 import Link from 'next/link'
@@ -14,20 +15,7 @@ async function loadProjectChannel(slug) {
   })
 }
 
-export async function generateMetadata({ params }) {
-  const { slug } = await params
-
-  try {
-    const channel = await loadProjectChannel(slug)
-    return {
-      title: channel?.title,
-      description: channel?.metadata?.description || undefined
-    }
-  } catch (error) {
-    console.error(`Failed to build metadata for project ${slug}:`, error)
-    return {}
-  }
-}
+export const generateMetadata = generateProjectMetadata
 
 export default async function ProjectPage({ params }) {
   const { slug } = await params
@@ -56,7 +44,7 @@ export default async function ProjectPage({ params }) {
       {((process.env.PREVIEW_MODE === 'true' &&
         process.env.HIDE_PUBLISH_BUTTON !== 'true') ||
         isLocalhost) && <PublishButton isLocalhost={isLocalhost} />}
-      <footer className="px-4 pt-28 pb-28 text-center grid gap-4">
+      <footer className="px-4 pt-12 pb-24 text-center grid gap-4">
         <div className="italic">End of page.</div>
         <div>
           Would you like to <Link href="/">browse images at the homepage</Link>{' '}

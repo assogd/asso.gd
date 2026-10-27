@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { transformArenaProjectContents } from '@/lib/arena-image-wall'
 import { ProjectModal } from '@/components/project-modal'
+import { generateProjectMetadata } from '@/lib/project-metadata'
+
+export const generateMetadata = generateProjectMetadata
 
 export default async function ProjectModalPage({ params }) {
   const { slug } = await params

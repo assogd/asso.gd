@@ -59,9 +59,21 @@ export default function Header({ intro }) {
                 ) : (
                   <span>{children} </span>
                 ),
-              a: ({ node, ...props }) => (
-                <a {...props} target="_blank" rel="noopener noreferrer" />
-              )
+              a: ({ node, href = '', ...props }) => {
+                const linkClass = '!no-underline hover:!underline'
+                const isInline = href.startsWith('/') || href.startsWith('#')
+                return isInline ? (
+                  <Link href={href} className={linkClass} {...props} />
+                ) : (
+                  <a
+                    href={href}
+                    {...props}
+                    className={linkClass}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                )
+              }
             }}
           >
             {intro || DEFAULT_INTRO}

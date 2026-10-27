@@ -1,5 +1,6 @@
 import { imageSize } from 'image-size'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
+import { isHiddenBlock } from '@/lib/arena-image-wall'
 
 // Are.na doesn't return image dimensions, so read them from the file to
 // reserve the right space before the image loads.
@@ -28,7 +29,9 @@ export async function getAboutContent() {
     const channel = await fetchArenaChannelWithBlocks(ABOUT_CHANNEL, {
       fresh: process.env.PREVIEW_MODE === 'true'
     })
-    const blocks = [...(channel?.contents || [])].reverse()
+    const blocks = [...(channel?.contents || [])]
+      .filter((block) => !isHiddenBlock(block))
+      .reverse()
     const introIndex = blocks.findIndex(
       (block) => block.class === 'Text' && block.title === 'Introduction'
     )

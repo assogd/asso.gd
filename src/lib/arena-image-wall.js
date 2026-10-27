@@ -116,6 +116,44 @@ function parseMetaBlockFields(content) {
     .filter(Boolean)
 }
 
+const OG_DIRECTIVE = /^[ \t]*type:[ \t]*og[ \t]*$/im
+
+const HIDDEN_DIRECTIVE = /^[ \t]*type:[ \t]*hidden[ \t]*$/im
+
+/** Blocks whose description has a "type: hidden" line are never rendered. */
+export function isHiddenBlock(block) {
+  return HIDDEN_DIRECTIVE.test(block?.description || '')
+}
+
+function isOgBlock(block) {
+  return OG_DIRECTIVE.test(block.description || '')
+}
+
+/**
+ * Social-sharing metadata from a project channel's "og" block: an image block
+ * whose description ends with a "type: og" line. Its title, description and
+ * image are used for link previews and are not rendered on the page.
+ * @param {Array} blocks - Array of Are.na channel blocks
+ * @returns {{title: string, description: string, image: string}|null}
+ */
+export function extractArenaProjectOg(blocks) {
+  const block = Array.isArray(blocks) ? blocks.find(isOgBlock) : null
+  if (!block) return null
+
+  // A rendition keeps the preview light; the original can be several MB.
+  const image =
+    block.image?.large?.url ||
+    block.image?.display?.url ||
+    block.image?.original?.url ||
+    ''
+
+  return {
+    title: block.title || '',
+    description: (block.description || '').replace(OG_DIRECTIVE, '').trim(),
+    image
+  }
+}
+
 /**
  * Transform image and text blocks from an Are.na project channel while
  * preserving their channel order.
@@ -128,6 +166,8 @@ export function transformArenaProjectContents(blocks) {
   }
 
   return blocks.flatMap((block) => {
+    if (isOgBlock(block) || isHiddenBlock(block)) return []
+
     const imageItem = transformArenaBlocksForImageWall([block])[0]
 
     if (imageItem) {
