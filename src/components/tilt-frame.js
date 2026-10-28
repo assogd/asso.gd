@@ -64,10 +64,14 @@ export function TiltFrame({ children, className }) {
     }
 
     function requestGyro() {
-      window.removeEventListener('pointerup', requestGyro)
+      // Must run inside a user gesture. Stay armed until permission is
+      // granted so a denied/failed attempt can be retried on the next tap.
       DeviceOrientationEvent.requestPermission()
         .then((state) => {
-          if (state === 'granted') attachGyro()
+          if (state !== 'granted') return
+          window.removeEventListener('click', requestGyro)
+          window.removeEventListener('touchend', requestGyro)
+          attachGyro()
         })
         .catch(() => {})
     }
@@ -77,7 +81,8 @@ export function TiltFrame({ children, className }) {
     if (typeof DeviceOrientationEvent !== 'undefined') {
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         // iOS: permission must be requested from a user gesture.
-        window.addEventListener('pointerup', requestGyro)
+        window.addEventListener('click', requestGyro)
+        window.addEventListener('touchend', requestGyro)
       } else {
         attachGyro()
       }
@@ -85,7 +90,8 @@ export function TiltFrame({ children, className }) {
 
     return () => {
       window.removeEventListener('pointermove', onPointerMove)
-      window.removeEventListener('pointerup', requestGyro)
+      window.removeEventListener('click', requestGyro)
+      window.removeEventListener('touchend', requestGyro)
       window.removeEventListener('deviceorientation', onOrientation)
     }
   }, [reduceMotion, x, y])
