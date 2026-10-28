@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { Children, isValidElement } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ProjectMetaPair } from './project-meta-pair'
+import { TiltFrame } from './tilt-frame'
 
 // Recursively flattens React children (strings, numbers, nested elements)
 // into their plain-text content, e.g. for locating a colon inside a
@@ -185,6 +186,12 @@ function ProjectMeta({ item, overlay = false, inModal = false }) {
   )
 }
 
+// Only the overlay hero image tilts; other images render a plain div.
+function Tilt({ overlay, className, children }) {
+  if (overlay) return <TiltFrame className={className}>{children}</TiltFrame>
+  return <div className={className}>{children}</div>
+}
+
 function ProjectImage({ item, overlay = false, priority = false }) {
   const { url, alt, width, height } = item.image
   const hasSize = Boolean(width && height)
@@ -215,14 +222,14 @@ function ProjectImage({ item, overlay = false, priority = false }) {
       )}
     >
       {hasSize && useFixedRatio ? (
-        <div className="relative aspect-[6/5] w-full">
+        <Tilt overlay={overlay} className="relative aspect-[6/5] w-full">
           <FadeImage
             {...imageProps}
             width={width}
             height={height}
             className="absolute inset-0 h-full w-full object-contain"
           />
-        </div>
+        </Tilt>
       ) : hasSize ? (
         <div
           className="relative w-full"
