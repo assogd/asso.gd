@@ -3,18 +3,18 @@ import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { transformArenaProjectContents } from '@/lib/arena-image-wall'
 import { ProjectModal } from '@/components/project-modal'
 import { generateProjectMetadata } from '@/lib/project-metadata'
+import { isPreviewMode, renderFreshInPreview } from '@/lib/preview'
 
 export const generateMetadata = generateProjectMetadata
 
 export default async function ProjectModalPage({ params }) {
+  await renderFreshInPreview()
   const { slug } = await params
 
   let channel
 
   try {
-    channel = await fetchArenaChannelWithBlocks(slug, {
-      fresh: process.env.PREVIEW_MODE === 'true'
-    })
+    channel = await fetchArenaChannelWithBlocks(slug, { fresh: isPreviewMode })
   } catch (error) {
     console.error(`Failed to fetch Arena project channel ${slug}:`, error)
     notFound()

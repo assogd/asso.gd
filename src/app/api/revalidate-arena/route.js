@@ -3,6 +3,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 
 // Simple in-memory store for revalidation history
 // In production, you might want to use a database or external storage
+const ARENA_TAG = 'arena-data'
 let revalidationHistory = []
 
 function isAuthorized(request) {
@@ -24,14 +25,7 @@ export async function POST(request) {
   }
 
   try {
-    const { path, tag } = await request.json()
-    
-    if (!path && !tag) {
-      return NextResponse.json(
-        { error: 'Either path or tag is required' },
-        { status: 400 }
-      )
-    }
+    const { path, tag = ARENA_TAG } = await request.json()
 
     const results = []
     const timestamp = new Date().toISOString()
@@ -42,11 +36,10 @@ export async function POST(request) {
       results.push({ type: 'path', value: path })
     }
 
-    // Revalidate by tag if provided
-    if (tag) {
-      revalidateTag(tag, 'max')
-      results.push({ type: 'tag', value: tag })
-    }
+    // Expire immediately so the next request refetches instead of serving
+    // stale content while revalidating.
+    revalidateTag(tag, { expire: 0 })
+    results.push({ type: 'tag', value: tag })
 
     // Store revalidation history
     const historyEntry = {
@@ -84,7 +77,7 @@ export async function GET(request) {
 
   const { searchParams } = new URL(request.url)
   const path = searchParams.get('path') || '/arena'
-  const tag = searchParams.get('tag')
+  const tag = searchParams.get('tag') || ARENA_TAG
   
   try {
     const results = []
@@ -94,11 +87,10 @@ export async function GET(request) {
     revalidatePath(path)
     results.push({ type: 'path', value: path })
 
-    // Revalidate by tag if provided
-    if (tag) {
-      revalidateTag(tag, 'max')
-      results.push({ type: 'tag', value: tag })
-    }
+    // Expire immediately so the next request refetches instead of serving
+    // stale content while revalidating.
+    revalidateTag(tag, { expire: 0 })
+    results.push({ type: 'tag', value: tag })
 
     // Store revalidation history
     const historyEntry = {

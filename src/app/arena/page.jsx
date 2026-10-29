@@ -1,9 +1,11 @@
 import { DevRevalidateButton } from '@/components/dev-revalidate-button'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
+import { isPreviewMode, renderFreshInPreview } from '@/lib/preview'
 
 export default async function ArenaPage() {
+  await renderFreshInPreview()
   const fetchOptions = {
-    fresh: process.env.PREVIEW_MODE === 'true'
+    fresh: isPreviewMode
   }
 
   // Fetch both channels server-side directly from Are.na

@@ -4,6 +4,8 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     qualities: [75, 80, 90],
+    // Are.na asset URLs are immutable, so optimized copies can be cached long.
+    minimumCacheTTL: 60 * 60 * 24 * 31,
     remotePatterns: [
       {
         protocol: 'https',

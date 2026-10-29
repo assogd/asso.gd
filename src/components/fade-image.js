@@ -5,7 +5,7 @@ import Image from 'next/image'
 import clsx from 'clsx'
 
 // How far outside the viewport (in viewport heights) an image starts loading.
-const PRELOAD_MARGIN = '250% 0px'
+const PRELOAD_MARGIN = '400% 0px'
 
 /**
  * next/image that starts loading well before it scrolls into view and fades

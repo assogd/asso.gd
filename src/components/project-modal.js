@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ProjectContent } from './project-content'
+import { ProjectRevealGate } from './project-reveal-gate'
 import Link from 'next/link'
 
 // Must match the key template.js checks for.
@@ -83,7 +84,7 @@ export function ProjectModal({ title, items }) {
         Close
       </button>
       <div className="project-modal-panel relative min-h-dvh bg-black">
-        <div className="project-modal-enter">
+        <ProjectRevealGate revealedClassName="project-modal-enter">
           <ProjectContent items={items} inModal />
           <footer className="px-4 pt-12 pb-12 text-center grid gap-4">
             <div className="italic">End of page.</div>
@@ -96,7 +97,7 @@ export function ProjectModal({ title, items }) {
               Close
             </button>
           </footer>
-        </div>
+        </ProjectRevealGate>
       </div>
     </div>
   )

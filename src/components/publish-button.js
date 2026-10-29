@@ -1,11 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 
-export function PublishButton({ isLocalhost = false }) {
+export function PublishButton({ showInPreview = false }) {
   const [status, setStatus] = useState('idle')
+  const [isLocalhost, setIsLocalhost] = useState(false)
   const pathname = usePathname()
+
+  useEffect(() => {
+    setIsLocalhost(/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname))
+  }, [])
+
+  if (!showInPreview && !isLocalhost) return null
 
   async function handlePublish() {
     setStatus('publishing')

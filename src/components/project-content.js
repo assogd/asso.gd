@@ -268,7 +268,10 @@ export function ProjectContent({ items = [], inModal = false }) {
     )
   }
 
-  const firstImageIndex = items.findIndex((item) => item.image)
+  // The first two images load eagerly so the page can wait for them.
+  const priorityIndexes = new Set(
+    items.flatMap((item, index) => (item.image ? [index] : [])).slice(0, 2)
+  )
 
   function renderFrom(start) {
     const nodes = []
@@ -312,7 +315,7 @@ export function ProjectContent({ items = [], inModal = false }) {
               <ProjectImage
                 item={item}
                 overlay
-                priority={index === firstImageIndex}
+                priority={priorityIndexes.has(index)}
               />
             }
             meta={<ProjectMeta item={items[index + 1]} overlay />}
@@ -327,7 +330,7 @@ export function ProjectContent({ items = [], inModal = false }) {
         <ProjectImage
           key={item.id}
           item={item}
-          priority={index === firstImageIndex}
+          priority={priorityIndexes.has(index)}
         />
       )
     }

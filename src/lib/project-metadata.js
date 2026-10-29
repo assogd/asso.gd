@@ -1,5 +1,6 @@
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { extractArenaProjectOg } from '@/lib/arena-image-wall'
+import { isPreviewMode, renderFreshInPreview } from '@/lib/preview'
 
 const TITLE_SUFFIX = ' – Asso Stockholm'
 
@@ -9,11 +10,12 @@ const TITLE_SUFFIX = ' – Asso Stockholm'
  * channel's "og" block overrides the title, description and image.
  */
 export async function generateProjectMetadata({ params }) {
+  await renderFreshInPreview()
   const { slug } = await params
 
   try {
     const channel = await fetchArenaChannelWithBlocks(slug, {
-      fresh: process.env.PREVIEW_MODE === 'true'
+      fresh: isPreviewMode
     })
     const og = extractArenaProjectOg(channel?.contents)
     const title = `${og?.title || channel?.title}${TITLE_SUFFIX}`

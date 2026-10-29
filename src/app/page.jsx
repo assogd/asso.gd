@@ -1,12 +1,10 @@
 import { notFound } from 'next/navigation'
-import { headers } from 'next/headers'
+import { isPreviewMode, renderFreshInPreview, showPublishInPreview } from '@/lib/preview'
 import siteContent from '@/content/site.json'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { transformArenaBlocksForImageWall } from '@/lib/arena-image-wall'
 import { HomeFeed } from '@/components/home-feed'
 import { PublishButton } from '@/components/publish-button'
-
-export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
   const { title, description } = siteContent.seo.home
@@ -19,15 +17,14 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const host = (await headers()).get('host') || ''
-  const isLocalhost = /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host)
+  await renderFreshInPreview()
 
   // Fetch the adddgd channel data
   let imageItems = []
 
   try {
     const channel = await fetchArenaChannelWithBlocks('adddgd', {
-      fresh: process.env.PREVIEW_MODE === 'true'
+      fresh: isPreviewMode
     })
     if (channel?.contents) {
       imageItems = transformArenaBlocksForImageWall(channel.contents).reverse()
@@ -44,11 +41,7 @@ export default async function Home() {
   return (
     <main className="pt-24">
       <HomeFeed items={imageItems} />
-      {((process.env.PREVIEW_MODE === 'true' &&
-        process.env.HIDE_PUBLISH_BUTTON !== 'true') ||
-        isLocalhost) && (
-        <PublishButton isLocalhost={isLocalhost} />
-      )}
+      <PublishButton showInPreview={showPublishInPreview} />
     </main>
   )
 }
