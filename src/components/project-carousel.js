@@ -8,7 +8,7 @@ import { Caption } from './caption'
 const SWIPE_THRESHOLD = 40
 
 /**
- * One-slide-at-a-time carousel for a collection with a 125ms crossfade. Swipe
+ * One-slide-at-a-time carousel for a collection. Swipe
  * or drag to navigate, click the left/right half of the image to go
  * back/forward, or use the dots below.
  */
@@ -59,7 +59,7 @@ export function ProjectCarousel({ images, title }) {
               aria-label={`${index + 1} of ${count}`}
               aria-hidden={index !== selected}
               className={clsx(
-                'relative col-start-1 row-start-1 transition-opacity duration-[125ms] ease-linear',
+                'relative col-start-1 row-start-1',
                 index === selected ? 'opacity-100' : 'opacity-0'
               )}
             >
