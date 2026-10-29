@@ -1,6 +1,3 @@
-// Reviewed alt texts keyed by Are.na block id; they take priority over Are.na's own alt.
-import altText from '@/content/alt.json'
-
 const LAYOUT_DIRECTIVE = /^[ \t]*layout:[ \t]*(\S+)[ \t]*$/im
 
 /**
@@ -70,7 +67,7 @@ export function transformArenaBlocksForImageWall(blocks) {
           block.image.large?.url ||
           block.image.display?.url ||
           block.image.thumb?.url,
-        alt: altText[block.id] || block.image.alt || '',
+        alt: block.image.alt || '',
         width:
           block.image.width ||
           block.image.original?.width ||
