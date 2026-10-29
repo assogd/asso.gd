@@ -56,6 +56,7 @@ export function transformArenaBlocksForImageWall(blocks) {
       title: block.title || '',
       description: block.description || '',
       caption: buildCaption(block),
+      figcaption: stripLayoutDirective(block.description).trim(),
       layout: parseLayout(block.description),
       image: {
         // Are.na's generated renditions are JPEG/WebP quality 75. Use the
@@ -167,6 +168,15 @@ export function transformArenaProjectContents(blocks) {
 
   return blocks.flatMap((block) => {
     if (isOgBlock(block) || isHiddenBlock(block)) return []
+
+    if (block.class === 'Channel') {
+      const images = transformArenaBlocksForImageWall(
+        (block.contents || []).filter((child) => !isHiddenBlock(child))
+      ).reverse()
+      return images.length
+        ? [{ id: block.id, type: 'collection', title: block.title || '', images }]
+        : []
+    }
 
     const imageItem = transformArenaBlocksForImageWall([block])[0]
 

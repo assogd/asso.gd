@@ -121,7 +121,21 @@ export async function fetchArenaChannelWithBlocks(channelSlug, options = {}) {
   try {
     // Fetch the channel which already includes contents/blocks
     const channel = await fetchArenaChannel(channelSlug, options)
-    return channel
+
+    // Nested channels are collections (rendered as carousels); load their blocks.
+    const contents = await Promise.all(
+      (channel.contents || []).map(async (block) => {
+        if (block.class !== 'Channel' || !block.slug) return block
+        try {
+          const nested = await fetchArenaChannel(block.slug, options)
+          return { ...block, contents: nested.contents || [] }
+        } catch {
+          return block
+        }
+      })
+    )
+
+    return { ...channel, contents }
   } catch (error) {
     console.error(`Error fetching Are.na channel with blocks:`, error)
     throw error

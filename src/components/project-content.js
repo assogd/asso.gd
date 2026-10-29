@@ -4,6 +4,8 @@ import { Children, isValidElement } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ProjectMetaPair } from './project-meta-pair'
 import { TiltFrame } from './tilt-frame'
+import { ProjectCarousel } from './project-carousel'
+import { Caption } from './caption'
 
 // Recursively flattens React children (strings, numbers, nested elements)
 // into their plain-text content, e.g. for locating a colon inside a
@@ -218,11 +220,17 @@ function ProjectImage({ item, overlay = false, priority = false }) {
         !overlay &&
           (item.layout === 'full'
             ? '-mx-4 self-stretch lg:mx-0 lg:w-full lg:max-w-4xl lg:self-center'
-            : 'max-w-xl')
+            : 'max-w-2xl')
       )}
     >
       {hasSize && useFixedRatio ? (
-        <Tilt overlay={overlay} className="relative aspect-[6/5] w-full">
+        <Tilt
+          overlay={overlay}
+          className={clsx(
+            'relative aspect-[6/5] w-full',
+            !overlay && 'max-h-[80vh]'
+          )}
+        >
           <FadeImage
             {...imageProps}
             width={width}
@@ -248,6 +256,42 @@ function ProjectImage({ item, overlay = false, priority = false }) {
         </div>
       )}
     </figure>
+  )
+}
+
+// Two-image collections sit side by side instead of becoming a carousel.
+function ProjectImagePair({ images }) {
+  return (
+    <div className="grid w-full max-w-4xl grid-cols-2 gap-2 md:gap-3 py-8">
+      {images.map(({ id, title, image, figcaption }) => {
+        const { url, alt, width, height } = image
+        return (
+          <figure key={id}>
+            <div
+              className="relative"
+              style={{
+                aspectRatio: width && height ? `${width} / ${height}` : '6 / 5'
+              }}
+            >
+              <FadeImage
+                src={url}
+                alt={alt || title || 'Asso archive image'}
+                fill
+                fade
+                sizes="(min-width: 896px) 28rem, 50vw"
+                quality={90}
+                className="object-contain"
+              />
+            </div>
+            {figcaption && (
+              <figcaption className="mt-1 text-xs">
+                <Caption>{figcaption}</Caption>
+              </figcaption>
+            )}
+          </figure>
+        )
+      })}
+    </div>
   )
 }
 
@@ -281,6 +325,21 @@ export function ProjectContent({ items = [], inModal = false }) {
 
       if (item.type === 'meta') {
         nodes.push(<ProjectMeta key={item.id} item={item} inModal={inModal} />)
+        continue
+      }
+
+      if (item.type === 'collection') {
+        nodes.push(
+          item.images.length === 2 ? (
+            <ProjectImagePair key={item.id} images={item.images} />
+          ) : (
+            <ProjectCarousel
+              key={item.id}
+              images={item.images}
+              title={item.title}
+            />
+          )
+        )
         continue
       }
 
