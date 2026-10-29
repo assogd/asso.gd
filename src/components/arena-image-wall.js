@@ -23,8 +23,6 @@ const MIDDLE_PASS = 1
 
 export function ArenaImageWall({
   items = [],
-  onTilePointerDown,
-  previewActive = false,
   loop = true
 }) {
   const wallRef = useRef(null)
@@ -288,18 +286,15 @@ export function ArenaImageWall({
               '--arena-lag-factor': 0.7 + (index % 3) * 0.15
             }}
           >
-            <button
-              type="button"
-              onClick={() => onTilePointerDown?.(item)}
+            <div
               onContextMenu={(event) => event.preventDefault()}
               onDragStart={(event) => event.preventDefault()}
-              className="home-image-preview absolute inset-0 block w-full cursor-zoom-in select-none"
-              aria-label={`View larger: ${item.title || 'image'}`}
+              className="absolute inset-0 block w-full select-none"
               style={{
                 WebkitTouchCallout: 'none',
                 WebkitUserSelect: 'none',
                 userSelect: 'none',
-                cursor: previewActive ? 'default' : 'zoom-in'
+                cursor: 'default'
               }}
             >
               <FadeImage
@@ -312,7 +307,7 @@ export function ArenaImageWall({
                 priority={index < 2}
                 draggable={false}
               />
-            </button>
+            </div>
           </div>
         </figure>
         )
