@@ -52,7 +52,7 @@ function renderMarquee(content) {
       })
     )
 
-  return <Marquee key={content} items={items} />
+  return <Marquee key={content} items={items} className="col-span-full mt-5" />
 }
 
 // Static so Tailwind can see them. Two paragraphs per line, three columns

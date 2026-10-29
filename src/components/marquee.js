@@ -7,20 +7,22 @@ const COPIES = 12
  * Full-viewport-width looping ticker. `items` are rendered on one line, each
  * line break becoming a divider, and the whole row repeats to stay filled.
  */
-export function Marquee({ items }) {
+export function Marquee({ items, gap = '3em', className = '' }) {
   const unit = items.map((item, index) => (
     <span key={index} className="inline-block whitespace-nowrap">
       {item}
       <span
         aria-hidden="true"
         className="inline-block"
-        style={{ width: '3em' }}
+        style={{ width: gap }}
       />
     </span>
   ))
 
   return (
-    <div className="marquee col-span-full -mx-2 sm:-mx-4 w-screen overflow-hidden mt-5">
+    <div
+      className={`marquee -mx-2 sm:-mx-4 w-screen overflow-hidden ${className}`}
+    >
       <div className="marquee-track flex w-max">
         {[0, 1].map((half) => (
           <div

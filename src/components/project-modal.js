@@ -85,7 +85,7 @@ export function ProjectModal({ title, items }) {
       <div className="project-modal-panel relative min-h-dvh bg-black">
         <div className="project-modal-enter">
           <ProjectContent items={items} inModal />
-          <footer className="px-4 pt-28 pb-28 text-center grid gap-16">
+          <footer className="px-4 pt-12 pb-12 text-center grid gap-4">
             <div className="italic">End of page.</div>
             <button
               type="button"

@@ -5,6 +5,7 @@ import { transformArenaProjectContents } from '@/lib/arena-image-wall'
 import { generateProjectMetadata } from '@/lib/project-metadata'
 import { ProjectContent } from '@/components/project-content'
 import { PublishButton } from '@/components/publish-button'
+import { Marquee } from '@/components/marquee'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -44,8 +45,8 @@ export default async function ProjectPage({ params }) {
       {((process.env.PREVIEW_MODE === 'true' &&
         process.env.HIDE_PUBLISH_BUTTON !== 'true') ||
         isLocalhost) && <PublishButton isLocalhost={isLocalhost} />}
-      <footer className="px-4 pt-12 pb-24 text-center grid gap-4">
-        <div className="italic">End of page.</div>
+      <footer className="px-4 pt-12 pb-12 text-center grid gap-4">
+        <span className="italic">End of page.</span>
         <div>
           Would you like to <Link href="/">browse images at the homepage</Link>{' '}
           or <Link href="/about">read texts about the studio</Link>?
