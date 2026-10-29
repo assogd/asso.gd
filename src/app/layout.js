@@ -47,6 +47,7 @@ const jsonLd = {
       name: 'Asso',
       url: SITE_URL,
       description: siteContent.seo.home.description,
+      sameAs: ['https://www.instagram.com/asso4077'],
       areaServed: 'Worldwide',
       address: {
         '@type': 'PostalAddress',
