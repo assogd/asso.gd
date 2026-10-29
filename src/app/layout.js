@@ -6,6 +6,8 @@ import { MegaCoverProvider } from '@/components/mega-cover-context'
 import { FirstImageLoadedProvider } from '@/hooks/use-first-image-loaded'
 import { getAboutContent } from '@/lib/about'
 import Header from '@/components/header'
+import siteContent from '@/content/site.json'
+import { SITE_URL } from '@/lib/site'
 
 const serif = localFont({
   src: [
@@ -26,6 +28,7 @@ const serif = localFont({
 export const metadata = {
   metadataBase: new URL('https://www.asso.gd'),
   creator: 'Asso DDD',
+  alternates: { canonical: './' },
   openGraph: {
     siteName: 'Asso',
     type: 'website'
@@ -33,6 +36,32 @@ export const metadata = {
   appleWebApp: {
     statusBarStyle: 'black-translucent'
   }
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'Asso',
+      url: SITE_URL,
+      description: siteContent.seo.home.description,
+      areaServed: 'Worldwide',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Stockholm',
+        addressCountry: 'SE'
+      }
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: 'Asso',
+      publisher: { '@id': `${SITE_URL}/#organization` }
+    }
+  ]
 }
 
 export default async function Layout({ children, modal, params }) {
@@ -44,6 +73,10 @@ export default async function Layout({ children, modal, params }) {
     >
       <head>
         <PlausibleProvider domain="asso.gd" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body>
         <MegaCoverProvider>
