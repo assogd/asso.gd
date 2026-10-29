@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation'
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { transformArenaProjectContents } from '@/lib/arena-image-wall'
-import { generateProjectMetadata } from '@/lib/project-metadata'
+import {
+  buildProjectJsonLd,
+  generateProjectMetadata
+} from '@/lib/project-metadata'
 import {
   isPreviewMode,
   renderFreshInPreview,
@@ -40,6 +43,12 @@ export default async function ProjectPage({ params }) {
 
   return (
     <main className="">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildProjectJsonLd(slug, channel))
+        }}
+      />
       <h1 className="sr-only">{channel.title}</h1>
       <ProjectRevealGate>
         <ProjectContent items={items} />

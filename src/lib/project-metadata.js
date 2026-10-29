@@ -1,5 +1,6 @@
 import { fetchArenaChannelWithBlocks } from '@/lib/arena'
 import { extractArenaProjectOg } from '@/lib/arena-image-wall'
+import { SITE_URL } from '@/lib/site'
 import { isPreviewMode, renderFreshInPreview } from '@/lib/preview'
 
 const TITLE_SUFFIX = ' – Asso Stockholm'
@@ -32,5 +33,26 @@ export async function generateProjectMetadata({ params }) {
   } catch (error) {
     console.error(`Failed to build metadata for project ${slug}:`, error)
     return {}
+  }
+}
+
+/** schema.org CreativeWork for a project page, built from its Are.na channel. */
+export function buildProjectJsonLd(slug, channel) {
+  const og = extractArenaProjectOg(channel?.contents)
+  const description =
+    og?.description || channel?.metadata?.description || undefined
+  const url = `${SITE_URL}/project/${slug}`
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    '@id': `${url}#project`,
+    url,
+    name: og?.title || channel?.title,
+    ...(description && { description }),
+    ...(og?.image && { image: og.image }),
+    ...(channel?.created_at && { dateCreated: channel.created_at }),
+    creator: { '@id': `${SITE_URL}/#organization` },
+    isPartOf: { '@id': `${SITE_URL}/#website` }
   }
 }
