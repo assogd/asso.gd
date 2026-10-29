@@ -9,10 +9,15 @@ const MAX_WAIT_MS = 4000
 
 /**
  * Keeps its children hidden (but laid out, so the priority images still
- * load) until the first images have loaded, then reveals them. `revealedClassName`
+ * load) until the first images have loaded, then reveals them. `coverClassName`
+ * styles the "..." overlay (e.g. an opaque background) and `revealedClassName`
  * is applied on reveal, e.g. to start an enter animation at that moment.
  */
-export function ProjectRevealGate({ children, revealedClassName }) {
+export function ProjectRevealGate({
+  children,
+  revealedClassName,
+  coverClassName
+}) {
   const containerRef = useRef(null)
   const [revealed, setRevealed] = useState(false)
 
@@ -58,7 +63,10 @@ export function ProjectRevealGate({ children, revealedClassName }) {
       {!revealed && (
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed inset-0 z-30 flex items-center justify-center"
+          className={clsx(
+            'pointer-events-none fixed inset-0 z-30 flex items-center justify-center',
+            coverClassName
+          )}
         >
           ...
         </div>
