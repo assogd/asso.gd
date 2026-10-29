@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import siteContent from '@/content/site.json'
 import { FadeImage } from '@/components/fade-image'
 import { Marquee } from '@/components/marquee'
+import altText from '@/content/alt.json'
 import { getAboutContent } from '@/lib/about'
 
 export async function generateMetadata() {
@@ -139,7 +140,7 @@ export default async function About() {
             >
               <FadeImage
                 src={block.src}
-                alt={block.title || 'Asso studio image'}
+                alt={altText[block.id] || block.title || 'Asso studio image'}
                 fill
                 className="object-contain"
                 sizes="(min-width: 768px) 48rem, 100vw"
