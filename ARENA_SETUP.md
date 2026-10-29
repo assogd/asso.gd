@@ -62,7 +62,7 @@ export default async function MyPage() {
 ```bash
 curl -X POST https://your-domain.com/api/revalidate-arena \
   -H "Content-Type: application/json" \
-  -d '{"path": "/arena", "tag": "arena-data"}'
+  -d '{"path": "/", "tag": "arena-data"}'
 ```
 
 #### Revalidate by Tag Only
@@ -76,7 +76,7 @@ curl -X POST https://your-domain.com/api/revalidate-arena \
 ```bash
 curl -X POST https://your-domain.com/api/revalidate-arena \
   -H "Content-Type: application/json" \
-  -d '{"path": "/arena"}'
+  -d '{"path": "/"}'
 ```
 
 ### When to Revalidate

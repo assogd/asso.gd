@@ -76,7 +76,7 @@ export async function GET(request) {
   }
 
   const { searchParams } = new URL(request.url)
-  const path = searchParams.get('path') || '/arena'
+  const path = searchParams.get('path') || '/'
   const tag = searchParams.get('tag') || ARENA_TAG
   
   try {
