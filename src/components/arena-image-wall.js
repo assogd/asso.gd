@@ -3,6 +3,7 @@
 import { FadeImage } from './fade-image'
 import { useEffect, useRef, useState } from 'react'
 import { Caption } from './caption'
+import { useBlocksSeenTracking } from '@/hooks/use-blocks-seen-tracking'
 
 function getStableColumnStart(id, columnCount, previousStart) {
   const value = String(id)
@@ -23,7 +24,8 @@ const MIDDLE_PASS = 1
 
 export function ArenaImageWall({
   items = [],
-  loop = true
+  loop = true,
+  trackBlocksSeen = false
 }) {
   const wallRef = useRef(null)
   const firstTileRef = useRef(null)
@@ -210,6 +212,8 @@ export function ArenaImageWall({
       nearViewportObserver.disconnect()
     }
   }, [items])
+
+  useBlocksSeenTracking(trackBlocksSeen, tileRefs, items)
 
   if (items.length === 0) {
     return (
