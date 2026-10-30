@@ -330,7 +330,7 @@ export function ProjectContent({ items = [], inModal = false }) {
 
       if (item.type === 'collection') {
         nodes.push(
-          item.images.length === 2 ? (
+          item.images.length < 5 ? (
             <ProjectImagePair key={item.id} images={item.images} />
           ) : (
             <ProjectCarousel
