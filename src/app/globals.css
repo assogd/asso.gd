@@ -87,7 +87,7 @@ h3:after {
 }
 
 /* Standard underline: thickness and offset scale with the text's own em. */
-a:link:not(.button-style),
+a:hover:not(.button-style),
 .link-underline {
   text-decoration: underline;
   text-decoration-thickness: 1px;
