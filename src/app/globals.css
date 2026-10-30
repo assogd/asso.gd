@@ -159,6 +159,20 @@ a:hover,
   }
 }
 
+/* Large screens: keep scaling the type past the 3rem cap, but bound it by the
+   viewport height so a title plus six fields still fits comfortably. */
+@media screen and (min-width: 1536px) {
+  .meta-title {
+    font-size: clamp(3rem, min(5.5vw, 10.5svh), 7rem);
+  }
+
+  /* Bound the hero by height too, so it doesn't crowd the header on wide but
+     relatively short displays (e.g. 1920x958). 6/5 is the hero's aspect. */
+  .project-meta-pair-image {
+    max-width: min(30rem, 54svh * 6 / 5) !important;
+  }
+}
+
 /*
  * Image + meta pair: the image scrolls normally while the meta text and every
  * block after it (the "rest") are held in place by position: sticky. The hold
@@ -226,14 +240,23 @@ a:hover,
       ) /
       2
   );
-  /* Moves the content down so the whitespace above it (below the header) and
-     below it (above the next block's glimpse) is balanced, but never less
-     than --project-pair-min-offset. */
+  /* Vertical center of the meta text alone, relative to the frame. */
+  --project-meta-center: calc(
+    var(--project-meta-start) + var(--project-meta-height, 0px) / 2
+  );
+  /* What gets centered in the viewport: the image + meta union by default. */
+  --project-anchor-center: var(--project-content-center);
+  /* Raises the anchor above geometric center for optical balance. */
+  --project-anchor-lift: 0px;
+  /* Moves the content down so the whitespace above the anchor (below the
+     header) and below it (above the next block's glimpse) is balanced, but
+     never less than --project-pair-min-offset. */
   --project-pair-offset: max(
     var(--project-pair-min-offset),
     calc(
       (var(--project-header-height) + 100svh - var(--project-next-glimpse)) /
-        2 - var(--project-pair-top, 1rem) - var(--project-content-center)
+        2 - var(--project-pair-top, 1rem) - var(--project-anchor-center) -
+        var(--project-anchor-lift)
     )
   );
   --project-rest-top: calc(
@@ -267,6 +290,18 @@ a:hover,
     --project-pair-min-offset: 2rem;
     --project-next-glimpse: 0px;
     --project-pair-base-height: calc(100svh - var(--project-pair-bleed, 2rem));
+  }
+}
+
+/* Large screens: center the text itself rather than the image + text union.
+   The lifted image otherwise drags the union's center up and leaves the
+   text - the visual mass - sitting below the middle of the screen. */
+@media screen and (min-width: 1536px) {
+  .project-meta-pair {
+    --project-anchor-center: var(--project-meta-center);
+    --project-anchor-lift: 0px;
+    /* Let the centering maths win instead of the 2rem floor. */
+    --project-pair-min-offset: 0px;
   }
 }
 

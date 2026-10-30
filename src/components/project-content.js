@@ -216,7 +216,7 @@ function ProjectImage({ item, overlay = false, priority = false }) {
         !overlay && 'py-8',
         (overlay || item.layout !== 'full') && 'w-full',
         overlay &&
-          'max-w-[70vw] md:max-w-[24rem] relative z-10 project-meta-pair-image',
+          'max-w-[70vw] md:max-w-[24rem] 2xl:max-w-[30rem] relative z-10 project-meta-pair-image',
         !overlay &&
           (item.layout === 'full'
             ? '-mx-4 self-stretch lg:mx-0 lg:w-full lg:max-w-4xl lg:self-center'
