@@ -6,23 +6,45 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 const ARENA_TAG = 'arena-data'
 let revalidationHistory = []
 
-function isAuthorized(request) {
+// Returns a NextResponse describing why the request is rejected, or null if
+// it may proceed. Distinct statuses so a misconfigured env is telling:
+//   403 - HIDE_PUBLISH_BUTTON=true is set on this deployment
+//   401 - token missing or doesn't match REVALIDATE_TOKEN
+function rejectionFor(request) {
   if (process.env.HIDE_PUBLISH_BUTTON === 'true') {
-    return false
+    return NextResponse.json(
+      { error: 'Publishing is disabled on this deployment' },
+      { status: 403 }
+    )
   }
 
   const expectedToken = process.env.REVALIDATE_TOKEN
   if (!expectedToken) {
     return process.env.NODE_ENV !== 'production'
+      ? null
+      : NextResponse.json(
+          { error: 'REVALIDATE_TOKEN is not configured' },
+          { status: 500 }
+        )
   }
 
-  return request.headers.get('authorization') === `Bearer ${expectedToken}`
+  const header = request.headers.get('authorization') || ''
+  if (header !== `Bearer ${expectedToken}`) {
+    return NextResponse.json(
+      {
+        error: 'Unauthorized',
+        reason: header ? 'token mismatch' : 'missing Authorization header'
+      },
+      { status: 401 }
+    )
+  }
+
+  return null
 }
 
 export async function POST(request) {
-  if (!isAuthorized(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const rejection = rejectionFor(request)
+  if (rejection) return rejection
 
   try {
     const { path, tag = ARENA_TAG } = await request.json()
@@ -71,9 +93,8 @@ export async function POST(request) {
 
 // Also support GET for easy testing
 export async function GET(request) {
-  if (!isAuthorized(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const rejection = rejectionFor(request)
+  if (rejection) return rejection
 
   const { searchParams } = new URL(request.url)
   const path = searchParams.get('path') || '/'
