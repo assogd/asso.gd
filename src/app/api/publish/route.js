@@ -41,8 +41,19 @@ export async function POST(request) {
     })
 
     if (!response.ok) {
+      // Surface what production actually said so a token mismatch (401) or a
+      // redirecting URL (308) is distinguishable from a crash in the logs.
+      const detail = await response.text().catch(() => '')
+      console.error(
+        `Publish failed: production responded ${response.status} for ${revalidateUrl}`,
+        detail.slice(0, 500)
+      )
       return NextResponse.json(
-        { error: 'Production revalidation failed' },
+        {
+          error: 'Production revalidation failed',
+          productionStatus: response.status,
+          detail: detail.slice(0, 500)
+        },
         { status: 502 }
       )
     }
